@@ -3,20 +3,20 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"flutter_bootstrap.js": "4bdc0411481899de0a5c59f1d4473067",
+const RESOURCES = {"flutter_bootstrap.js": "5b3903396be929c4935da8e094cfc4a0",
 "version.json": "424897348b4aaecf58e8c7da74983364",
 "Agora_Web_SDK_FULL/favicon.ico": "6464eb4bd09af54c697617040dd74209",
 "Agora_Web_SDK_FULL/index.html": "e7cd3e59daaeaf9f057f107afae6feab",
 "Agora_Web_SDK_FULL/AgoraRTC_N-4.23.2.js": "f86c6acf46d30911562bb4e85fcc10a6",
 "Agora_Web_SDK_FULL/index.js": "2e9c9dccc03d10ad8d6655dd0fec134c",
-"Agora_Web_SDK_FULL/index.css": "076707971967e5879d7ea84c8fbb5f6d",
+"Agora_Web_SDK_FULL/index.css": "c07cab671ee07b5490aa4f490c7a71a2",
 "Agora_Web_SDK_FULL/indexandjs.html": "64357d76955ec0ed9f3502741f1efae7",
 "Agora_Web_SDK_FULL/vendor/bootstrap.min.css": "7cc40c199d128af6b01e74a28c5900b0",
 "Agora_Web_SDK_FULL/vendor/bootstrap.bundle.min.js": "a5334e475209f965b4862f3bedf32618",
 "Agora_Web_SDK_FULL/vendor/jquery-3.4.1.min.js": "f832e36068ab203a3f89b1795480d0d7",
 "index.html": "b11f0552e6d0b84b59ffdc148ca79860",
 "/": "b11f0552e6d0b84b59ffdc148ca79860",
-"main.dart.js": "d1508e0a98ebc36300499457ed391553",
+"main.dart.js": "2a8016f627f45e19b8625961ebaadd1f",
 "flutter.js": "76f08d47ff9f5715220992f993002504",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
