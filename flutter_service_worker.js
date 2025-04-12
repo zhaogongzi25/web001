@@ -3,7 +3,7 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"flutter_bootstrap.js": "afd57528a21402d28b95ee50bde16f18",
+const RESOURCES = {"flutter_bootstrap.js": "45edb17bdd912f3cef5107edc380419b",
 "version.json": "424897348b4aaecf58e8c7da74983364",
 "index.html": "70ea7420b1c491f62015a17ea69ddb15",
 "/": "70ea7420b1c491f62015a17ea69ddb15",
@@ -19,7 +19,7 @@ const RESOURCES = {"flutter_bootstrap.js": "afd57528a21402d28b95ee50bde16f18",
 "assets/Agora_Web_SDK_FULL/index.html": "e7cd3e59daaeaf9f057f107afae6feab",
 "assets/Agora_Web_SDK_FULL/AgoraRTC_N-4.23.2.js": "f86c6acf46d30911562bb4e85fcc10a6",
 "assets/Agora_Web_SDK_FULL/index.js": "2e9c9dccc03d10ad8d6655dd0fec134c",
-"assets/Agora_Web_SDK_FULL/index.css": "c07cab671ee07b5490aa4f490c7a71a2",
+"assets/Agora_Web_SDK_FULL/index.css": "475ea403ed9407583d83a1d61fe75cd8",
 "assets/Agora_Web_SDK_FULL/indexandjs.html": "5a0cbaef0c94c16c7e37c0d15b9720ee",
 "assets/Agora_Web_SDK_FULL/vendor/bootstrap.min.css": "7cc40c199d128af6b01e74a28c5900b0",
 "assets/Agora_Web_SDK_FULL/vendor/bootstrap.bundle.min.js": "a5334e475209f965b4862f3bedf32618",

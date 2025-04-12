@@ -2,7 +2,7 @@
 
 
 
-@media (max-width: 500px) {
+@media (max-width: 1000px) {
   .player {
     position: relative;
     top: 0px; /* 向下偏移 20px */
