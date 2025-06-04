@@ -68,7 +68,7 @@ Tuple2<List<InlineSpan>, List<TextLinkRegion>> buildSpansAndRegions({
             style: baseStyle.copyWith(
               // Copy base style and add link specific style
               color: color ?? Colors.blueAccent, // Example link style
-              decoration: TextDecoration.underline,
+              // decoration: TextDecoration.underline,
             ),
             // No recognizer here! Handled in RenderSliver.
           ),

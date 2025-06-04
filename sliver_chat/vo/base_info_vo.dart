@@ -1,19 +1,20 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:data_center/live_old/model/data_manager.dart';
 import 'package:data_center/live_old/model/room_msg.dart';
 import 'package:data_center/live_old/model/room_player.dart';
 import 'package:data_center/live_old/utility/string.dart';
+import 'package:data_center/utils/chat_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 
 import '../chatcell/base_text_link.dart';
-import '../chatcell/chat_text_talk.dart';
-import '../chatcell/notify_info_talk.dart';
+
 import '../chatcell/room_msg_chat.dart';
-import '../chatcell/system_info_talk.dart';
+
 import '../custom_chat_controller.dart';
 
 import 'nine_image_draw.dart';
@@ -40,11 +41,13 @@ class BaseInfovo {
   }
 
   void initData() {
-    
+
+
     niceImage = NineImageDraw(
       chatController: chatController,
       // url: 'https://zhaogongzi25.github.io/web001/bg_216_96.png',
       url: null,
+      bgType: 2, //暂时设定2为红色
       nineBorderSize: 10,
     );
 
@@ -58,9 +61,7 @@ class BaseInfovo {
   }
 
   void draw(Canvas canvas, double ty) {
-    if(textLink!.hide){
-      return;
-    }
+
 
     niceImage!.draw(this, canvas, ty);
     textLink!.draw(this, canvas, ty);
@@ -83,30 +84,19 @@ class BaseInfovo {
   }
 
   void resize() {
-    if (textLink!.hide) {
-      rect = Rect.fromLTWH(
-        0,
-        0,
-        0,
-        0,
-      );
-    } else    if (niceImage !=null) {
+  if (niceImage != null) {
       rect = Rect.fromLTWH(
         0,
         0,
         textLink!.textPainter!.width +
             (niceImage!.ctxPodding + niceImage!.ctxPodding),
         textLink!.textPainter!.height +
-            (niceImage!.ctxPodding + niceImage!.ctxPodding),
+            (niceImage!.ctxPodding + niceImage!.ctxPodding) +
+            textLink!.multipleLinesH,
       );
-    }else{
-       rect = Rect.fromLTWH(
-        0,
-        0,
-        textLink!.textPainter!.width ,
-             
-        textLink!.textPainter!.height );
-            
+    } else {
+      rect = Rect.fromLTWH(
+          0, 0, textLink!.textPainter!.width, textLink!.textPainter!.height);
     }
   }
 // static double getTotalheight(List<BaseInfovo> arr) {

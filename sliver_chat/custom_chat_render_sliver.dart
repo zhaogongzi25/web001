@@ -58,7 +58,7 @@ class CustomChatRenderSliver extends RenderSliver {
     final double recalculatedPaintOrigin = min(0.0, constraints.scrollOffset);
 
     geometry = SliverGeometry(
-      scrollExtent: scrollExtent,
+      scrollExtent: max(scrollExtent,constraints.remainingPaintExtent+0.001,), //0.001是始终让组件接受滑动事件，因为当内容小于视口时原本不支持滑动事件
       paintOrigin: recalculatedPaintOrigin,
       paintExtent: paintExtent,
       layoutExtent: layoutExtent,
@@ -143,7 +143,7 @@ class CustomChatRenderSliver extends RenderSliver {
     if (geometry!.paintExtent <= 0.0) {
       return;
     }
-    final double ty = constraints.scrollOffset;
+    final double ty = constraints.scrollOffset-offset.dy;
     final double th = constraints.viewportMainAxisExtent;
 
     sliverDrawNum=0;
