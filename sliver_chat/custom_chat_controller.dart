@@ -13,7 +13,7 @@ class CustomcChatController {
   final AnimationController animationControl;
   final ScrollController scrollController;
   final Function refreshUi;
-  List<BaseInfovo> data = [];
+  List<BaseInfoVo> data = [];
   //刷新变量，用于改变让updateRenderObject能够更新到变化才会刷行ui
   int refreshNum = 0;
 
@@ -65,13 +65,13 @@ class CustomcChatController {
 
   double getTotalHeight() {
     double num = 0;
-    for (BaseInfovo vo in data) {
+    for (BaseInfoVo vo in data) {
       num += vo.rect!.height;
     }
     return num;
   }
 
-  void pushData(BaseInfovo vo) {
+  void pushData(BaseInfoVo vo) {
     data.add(vo);
     _clearOldData();
     _resetPosition(data);
@@ -97,11 +97,9 @@ class CustomcChatController {
   }
 
   //计算所有对象当前的位置和对应的高度，这里需要优化，不是每一个都是要全刷新，可以优化
-  void _resetPosition(List<BaseInfovo> arr) {
+  void _resetPosition(List<BaseInfoVo> arr) {
     double ty = 0.0;
-    int id = 0;
-    for (BaseInfovo vo in arr) {
-
+    for (BaseInfoVo vo in arr) {
       vo.rect = Rect.fromLTWH(0.0, ty, vo.rect!.width, vo.rect!.height);
       ty += vo.rect!.height;
     }

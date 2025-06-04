@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:common_base/utils.dart';
 import 'package:data_center/live_old/service/service_upload.dart';

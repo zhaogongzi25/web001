@@ -1,29 +1,21 @@
-import 'dart:math';
-import 'dart:ui';
-
 import 'package:common_base/common_base.dart';
-import 'package:data_center/live_old/model/data_manager.dart';
+
 import 'package:data_center/live_old/model/room_msg.dart';
-import 'package:data_center/live_old/model/room_player.dart';
-import 'package:data_center/live_old/utility/string.dart';
-import 'package:data_center/utils/chat_utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter/services.dart';
-
 import '../chatcell/base_text_link.dart';
-
 import '../chatcell/room_msg_chat.dart';
-
 import '../custom_chat_controller.dart';
-
 import 'nine_image_draw.dart';
 
 //每一条显示记录对象
-class BaseInfovo {
+class BaseInfoVo {
   final CustomcChatController chatController;
+
+  //传入房间的聊天信息
   final RoomMsg roomMsg;
+
+  //内容距离边缘区域值
+  Rect ctxPodding =  Rect.fromLTRB(10.w, 8.w, 15.w, 8.w);
 
   //基础文本颜色，
   TextStyle textStyle = TextStyle(
@@ -38,7 +30,7 @@ class BaseInfovo {
   BaseTextLink? textLink;
 
   //传入房间信息roomMsg 和chatController控制器
-  BaseInfovo({required this.roomMsg, required this.chatController}) {
+  BaseInfoVo({required this.roomMsg, required this.chatController}) {
     initData();
     resize();
   }
@@ -48,15 +40,13 @@ class BaseInfovo {
     niceImage = NineImageDraw(
       chatController: chatController,
       // url: 'https://zhaogongzi25.github.io/web001/bg_216_96.png',
-      url: null,
-      bgType: 2, //暂时设定2为红色
-      nineBorderSize: 10,
+      nineSize: 10, //只能是像素，不需要.w
     );
     textLink = RoomMsgChat(roomMsg, baseStyle: textStyle);
   }
 
   //传递点击事件
-  bool hitTest(BaseInfovo vo, Offset clikPos) {
+  bool hitTest(BaseInfoVo vo, Offset clikPos) {
     return textLink!.hitTest(vo, clikPos);
   }
 
@@ -70,41 +60,17 @@ class BaseInfovo {
 
   //记算当前cell的尺寸，用于在列表中的排序位置，所有需要显示的对象都是需要进行先记算
   void resize() {
-    if (textLink == null && niceImage == null) {
-      //当没有文本，也没有背景设置为空，不应该到这里，做异常赋值，真实情况可以不要做判断
-      rect = Rect.fromLTWH(0, 0, 0, 0);
+    if (niceImage != null && textLink != null) {
+      rect = Rect.fromLTWH(
+        0,//初始先设定为0.组织后第一个的宽度，再变量所有记录修改位置用于显示
+        0,
+        textLink!.textPainter!.width + (ctxPodding.left + ctxPodding.right),
+        textLink!.textPainter!.height +
+            (ctxPodding .top+ ctxPodding.bottom) +
+            textLink!.multipleLinesH,
+      );
     } else {
-      //有背景和文本 应该都是到这里
-      if (niceImage != null && textLink != null) {
-        rect = Rect.fromLTWH(
-          0,
-          0,
-          textLink!.textPainter!.width +
-              (niceImage!.ctxPodding + niceImage!.ctxPodding),
-          textLink!.textPainter!.height +
-              (niceImage!.ctxPodding + niceImage!.ctxPodding) +
-              textLink!.multipleLinesH,
-        );
-      } else {
-        //只有背景
-        if (niceImage != null&&textLink==null) {
-          rect = Rect.fromLTWH(
-              0,
-              0,
-              (niceImage!.ctxPodding + niceImage!.ctxPodding),
-              (niceImage!.ctxPodding + niceImage!.ctxPodding));
-        }
-        //只有文本
-        if (textLink != null&&niceImage==null) {
-          rect = Rect.fromLTWH(
-            0,
-            0,
-            textLink!.textPainter!.width,
-            textLink!.textPainter!.height + textLink!.multipleLinesH,
-          );
-        }
-      }
-
+      //现在都是设定有背景和文本的方法 不会出现到这里的显示内容
     }
   }
 }

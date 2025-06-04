@@ -13,7 +13,7 @@ class CustomCavasWidget extends SingleChildRenderObjectWidget {
     required this.data,
   }) : super(key: key);
 
-  final List<BaseInfovo> data;
+  final List<BaseInfoVo> data;
   final double blockExtent;
   final int refreshNum;
   @override
@@ -35,5 +35,6 @@ class CustomCavasWidget extends SingleChildRenderObjectWidget {
     if (renderObject.refreshNum != refreshNum) {
       renderObject.refreshNum = refreshNum;
     }
+
   }
 }

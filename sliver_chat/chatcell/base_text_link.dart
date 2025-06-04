@@ -8,6 +8,7 @@ import 'package:live/page/home/room/sliver_chat/chatcell/text_link_region.dart';
 import '../vo/base_info_vo.dart';
 import '../icon/base_icon.dart';
 
+//基本文本包含富文本点击的文本对象，描述文本显示内容，和点击事件的内容
 class BaseTextLink {
   // String headstr = '';
   // int headLen = 0;
@@ -52,7 +53,7 @@ class BaseTextLink {
   }
 
   //添加头部对象，会和文本空格结合
-  void addHeadImageArr(BaseIcon baseTittle) {
+  void addIconTittleToHead(BaseIcon baseTittle) {
     _headImageArr.add(baseTittle);
   }
 
@@ -79,12 +80,10 @@ class BaseTextLink {
   }
 
   //点击测试
-  bool hitTest(BaseInfovo vo, Offset clikpos) {
+  bool hitTest(BaseInfoVo vo, Offset clikpos) {
     final Offset pointInTextLayout = Offset(
-      clikpos.dx - vo.niceImage!.ctxPodding, // corresponds to dx
-      clikpos.dy -
-          vo.niceImage!.ctxPodding -
-          multipleLinesH / 2.0, // corresponds to dy
+      clikpos.dx - vo.ctxPodding.left, // corresponds to dx
+      clikpos.dy - vo.ctxPodding.top - multipleLinesH / 2.0, // corresponds to dy
     );
     final TextPosition textPosition =
         vo.textLink!.textPainter!.getPositionForOffset(pointInTextLayout);
@@ -131,10 +130,10 @@ class BaseTextLink {
 
     lines = textPainter?.computeLineMetrics();
 
-    multipleLinesH = lines!.length > 1 ? -4 : 0;
+    multipleLinesH = lines!.length > 1 ? -3.w : 0.w;
   }
 
-  void draw(BaseInfovo vo, Canvas canvas, double ty) {
+  void draw(BaseInfoVo vo, Canvas canvas, double ty) {
     _drawBaseTextLink(canvas, vo, ty);
     double statIndex = 0.0;
     for (BaseIcon baseTittle in _headImageArr) {
@@ -144,15 +143,13 @@ class BaseTextLink {
     }
   }
 
-  void _drawBaseTextLink(Canvas canvas, BaseInfovo vo, double ty) {
+  void _drawBaseTextLink(Canvas canvas, BaseInfoVo vo, double ty) {
     vo.textLink!.textPainter!.paint(
       canvas,
       Offset(
-        vo.niceImage!.ctxPodding,
-        vo.niceImage!.ctxPodding + vo.rect!.top - ty + multipleLinesH / 2.0,
+        vo.ctxPodding.left,
+        vo.ctxPodding.top + vo.rect!.top - ty + multipleLinesH / 2.0,
       ),
     );
   }
-
-
 }

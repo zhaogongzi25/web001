@@ -28,7 +28,7 @@ class _SliverMainState extends State<SliverMain> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(top: 300.w),
+        margin: EdgeInsets.only(left: 10.w, top: 300.w),
         width: 650.w,
         height: 500.w,
         color: Colors.white30,
@@ -50,14 +50,14 @@ class _SliverMainState extends State<SliverMain> {
       for(RoomMsg roomMsg in widget.roomMsgModel.msgList){
 
         bool needAdd=true;
-        for(BaseInfovo baseInfovo in   _customcChatController!.data){
+        for(BaseInfoVo baseInfovo in   _customcChatController!.data){
             if( baseInfovo.roomMsg.id==roomMsg.id){
               needAdd=false;
             }
         }
         if(needAdd){
           print('添加  。${roomMsg.id}');
-          BaseInfovo addvo=   BaseInfovo(
+          BaseInfoVo addvo=   BaseInfoVo(
             chatController: _customcChatController!,
             roomMsg: roomMsg,
           );
@@ -74,13 +74,13 @@ class _SliverMainState extends State<SliverMain> {
 
   Widget _body() {
     refreshMsglIst();
+
     return Container(
       color: Colors.black26,
       child: CustomChatView(
         onCreated: (CustomcChatController controller) {
           _customcChatController=controller;
           refreshMsglIst();
-          // CustomBridgeModel().init(controller);
         },
       ),
     );

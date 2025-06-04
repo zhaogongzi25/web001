@@ -14,12 +14,12 @@ class CustomChatRenderSliver extends RenderSliver {
   CustomChatRenderSliver({
     required double blockExtent,
     required int refrishnum,
-    required List<BaseInfovo> data,
+    required List<BaseInfoVo> data,
   }) : _data = data,
        _refreshnum = refrishnum,
        _blockExtent = blockExtent;
 
-  final List<BaseInfovo> _data;
+  final List<BaseInfoVo> _data;
 
   int _refreshnum;
 
@@ -112,22 +112,22 @@ class CustomChatRenderSliver extends RenderSliver {
       final double th = constraints.viewportMainAxisExtent;
       final double hitMainAxis = entry.mainAxisPosition;
       final double hitCrossAxis = entry.crossAxisPosition;
-      for (BaseInfovo vo in _data) {
+      for (BaseInfoVo vo in _data) {
         double voY = vo.rect!.top - ty;
-        if (!(hitMainAxis > voY + vo.niceImage!.ctxPodding &&
+        if (!(hitMainAxis > voY + vo.ctxPodding.top &&
             hitMainAxis <
-                (voY + vo.rect!.height) - vo.niceImage!.ctxPodding)) {
+                (voY + vo.rect!.height) - vo.ctxPodding.bottom)) {
           continue;
         }
-        if (hitCrossAxis < vo.niceImage!.ctxPodding ||
-            hitCrossAxis > vo.rect!.width - vo.niceImage!.ctxPodding) {
+        if (hitCrossAxis < vo.ctxPodding.top ||
+            hitCrossAxis > vo.rect!.width - vo.ctxPodding.bottom) {
           continue;
         }
-        final Offset clikpos = Offset(
+        final Offset clikPos = Offset(
           hitCrossAxis, // corresponds to dx
           hitMainAxis - voY, // corresponds to dy
         );
-        vo.hitTest(vo, clikpos);
+        vo.hitTest(vo, clikPos);
       }
     }
   }
@@ -137,7 +137,7 @@ class CustomChatRenderSliver extends RenderSliver {
     super.describeSemanticsConfiguration(config);
   }
   //用于记录绘制数里，用于监测显示，最后可以删除掉
-  static int sliverDrawNum=0;
+
   @override
   void paint(PaintingContext context, Offset offset) {
     if (geometry!.paintExtent <= 0.0) {
@@ -146,20 +146,18 @@ class CustomChatRenderSliver extends RenderSliver {
     final double ty = constraints.scrollOffset-offset.dy;
     final double th = constraints.viewportMainAxisExtent;
 
-    sliverDrawNum=0;
-    for (BaseInfovo infoVo in _data) {
+    for (BaseInfoVo infoVo in _data) {
       if ((infoVo.rect!.top - ty + infoVo.rect!.height) < 0 ||
           (infoVo.rect!.top - ty) > th) {
         continue;
       }
-      sliverDrawNum++;
+
 
       if (infoVo.niceImage != null) {
-        NineImageDraw? niceImage = infoVo.niceImage;
         context.canvas.drawRect(
           Rect.fromLTWH(
-            niceImage!.ctxPodding,
-            infoVo.rect!.top - ty + niceImage.ctxPodding,
+            infoVo.ctxPodding.left,
+            infoVo.rect!.top - ty + infoVo.ctxPodding.top,
             infoVo.textLink!.textPainter!.width,
             infoVo.textLink!.textPainter!.height,
           ), // Draw only the visible intersection
