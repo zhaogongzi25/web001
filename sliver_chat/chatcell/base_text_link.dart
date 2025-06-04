@@ -39,11 +39,9 @@ class BaseTextLink {
 
   double multipleLinesH = 0.0; //多很文本和单行的高度偏移。给每行的基本高度
 
-  //基础文本颜色，
-  TextStyle baseStyle =
-      TextStyle(color: Colors.white, fontSize:  24.sp, height:2.5.w); //原来chat的数值
+  final TextStyle baseStyle;
 
-  BaseTextLink() {
+  BaseTextLink({required this.baseStyle}) {
     initData();
     _buildToPainter(textContent!, links!);
   }
@@ -102,11 +100,11 @@ class BaseTextLink {
     if (clickedLink != null) {
       if (clickedLink.onTap == null) {
         if (kDebugMode) {
-          print('点击中cell id ${vo.skipId}    click  : ${clickedLink.linkData}');
+          print('点击中cell id   click  : ${clickedLink.linkData}');
         }
       } else {
         if (kDebugMode) {
-          print('点击中cell id ${vo.skipId}   ');
+          print('点击中cell id   ');
         }
         clickedLink.onTap?.call();
       }

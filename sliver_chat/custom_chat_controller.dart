@@ -101,7 +101,7 @@ class CustomcChatController {
     double ty = 0.0;
     int id = 0;
     for (BaseInfovo vo in arr) {
-      vo.skipId = id++;
+
       vo.rect = Rect.fromLTWH(0.0, ty, vo.rect!.width, vo.rect!.height);
       ty += vo.rect!.height;
     }

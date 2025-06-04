@@ -25,7 +25,8 @@ import 'base_text_link.dart';
 class RoomMsgChat extends BaseTextLink {
   final RoomMsg roomMsg;
 
-  RoomMsgChat(this.roomMsg) {}
+
+  RoomMsgChat(this.roomMsg,{  required super.baseStyle,});
 
   @override
   void initData() {

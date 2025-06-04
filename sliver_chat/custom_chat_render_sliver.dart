@@ -173,7 +173,7 @@ class CustomChatRenderSliver extends RenderSliver {
             infoVo.rect!.width,
             infoVo.rect!.height,
           ), // Draw only the visible intersection
-          Paint()..color = infoVo.color,
+          Paint()..color = Colors.red,
         );
       }
       infoVo.draw(context.canvas, ty);
