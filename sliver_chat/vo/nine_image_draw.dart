@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import '../chatcell/room_msg_chat.dart';
 import '../custom_chat_controller.dart';
 import 'base_info_vo.dart';
-import 'image_load_manager.dart';
+import '../image_load_manager.dart';
 
 class NineImageDraw {
   //加载到的图像数据，用于绘制

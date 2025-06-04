@@ -15,7 +15,7 @@ class BaseInfoVo {
   final RoomMsg roomMsg;
 
   //内容距离边缘区域值
-  Rect ctxPodding =  Rect.fromLTRB(10.w, 8.w, 15.w, 8.w);
+  Rect ctxPodding = Rect.fromLTRB(10.w, 8.w, 15.w, 8.w);
 
   //基础文本颜色，
   TextStyle textStyle = TextStyle(
@@ -62,15 +62,16 @@ class BaseInfoVo {
   void resize() {
     if (niceImage != null && textLink != null) {
       rect = Rect.fromLTWH(
-        0,//初始先设定为0.组织后第一个的宽度，再变量所有记录修改位置用于显示
+        0, //初始先设定为0.组织后第一个的宽度，再变量所有记录修改位置用于显示
         0,
         textLink!.textPainter!.width + (ctxPodding.left + ctxPodding.right),
         textLink!.textPainter!.height +
-            (ctxPodding .top+ ctxPodding.bottom) +
+            (ctxPodding.top + ctxPodding.bottom) +
             textLink!.multipleLinesH,
       );
     } else {
       //现在都是设定有背景和文本的方法 不会出现到这里的显示内容
+      rect = Rect.fromLTWH(0, 0, 0, 0);
     }
   }
 }

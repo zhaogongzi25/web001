@@ -2,10 +2,10 @@ import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import '../vo/base_info_vo.dart';
-import '../vo/image_load_manager.dart';
+import '../image_load_manager.dart';
 
 class BaseIcon {
-  //空格数量
+  //空格数量.
   double startLeft = 0.0;
 
   //背景图片
@@ -15,9 +15,11 @@ class BaseIcon {
   Size? fontRect;
 
   //图像偏移，默认为0,0,0,0;计算出来的文字空间再扩展
-  Rect boxRect = Rect.fromLTRB(0, 0, 0, 0);
-   //设定图片占用的文字宽度。用的是空格数量，和字号关联，做到图片和文字同比
+  final Rect boxRect;
+
+  //设定图片占用的文字宽度。用的是空格数量，和字号关联，做到图片和文字同比
   final int titleLen;
+
   //文字的字号
   final TextStyle textStyle;
 
@@ -33,18 +35,14 @@ class BaseIcon {
     ImageLoadManager.getImageLocalorNetFun(url, (ui.Image value) {
       _bgImage = value;
     });
-    _mathFontRect();
+    _mathIconUseRect();
     initData();
-
-    
-
   }
 
-  void initData() {
+  void initData() {}
 
-  }
   //计算占用空间矩形，用于绘制对应该图标和文本内容的前部空格
-  void _mathFontRect() {
+  void _mathIconUseRect() {
     TextStyle baseStyle = textStyle;
     TextPainter textPainter = TextPainter(
       text: TextSpan(text: _getTittleStr(), style: baseStyle),
@@ -52,10 +50,12 @@ class BaseIcon {
     )..layout(minWidth: 0, maxWidth: double.infinity);
     fontRect = textPainter.size;
   }
+
   //获取Icon的宽度，
   double getWidth() {
     return fontRect!.width;
   }
+
   //传入TittleLen来标记图标的宽度，将和本字号关联，做到同比缩放
   String _getTittleStr() {
     String addStr = '';
@@ -64,8 +64,10 @@ class BaseIcon {
     }
     return addStr;
   }
+
   //绘制的区域，这是在列表表中对应该布局坐标
   Rect? drawToRect;
+
   //将内容绘制到空格范围内容
   void draw(Canvas canvas, BaseInfoVo vo, double ty) {
     if (_bgImage != null) {
@@ -73,7 +75,7 @@ class BaseIcon {
         boxRect.left,
         boxRect.top,
         fontRect!.width + boxRect.left + boxRect.right,
-        fontRect!.height + boxRect.bottom + boxRect.top,
+        fontRect!.height + boxRect.top + boxRect.bottom,
       );
       double ttx = vo.ctxPodding.left + startLeft;
       double tty = vo.rect!.top - ty + vo.ctxPodding.top;

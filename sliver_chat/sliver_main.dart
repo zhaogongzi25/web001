@@ -1,4 +1,3 @@
-
 import 'package:custom_image/cache_image.dart';
 import 'package:data_center/live_old/model/room_msg.dart';
 import 'package:flutter/material.dart';
@@ -46,31 +45,27 @@ class _SliverMainState extends State<SliverMain> {
   }
 
   void refreshMsglIst() {
-    if(_customcChatController!=null){
-      for(RoomMsg roomMsg in widget.roomMsgModel.msgList){
-
-        bool needAdd=true;
-        for(BaseInfoVo baseInfovo in   _customcChatController!.data){
-            if( baseInfovo.roomMsg.id==roomMsg.id){
-              needAdd=false;
-            }
+    if (_customcChatController != null) {
+      for (RoomMsg roomMsg in widget.roomMsgModel.msgList) {
+        bool needAdd = true;
+        for (BaseInfoVo baseInfovo in _customcChatController!.data) {
+          if (baseInfovo.roomMsg.id == roomMsg.id) {
+            needAdd = false;
+          }
         }
-        if(needAdd){
-          print('添加  。${roomMsg.id}');
-          BaseInfoVo addvo=   BaseInfoVo(
+        if (needAdd) {
+          print('添加  -----------。${roomMsg.id}');
+          BaseInfoVo addvo = BaseInfoVo(
             chatController: _customcChatController!,
             roomMsg: roomMsg,
           );
-
           _customcChatController!.pushData(addvo);
-
         }
-
       }
-
     }
-
   }
+
+
 
   Widget _body() {
     refreshMsglIst();
@@ -79,7 +74,7 @@ class _SliverMainState extends State<SliverMain> {
       color: Colors.black26,
       child: CustomChatView(
         onCreated: (CustomcChatController controller) {
-          _customcChatController=controller;
+          _customcChatController = controller;
           refreshMsglIst();
         },
       ),

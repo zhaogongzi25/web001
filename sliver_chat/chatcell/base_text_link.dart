@@ -16,6 +16,9 @@ class BaseTextLink {
   //基础文本最大宽度
   double maxWidth = 250.0;
 
+  //多行文本和单行的高度偏移。如多行我们会让记录网往小一点显示，
+  double multipleLinesH = 0.0;
+
   //存放头部标签一般一个，也有可能会多个，
   List<BaseIcon> _headImageArr = [];
 
@@ -28,7 +31,7 @@ class BaseTextLink {
   //链接对象
   List<TextLinkRegion>? linkRegions;
 
-  //文本
+  //文本Painter
   TextPainter? textPainter;
 
   //文本内容
@@ -36,9 +39,11 @@ class BaseTextLink {
 
   //链接内容
   List<Map<String, dynamic>>? links;
+
+  //文本行数列表，layout后才能有数据
   List<LineMetrics>? lines;
 
-  double multipleLinesH = 0.0; //多很文本和单行的高度偏移。给每行的基本高度
+
 
   final TextStyle baseStyle;
 
@@ -62,7 +67,8 @@ class BaseTextLink {
     _endImageArr.add(baseTittle);
   }
 
-  int getHeadTitleFontLen() {
+  //获得头部共有的Icon图标占用的文本宽度，用于显示文本缩进位置
+  int _getHeadTitleFontLen() {
     int len = 0;
     for (BaseIcon baseTittle in _headImageArr) {
       len += baseTittle.titleLen;
@@ -71,9 +77,9 @@ class BaseTextLink {
   }
 
   //获取头部的空格文本
-  String getHeadEmptyStr() {
+  String _getHeadEmptyStr() {
     String addStr = '';
-    for (int i = 0; i < getHeadTitleFontLen(); i++) {
+    for (int i = 0; i < _getHeadTitleFontLen(); i++) {
       addStr += '\u2003';
     }
     return addStr;
@@ -97,14 +103,7 @@ class BaseTextLink {
       }
     }
     if (clickedLink != null) {
-      if (clickedLink.onTap == null) {
-        if (kDebugMode) {
-          print('点击中cell id   click  : ${clickedLink.linkData}');
-        }
-      } else {
-        if (kDebugMode) {
-          print('点击中cell id   ');
-        }
+      if (clickedLink.onTap != null) {
         clickedLink.onTap?.call();
       }
     }
@@ -113,7 +112,7 @@ class BaseTextLink {
 
   void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
-    String addStr = getHeadEmptyStr();
+    String addStr = _getHeadEmptyStr();
     String text = addStr + str;
     List<Map<String, dynamic>> linkArr = arr;
     final spanAndRegionData = buildSpansAndRegions(
@@ -129,20 +128,21 @@ class BaseTextLink {
     )..layout(minWidth: 0, maxWidth: maxWidth);
 
     lines = textPainter?.computeLineMetrics();
-
     multipleLinesH = lines!.length > 1 ? -3.w : 0.w;
   }
 
   void draw(BaseInfoVo vo, Canvas canvas, double ty) {
     _drawBaseTextLink(canvas, vo, ty);
-    double statIndex = 0.0;
+
+    //绘制开头的icon列表，因第个独立，它们并不知到排列顺序，需要逐个计算起始位置
+    double startLeft = 0.0;
     for (BaseIcon baseTittle in _headImageArr) {
-      baseTittle.startLeft = statIndex;
+      baseTittle.startLeft = startLeft;
       baseTittle.draw(canvas, vo, ty);
-      statIndex += baseTittle.getWidth();
+      startLeft += baseTittle.getWidth();
     }
   }
-
+  //绘制文本信息
   void _drawBaseTextLink(Canvas canvas, BaseInfoVo vo, double ty) {
     vo.textLink!.textPainter!.paint(
       canvas,
