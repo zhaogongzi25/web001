@@ -1,9 +1,6 @@
 
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+//用于给文本保存点击链接的数据，
 class TextLinkRegion {
   /// 链接在整个文本字符串中的起始字符索引 (包含)
   final int startCharacterIndex;

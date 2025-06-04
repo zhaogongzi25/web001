@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
-import 'vo/base_info_vo.dart';
+import 'chatcell/room_chat_cell_vo.dart';
 
 class CustomcChatController {
   num _easeInOut(double t) {
@@ -13,14 +13,17 @@ class CustomcChatController {
   final AnimationController animationControl;
   final ScrollController scrollController;
   final Function refreshUi;
-  List<BaseInfoVo> data = [];
+  List<RoomChatCellVo> data = [];
+
   //刷新变量，用于改变让updateRenderObject能够更新到变化才会刷行ui
   int refreshNum = 0;
 
   //标记动画的滑动方向，是否移动到地步
   bool _animationMoveBottom = true;
+
   //播放开始时间
   double _startTm = 0.0;
+
   //播放的开始位置，
   double _startMovePosition = 0.0;
 
@@ -63,21 +66,40 @@ class CustomcChatController {
     animationControl.forward(from: 0);
   }
 
+  void dispose() {
+    animationControl.dispose();
+    scrollController.dispose();
+    print('销毁   CustomcChatController ');
+
+
+
+  }
+
+
+  //总列表的高度，因为记录中都有进行了逐条排序，只需要最后一个的位置和高度就得到总长度，不需要逐个相加，
   double getTotalHeight() {
-    double num = 0;
-    for (BaseInfoVo vo in data) {
-      num += vo.rect!.height;
-    }
-    return num;
+    // double num = 0;
+    // for (RoomChatCellVo vo in data) {
+    //   num += vo.rect!.height;
+    // }
+    return data.length > 0
+        ? data[data.length - 1].rect!.top + data[data.length - 1].rect!.height
+        : 0;
   }
-
-  void pushData(BaseInfoVo vo) {
-    data.add(vo);
+ //推入对象必须是组总好的RoomChatCellVo对象
+  void pushData(RoomChatCellVo vo) {
     _clearOldData();
-    _resetPosition(data);
+    if(data.length >0){
+      //逐个加入，只需要取出上一个的位置，然后加上上一个的高度就得到当前Cell的位置，
+      double top=data[data.length-1].rect!.top+data[data.length-1].rect!.height;
+      vo.rect = Rect.fromLTWH(0.0,  top, vo.rect!.width, vo.rect!.height);
+    }
+    data.add(vo);
+
   }
 
-  //清理超出的数量，删除前部分，
+
+  //清理超出的数量，删除前部分， 当超过1000记录删除前面100条
   void _clearOldData() {
     int maxLen = 1000;
     int killNum = 100;
@@ -87,6 +109,14 @@ class CustomcChatController {
         killHeight += data[0].rect!.height;
         data.removeAt(0);
       }
+      //有删除记录那我们将重置所有显示记录的位置，因为删除前部分数据所有位置前移
+      //计算所有对象当前的位置和对应的高度，这里需要优化，不是每一个都是要全刷新，可以优化
+      double top = 0.0;
+      for (RoomChatCellVo vo in data) {
+        vo.rect = Rect.fromLTWH(0.0, top, vo.rect!.width, vo.rect!.height);
+        top += vo.rect!.height;
+      }
+
       if (scrollController.hasClients) {
         if (scrollController.position.hasContentDimensions) {
           _startMovePosition = scrollController.position.pixels - killHeight;
@@ -96,37 +126,16 @@ class CustomcChatController {
     }
   }
 
-  //计算所有对象当前的位置和对应的高度，这里需要优化，不是每一个都是要全刷新，可以优化
-  void _resetPosition(List<BaseInfoVo> arr) {
-    double ty = 0.0;
-    for (BaseInfoVo vo in arr) {
-      vo.rect = Rect.fromLTWH(0.0, ty, vo.rect!.width, vo.rect!.height);
-      ty += vo.rect!.height;
-    }
-  }
+
+
 
   //移到到底部，
   void moveBottom({double? time}) {
     _animationMoveBottom = true;
-    _starAnimation(time: time ?? 0.25);
+    _starAnimation(time: time ?? 0.25);//默认滑动时间为0.25秒
   }
 
-  //当不是在滑动的时间播放滑动到底部事件
-  void autoMoveBottom({double? time}) {
-    if (scrollController.hasClients) {
-      ScrollPosition position = scrollController.position;
-      if (position.hasPixels && position.hasViewportDimension) {
-        if (position.activity is DragScrollActivity) {
-          //拖拽滑动
-        } else {
-          if (position.pixels >= position.maxScrollExtent) {
-            moveBottom(time: 0.25);
-          }
-        }
-      }
-    }
-  }
- //设定动画的播放时间，用于驱动列表的位置，
+  //设定动画的播放时间，用于驱动列表的位置，
   void _starAnimation({required double time}) {
     // 设置动画开始的进度值，并限制在 0.0 到 1.0 之间
     if (scrollController.hasClients) {

@@ -1,18 +1,17 @@
 import 'dart:ui' as ui;
 import 'package:common_base/common_base.dart';
-import 'package:data_center/live_old/model/data_manager.dart';
+
 import 'package:data_center/live_old/model/room_player.dart';
 import 'package:data_center/live_old/utility/colors.dart';
-import 'package:data_center/live_old/utility/string.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 
-import '../chatcell/room_msg_chat.dart';
+import '../chatcell/room_chat_text.dart';
 import '../custom_chat_controller.dart';
-import 'base_info_vo.dart';
-import '../image_load_manager.dart';
+import '../chatcell/room_chat_cell_vo.dart';
+import 'image_load_manager.dart';
 
-class NineImageDraw {
+class BaseNineImage {
   //加载到的图像数据，用于绘制
   ui.Image? image;
 
@@ -22,7 +21,7 @@ class NineImageDraw {
   //9宫格边缘宽度 设定是上下左右都是一样的拉绅方法的9宫图像 设定为20图像像素，在传入的数值也是绝对像素
   final double nineSize; //= 20.0;
 
-  NineImageDraw({
+  BaseNineImage({
     String? url,
     required this.nineSize,
     required this.chatController,
@@ -32,7 +31,7 @@ class NineImageDraw {
     }
   }
   //如果有9宫格图，没有现在绘制的是聊天对象的背景，还需要分离
-  void draw(BaseInfoVo vo, Canvas canvas, double ty) {
+  void draw(RoomChatCellVo vo, Canvas canvas, double ty) {
     if (image == null) {
       _drawRoundRedBg(canvas, vo, ty);
     } else {
@@ -41,11 +40,11 @@ class NineImageDraw {
   }
 
   //绘制9宫格单色没图背景
-  void _drawRoundRedBg(Canvas canvas, BaseInfoVo vo, double ty) {
+  void _drawRoundRedBg(Canvas canvas, RoomChatCellVo vo, double ty) {
     int vipLevel = 0;
 
 
-    RoomPlayer? player =RoomMsgChat.getRoomPlayerByUserId(vo.roomMsg.userId);
+    RoomPlayer? player =RoomChatText.getRoomPlayerByUserId(vo.roomMsg.userId);
     if (player != null) {
       vipLevel = player.vipLevel;
     }
@@ -103,7 +102,7 @@ class NineImageDraw {
   }
 
   //绘制9宫格背景
-  void _drawVoNineGridImg(Canvas canvas, BaseInfoVo vo, Offset pos) {
+  void _drawVoNineGridImg(Canvas canvas, RoomChatCellVo vo, Offset pos) {
     if (image != null) {
       Rect center = Rect.fromLTWH(
         nineSize,

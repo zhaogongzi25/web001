@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import '../vo/base_info_vo.dart';
-import '../image_load_manager.dart';
+import '../chatcell/room_chat_cell_vo.dart';
+import 'image_load_manager.dart';
 
-class BaseIcon {
-  //空格数量.
+class HeadBaseIcon {
+  //起始位置，后续逐个叠加在文本的开始使用.
   double startLeft = 0.0;
 
   //背景图片
@@ -26,7 +26,7 @@ class BaseIcon {
   //是否绘制测试的背景区域颜色， 用于调整当前字号，正式版本删除绘制测试区域的方法，
   bool _hideRectBg = true;
 
-  BaseIcon({
+  HeadBaseIcon({
     required String url,
     required this.textStyle,
     required this.titleLen,
@@ -69,7 +69,7 @@ class BaseIcon {
   Rect? drawToRect;
 
   //将内容绘制到空格范围内容
-  void draw(Canvas canvas, BaseInfoVo vo, double ty) {
+  void draw(Canvas canvas, RoomChatCellVo vo, double ty) {
     if (_bgImage != null) {
       Rect drawRect = Rect.fromLTWH(
         boxRect.left,

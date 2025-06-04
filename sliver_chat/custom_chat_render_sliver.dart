@@ -1,71 +1,65 @@
 import 'dart:math';
-
-import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:live/page/home/room/sliver_chat/vo/nine_image_draw.dart';
-
-import 'vo/base_info_vo.dart';
-
+import 'chatcell/room_chat_cell_vo.dart';
 
 // --- 1. 定义自定义的 RenderSliver ---
 class CustomChatRenderSliver extends RenderSliver {
   // 修正: extends
   CustomChatRenderSliver({
-    required double blockExtent,
+    required double totalExtent,
     required int refrishnum,
-    required List<BaseInfoVo> data,
-  }) : _data = data,
-       _refreshnum = refrishnum,
-       _blockExtent = blockExtent;
+    required List<RoomChatCellVo> data,
+  })  : _data = data,
+        _refreshNum = refrishnum,
+        _totalExtent = totalExtent;
 
-  final List<BaseInfoVo> _data;
+  final List<RoomChatCellVo> _data;
 
-  int _refreshnum;
+  int _refreshNum;
 
-  int get refreshNum => _refreshnum;
+  int get refreshNum => _refreshNum;
 
   set refreshNum(int value) {
-    if (_refreshnum == value) return;
-    _refreshnum = value;
+    if (_refreshNum == value) return;
+    _refreshNum = value;
 
     markNeedsLayout();
   }
 
-  double _blockExtent;
+  double _totalExtent;
 
-  double get blockExtent => _blockExtent;
+  double get totalExtent => _totalExtent;
 
-  set blockExtent(double value) {
-    if (_blockExtent == value) return;
-    _blockExtent = value;
+  set totalExtent(double value) {
+    if (_totalExtent == value) return;
+    _totalExtent = value;
     markNeedsLayout();
   }
 
-  // --- 2. performLayout 方法: 使用 SliverConstraints 计算 SliverGeometry ---
+  //本来应该是大于0这个和支持滑动的0.001互补 这个0.001
+  static double num001 = 0.001;
+
   @override
   void performLayout() {
-    double scrollExtent = _blockExtent;
+    double scrollExtent = _totalExtent;
 
     final double paintExtent = min(
       scrollExtent - constraints.scrollOffset,
       constraints.remainingPaintExtent,
     ).clamp(0.0, constraints.remainingPaintExtent);
 
-    final double layoutExtent =
-        paintExtent; // min(paintExtent, constraints.remainingCacheExtent); // Could use cache extent here
-
-    final double recalculatedPaintOrigin = min(0.0, constraints.scrollOffset);
-
     geometry = SliverGeometry(
-      scrollExtent: max(scrollExtent,constraints.remainingPaintExtent+0.001,), //0.001是始终让组件接受滑动事件，因为当内容小于视口时原本不支持滑动事件
-      paintOrigin: recalculatedPaintOrigin,
+      scrollExtent: max(
+        scrollExtent,
+        constraints.remainingPaintExtent + CustomChatRenderSliver.num001,
+      ),
+      //0.001是始终让组件接受滑动事件，因为当内容小于视口时原本不支持滑动事件
+      // paintOrigin: recalculatedPaintOrigin,
       paintExtent: paintExtent,
-      layoutExtent: layoutExtent,
-      maxPaintExtent: scrollExtent,
+      layoutExtent: paintExtent,
+      maxPaintExtent: paintExtent,
       hitTestExtent: paintExtent,
-      hasVisualOverflow:
-          scrollExtent > constraints.remainingPaintExtent ||
+      hasVisualOverflow: scrollExtent > constraints.remainingPaintExtent ||
           constraints.scrollOffset >
               0, // Content can be above or below viewport
     );
@@ -78,13 +72,8 @@ class CustomChatRenderSliver extends RenderSliver {
     required double mainAxisPosition,
     required double crossAxisPosition,
   }) {
-    // mainAxisPosition: position along the scrolling axis, relative to the start of the sliver's *content*.
-    // crossAxisPosition: position along the extent axis, relative to the start of the sliver's painting area.
-    // 1. Check if the hit point is within the visible paint area of the sliver.
-    // The hitTestExtent is the area checked by the framework before calling this.
-    // We need to confirm it's within our laid-out text height relevant to the *current viewport*.
-    final bool isHit =
-        geometry!.hitTestExtent > 0 &&
+    //区域判断
+    final bool isHit = geometry!.hitTestExtent > 0 &&
         mainAxisPosition >= 0.0 &&
         mainAxisPosition < geometry!.hitTestExtent &&
         crossAxisPosition >= 0.0 &&
@@ -93,87 +82,60 @@ class CustomChatRenderSliver extends RenderSliver {
       result.add(
         SliverHitTestEntry(
           this,
-          // Pass the hit coordinates relative to the sliver's paint origin.
           mainAxisPosition: mainAxisPosition,
           crossAxisPosition: crossAxisPosition,
         ),
       );
-
       return true; // We've found a target
+    }else{
+      return false;
     }
-    return false; // No hit in this sliver
   }
-
 
   @override
   void handleEvent(PointerEvent event, SliverHitTestEntry entry) {
     if (event is PointerUpEvent) {
+
       final double ty = constraints.scrollOffset;
-      final double th = constraints.viewportMainAxisExtent;
       final double hitMainAxis = entry.mainAxisPosition;
       final double hitCrossAxis = entry.crossAxisPosition;
-      for (BaseInfoVo vo in _data) {
-        double voY = vo.rect!.top - ty;
-        if (!(hitMainAxis > voY + vo.ctxPodding.top &&
-            hitMainAxis <
-                (voY + vo.rect!.height) - vo.ctxPodding.bottom)) {
+      for (RoomChatCellVo vo in _data) {
+        double toy = vo.rect!.top - ty;
+        if (!(hitMainAxis > toy + vo.ctxPodding.top &&
+            hitMainAxis < (toy + vo.rect!.height) - vo.ctxPodding.bottom)) {
+          //上下边界超出，跳过
           continue;
         }
-        if (hitCrossAxis < vo.ctxPodding.top ||
-            hitCrossAxis > vo.rect!.width - vo.ctxPodding.bottom) {
+        if (hitCrossAxis < vo.ctxPodding.left ||
+            hitCrossAxis > vo.rect!.width - vo.ctxPodding.right) {
+          //左右边界超出，跳过
           continue;
         }
+
         final Offset clikPos = Offset(
           hitCrossAxis, // corresponds to dx
-          hitMainAxis - voY, // corresponds to dy
+          hitMainAxis - toy, // corresponds to dy
         );
+        //向选中的cell传递点击事件
         vo.hitTest(vo, clikPos);
       }
     }
   }
 
   @override
-  void describeSemanticsConfiguration(SemanticsConfiguration config) {
-    super.describeSemanticsConfiguration(config);
-  }
-  //用于记录绘制数里，用于监测显示，最后可以删除掉
-
-  @override
   void paint(PaintingContext context, Offset offset) {
     if (geometry!.paintExtent <= 0.0) {
       return;
     }
-    final double ty = constraints.scrollOffset-offset.dy;
+    final double ty = constraints.scrollOffset - offset.dy;
     final double th = constraints.viewportMainAxisExtent;
-
-    for (BaseInfoVo infoVo in _data) {
+    for (RoomChatCellVo infoVo in _data) {
       if ((infoVo.rect!.top - ty + infoVo.rect!.height) < 0 ||
           (infoVo.rect!.top - ty) > th) {
+        //超出视窗的将跳过不绘制
         continue;
       }
-
-
-      if (infoVo.niceImage != null) {
-        context.canvas.drawRect(
-          Rect.fromLTWH(
-            infoVo.ctxPodding.left,
-            infoVo.rect!.top - ty + infoVo.ctxPodding.top,
-            infoVo.textLink!.textPainter!.width,
-            infoVo.textLink!.textPainter!.height,
-          ), // Draw only the visible intersection
-          Paint()..color = Colors.transparent,
-        );
-      } else {
-        context.canvas.drawRect(
-          Rect.fromLTWH(
-            0,
-            infoVo.rect!.top - ty,
-            infoVo.rect!.width,
-            infoVo.rect!.height,
-          ), // Draw only the visible intersection
-          Paint()..color = Colors.red,
-        );
-      }
+      //绘制传递到对应对象自行绘制
       infoVo.draw(context.canvas, ty);
     }
   }

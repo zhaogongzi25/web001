@@ -15,16 +15,16 @@ import 'package:data_center/live_old/utility/string.dart';
 import 'package:data_center/live_old/widget/style_widget.dart';
 import 'package:data_center/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:live/page/home/room/sliver_chat/icon/base_icon.dart';
+import 'package:live/page/home/room/sliver_chat/view/head_base_icon.dart';
 
-import '../icon/tittle_base_icon.dart';
-import 'base_text_link.dart';
+import '../view/tittle_base_icon.dart';
+import '../view/base_text_link.dart';
 
-class RoomMsgChat extends BaseTextLink {
+class RoomChatText extends BaseTextLink {
   //聊天记录对象
   final RoomMsg roomMsg;
 
-  RoomMsgChat(
+  RoomChatText(
     this.roomMsg, {
     required super.baseStyle,
   });
@@ -48,7 +48,7 @@ class RoomMsgChat extends BaseTextLink {
     }
   }
 
-  //通过id得到RoomPlayer；
+  //通过id得到RoomPlayer； 这个方法暂时来直接获取用户信息，
   static RoomPlayer? getRoomPlayerByUserId(int userId) {
     RoomPlayer? player = dataMgr.findObj(TableNames.roomPlayer, userId) != null
         ? dataMgr.findObj(TableNames.roomPlayer, userId) as RoomPlayer
@@ -94,18 +94,16 @@ class RoomMsgChat extends BaseTextLink {
           titleLen: 4,
           url: 'assets/new_rank/rank_61_70.png',
           textStyle: baseStyle,
-          boxRect: Rect.fromLTRB(0.w, 0.w, 0.w, 0.w),
-          pos: Offset(10.w, 2.w),
+          boxRect: Rect.fromLTRB(0.w, 0.w, -2.w, 0.w),
+          pos: Offset(14.w, 2.w),
           title: "国王",
         ),
       );
     }
-
-
     //是否为国王，应该判断是管理者
     if (player.roomAdmin > 0) {
       addIconTittleToHead(
-        BaseIcon(
+        HeadBaseIcon(
           boxRect: Rect.fromLTRB(-2.w, 0.w, -2.w, 0.w),
           titleLen: 2,
           url: 'assets/common/room_admin.png',
@@ -116,7 +114,7 @@ class RoomMsgChat extends BaseTextLink {
     //幸运
     if (player.luckNum != null && player.luckNum! > 0) {
       addIconTittleToHead(
-        BaseIcon(
+        HeadBaseIcon(
           titleLen: 2,
           boxRect: Rect.fromLTRB(-2.w, 0.w, -2.w, 0.w),
           url: 'assets/common/icon_luckey_num.png',
