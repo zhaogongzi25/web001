@@ -6,6 +6,8 @@ import 'package:data_center/live_old/model/room_player.dart';
 import 'package:data_center/live_old/view_model/my_follow_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:live/page/home/room/live_game_caipiao/model/live_game_model.dart';
+import 'package:live/page/home/room/sliver_chat/chatcell/model_pack.dart';
 import 'package:live/page/home/room/sliver_chat/chatcell/room_chat_cell_vo.dart';
 import '../../../../view_model/room_msg_model.dart';
 import '../../../../view_model/room_page_model.dart';
@@ -27,6 +29,8 @@ class _SliverMainState extends State<SliverMain> {
   RoomMsgModel? _roomMsgModel;
   MyFollowModel? _myFollowModel;
   RoomPageModel? _roomPageModel;
+  LiveGameModel? _liveGameModel;
+  ModelPack? _modelPack;
 
   @override
   void initState() {
@@ -34,7 +38,15 @@ class _SliverMainState extends State<SliverMain> {
     _roomMsgModel = Provider.of<RoomMsgModel>(context, listen: false);
     _myFollowModel = Provider.of<MyFollowModel>(context, listen: false);
     _roomPageModel = Provider.of<RoomPageModel>(context, listen: false);
+    _liveGameModel = Provider.of<LiveGameModel>(context, listen: false);
     print('SliverMain------------------initState');
+    _modelPack = ModelPack(
+        roomMsgModel: _roomMsgModel!,
+        myFollowModel: _myFollowModel!,
+        liveGameModel: _liveGameModel!,
+        roomPageModel: _roomPageModel!,
+        chatContext: context!,
+    );
   }
 
 //数据显示暂是不改app逻辑硬对比的方法来添加到列表中
@@ -55,8 +67,7 @@ class _SliverMainState extends State<SliverMain> {
             RoomChatCellVo addVo = RoomChatCellVo(
                 chatController: _customcChatController!,
                 roomMsg: item,
-                roomMsgModel: _roomMsgModel!,
-                myFollowModel: _myFollowModel!);
+                modelPack: _modelPack!);
             _customcChatController!.pushData(addVo);
             _customcChatController!.moveBottomOfpushData();
           } else {
@@ -73,8 +84,7 @@ class _SliverMainState extends State<SliverMain> {
       RoomChatCellVo addVo = RoomChatCellVo(
           chatController: _customcChatController!,
           roomMsg: item,
-          roomMsgModel: _roomMsgModel!,
-          myFollowModel: _myFollowModel!);
+          modelPack: _modelPack!);
       _customcChatController!.pushData(addVo);
       _customcChatController!.moveBottomOfpushData();
     } else {

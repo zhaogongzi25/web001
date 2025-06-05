@@ -26,11 +26,14 @@ class EndBaseIcon {
   //是否绘制测试的背景区域颜色， 用于调整当前字号，正式版本删除绘制测试区域的方法，
   bool _hideRectBg = true;
 
+  final VoidCallback? onTap;
+
   EndBaseIcon({
     required String url,
     required this.textStyle,
     required this.titleLen,
     required this.boxRect,
+      this.onTap,
   }) {
     ImageLoadManager.getImageLocalorNetFun(url, (ui.Image value) {
       _bgImage = value;
@@ -49,6 +52,31 @@ class EndBaseIcon {
       textDirection: TextDirection.ltr,
     )..layout(minWidth: 0, maxWidth: double.infinity);
     fontRect = textPainter.size;
+  }
+
+  bool hitTest(RoomChatCellVo vo, Offset clikPos) {
+    //写法有点罗说，需要在创建的时候就算出位置
+
+    LineMetrics lineMetrics =
+        vo.textLink!.lines![vo.textLink!.lines!.length - 1];
+
+    double ty = vo.ctxPodding.top +
+        vo.textLink!.multipleLinesH / 2.0 +
+        lineMetrics.baseline -
+        drawToRect!.height;
+
+
+    Rect testRect = Rect.fromLTWH(
+      drawToRect!.left,
+      ty,
+      drawToRect!.width,
+      drawToRect!.height,
+    );
+
+    if(testRect.contains(clikPos)){
+      onTap!();
+    }
+    return true;
   }
 
   //获取Icon的宽度，
@@ -78,9 +106,15 @@ class EndBaseIcon {
         fontRect!.height + boxRect.top + boxRect.bottom,
       );
 
-      LineMetrics lineMetrics= vo.textLink!.lines![vo.textLink!.lines!.length-1];
+      LineMetrics lineMetrics =
+          vo.textLink!.lines![vo.textLink!.lines!.length - 1];
+
       double ttx = vo.ctxPodding.left + lineMetrics.width;
-      double tty = vo.rect!.top - ty + vo.ctxPodding.top+lineMetrics.baseline-drawRect.height;
+      double tty = vo.rect!.top -
+          ty +
+          vo.ctxPodding.top +
+          lineMetrics.baseline -
+          drawRect.height;
 
       drawToRect = Rect.fromLTWH(
         ttx - drawRect.left,
@@ -89,7 +123,7 @@ class EndBaseIcon {
         drawRect.height,
       );
       //显示背景区域
-      // _hideRectBg=false;
+      // _hideRectBg = false;
       if (!_hideRectBg) {
         canvas.drawRect(
           drawToRect!, // Draw only the visible intersection

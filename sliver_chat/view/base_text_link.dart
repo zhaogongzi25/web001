@@ -88,6 +88,8 @@ class BaseTextLink {
 
   //点击测试
   bool hitTest(RoomChatCellVo vo, Offset clikpos) {
+
+
     final Offset pointInTextLayout = Offset(
       clikpos.dx - vo.ctxPodding.left, // corresponds to dx
       clikpos.dy - vo.ctxPodding.top - multipleLinesH / 2.0, // corresponds to dy
@@ -107,6 +109,9 @@ class BaseTextLink {
       if (clickedLink.onTap != null) {
         clickedLink.onTap?.call();
       }
+    }
+    for (EndBaseIcon endBaseIcon in _endImageArr){
+      endBaseIcon.hitTest(vo, clikpos);
     }
     return true;
   }
