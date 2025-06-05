@@ -46,15 +46,23 @@ class TittleBaseIcon extends HeadBaseIcon {
 
   //创建文本对象 //这里用的字号，暂为基础文本的0.8. 这个数值需要预定。倒底应该显示为多大比例，还是固定数字
   void _makeLabel(label) {
-    _labelPainter = TextPainter(
-      text: TextSpan(
-          text: label,
-          style: textStyle.copyWith(
-              decoration: TextDecoration.none,
-              fontWeight: FontWeight.bold,
-              fontSize: 20.sp,
-              color: Colors.white)),
-      textDirection: TextDirection.rtl,
-    )..layout(minWidth: 0, maxWidth: double.infinity);
+    try {
+      _labelPainter = TextPainter(
+        text: TextSpan(
+            text: label,
+            style: textStyle.copyWith(
+                decoration: TextDecoration.none,
+                fontWeight: FontWeight.bold,
+                fontSize: 20.sp,
+                color: Colors.white)),
+        textDirection: TextDirection.rtl,
+      )..layout(minWidth: 0, maxWidth: double.infinity);
+    } catch (e) {
+
+      print('不应该到这   TittleBaseIcon');
+    } finally {
+
+    }
+
   }
 }

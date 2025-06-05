@@ -17,9 +17,7 @@ class CustomChatView extends StatefulWidget {
   _CustomChatViewState createState() => _CustomChatViewState();
 }
 
-class _CustomChatViewState extends State<CustomChatView>
-    with SingleTickerProviderStateMixin {
-
+class _CustomChatViewState extends State<CustomChatView> with SingleTickerProviderStateMixin {
   CustomcChatController? _controller;
 
   Widget? _chatScrollButton;
@@ -35,9 +33,7 @@ class _CustomChatViewState extends State<CustomChatView>
       scrollController: ScrollController(),
       animationControl: AnimationController(
         vsync: this, // 提供 Ticker
-        duration: Duration(
-            milliseconds:
-                1000), //这里设置1秒是以后所有需要播放动画可以在这个范围内，参数在移动到底部可选0-1秒来确定滑动时间
+        duration: Duration(milliseconds: 1000), //这里设置1秒是以后所有需要播放动画可以在这个范围内，参数在移动到底部可选0-1秒来确定滑动时间
       ),
     );
     // _controller!.scrollController.addListener(_onScroll);
@@ -48,8 +44,7 @@ class _CustomChatViewState extends State<CustomChatView>
     if (_chatScrollButton == null) {
       _chatScrollButton = Container(
         margin: EdgeInsets.only(left: 25.w, bottom: 5.w),
-        padding:
-            EdgeInsets.only(left: 15.w, right: 20.w, top: 5.w, bottom: 5.w),
+        padding: EdgeInsets.only(left: 15.w, right: 20.w, top: 5.w, bottom: 5.w),
         decoration: new BoxDecoration(
           color: Color(0xEAFFFFFF), // 边色与边宽度
           shape: BoxShape.rectangle, // 默认值也是矩形
@@ -58,8 +53,7 @@ class _CustomChatViewState extends State<CustomChatView>
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            createImage("assets/common/arrow_gray_down.png",
-                width: 20.w, height: 20.w),
+            createImage("assets/common/arrow_gray_down.png", width: 20.w, height: 20.w),
             SizedBox(
               width: 5.w,
             ),
@@ -74,14 +68,11 @@ class _CustomChatViewState extends State<CustomChatView>
     return _chatScrollButton!;
   }
 
-
-
   //当数据变化时来判断是否需要刷新ui
   void refreshListView() {
     if (mounted) {
       setState(() {});
     }
-
   }
 
   @override
@@ -91,10 +82,9 @@ class _CustomChatViewState extends State<CustomChatView>
   }
 
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (  _controller!.dragScrollEvent) {
+    if (_controller!.dragScrollEvent) {
       double currentOffset = _controller!.scrollController.offset;
-      double maxScrollExtent =
-          _controller!.scrollController.position.maxScrollExtent;
+      double maxScrollExtent = _controller!.scrollController.position.maxScrollExtent;
       if (maxScrollExtent > CustomChatRenderSliver.num001) {
         _controller!.scrollButtonState.value = !(maxScrollExtent <= currentOffset);
       }
@@ -131,25 +121,30 @@ class _CustomChatViewState extends State<CustomChatView>
               return SizedBox(width: 1, height: 1);
             }
           },
-        )
+        ),
+        Positioned(
+          right: 0,
+            child: Text(
+          '${_controller!.data.length}/${CustomcChatController.maxLen}',
+          style: TextStyle(color: Colors.white, fontSize: 24.sp, height: 2.5.w, fontWeight: FontWeight.w400),
+        ))
       ],
     );
   }
+
   Map<Rect, Shader> shaderCache = {};
+
   Shader _getOrCreateShader(Rect bounds) {
     return shaderCache.putIfAbsent(
         bounds,
-            () => LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xff000000),
-            Color(0x00000000),
-            Colors.transparent
-          ],
-          stops: [0, .1, .11],
-        ).createShader(bounds));
+        () => LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xff000000), Color(0x00000000), Colors.transparent],
+              stops: [0, .1, .11],
+            ).createShader(bounds));
   }
+
   //上部分渐变效果，原chat复制过来
   Widget _maskWidget() {
     return ShaderMask(

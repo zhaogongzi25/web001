@@ -99,31 +99,36 @@ class CustomcChatController {
 
   }
 
-
   //清理超出的数量，删除前部分， 当超过1000记录删除前面100条
+  static int maxLen=15;
   void _clearOldData() {
-    int maxLen = 1000;
-    int killNum = 100;
+
+
+
+    int killNum = 5;
     if (data.length > maxLen) {
       double killHeight = 0;
       while (data.length > maxLen - killNum) {
         killHeight += data[0].rect!.height;
+        data[0].dispose();
         data.removeAt(0);
       }
       //有删除记录那我们将重置所有显示记录的位置，因为删除前部分数据所有位置前移
       //计算所有对象当前的位置和对应的高度，这里需要优化，不是每一个都是要全刷新，可以优化
       double top = 0.0;
-      for (RoomChatCellVo vo in data) {
+      for (int i=0;i< data.length;i++) {
+        RoomChatCellVo vo=data[i];
         vo.rect = Rect.fromLTWH(0.0, top, vo.rect!.width, vo.rect!.height);
         top += vo.rect!.height;
       }
 
-      if (scrollController.hasClients) {
-        if (scrollController.position.hasContentDimensions) {
-          _startMovePosition = scrollController.position.pixels - killHeight;
-          scrollController.jumpTo(_startMovePosition);
-        }
-      }
+
+      // if (scrollController.hasClients) {
+      //   if (scrollController.position.hasContentDimensions) {
+      //     _startMovePosition = scrollController.position.pixels - killHeight;
+      //     scrollController.jumpTo(_startMovePosition);
+      //   }
+      // }
     }
   }
 
@@ -135,6 +140,7 @@ class CustomcChatController {
     _animationMoveBottom = true;
     _starAnimation(time: time ?? 0.25);//默认滑动时间为0.25秒
   }
+  //推入的消息，如果是在查看显示到底部按钮，将不处理自动滑动到底部
   void moveBottomOfpushData(){
 
     if(!scrollButtonState.value){

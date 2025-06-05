@@ -43,12 +43,20 @@ class HeadBaseIcon {
 
   //计算占用空间矩形，用于绘制对应该图标和文本内容的前部空格
   void _mathIconUseRect() {
-    TextStyle baseStyle = textStyle;
-    TextPainter textPainter = TextPainter(
-      text: TextSpan(text: _getTittleStr(), style: baseStyle),
-      textDirection: TextDirection.ltr,
-    )..layout(minWidth: 0, maxWidth: double.infinity);
-    fontRect = textPainter.size;
+
+    try {
+      TextStyle baseStyle = textStyle;
+      TextPainter textPainter = TextPainter(
+        text: TextSpan(text: _getTittleStr(), style: baseStyle),
+        textDirection: TextDirection.ltr,
+      )..layout(minWidth: 0, maxWidth: double.infinity);
+      fontRect = textPainter.size;
+    } catch (e) {
+
+      print('不应该到这');
+    } finally {
+
+    }
   }
 
   //获取Icon的宽度，

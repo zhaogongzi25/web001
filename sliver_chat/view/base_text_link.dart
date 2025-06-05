@@ -39,7 +39,7 @@ class BaseTextLink {
   String? textContent;
 
   //链接内容
-  List<Map<String, dynamic>>? links;
+  List<Map<String, dynamic>> links=[];
 
   //文本行数列表，layout后才能有数据
   List<LineMetrics>? lines;
@@ -50,12 +50,12 @@ class BaseTextLink {
 
   BaseTextLink({required this.baseStyle}) {
     initData();
-    _buildToPainter(textContent!, links!);
+    _buildToPainter(textContent!, links);
   }
 
   void initData() {
     textContent = '测试文本';
-    links = [];
+
   }
 
   //添加头部对象，会和文本空格结合
@@ -128,13 +128,21 @@ class BaseTextLink {
     );
     List<InlineSpan> textSpans = spanAndRegionData.item1;
     linkRegions = spanAndRegionData.item2;
-    textPainter = TextPainter(
-      text: TextSpan(children: textSpans),
-      textDirection: TextDirection.ltr,
-    )..layout(minWidth: 0, maxWidth: maxWidth);
+    try {
+      textPainter = TextPainter(
+        text: TextSpan(children: textSpans),
+        textDirection: TextDirection.ltr,
+      )..layout(minWidth: 0, maxWidth: maxWidth);
 
-    lines = textPainter?.computeLineMetrics();
-    multipleLinesH = lines!.length > 1 ? -2.w : 0.w;
+      lines = textPainter?.computeLineMetrics();
+      multipleLinesH = lines!.length > 1 ? -2.w : 0.w;
+    } catch (e) {
+
+      print('不应该到这  BaseTextLink');
+    } finally {
+
+    }
+
   }
 
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {

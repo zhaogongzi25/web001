@@ -5,6 +5,7 @@ import '../../../../../view_model/room_msg_model.dart';
 import '../../../../../view_model/room_page_model.dart';
 import '../../live_game_caipiao/model/live_game_model.dart';
 
+//用于传递模型数据，
 class ModelPack{
   final RoomMsgModel roomMsgModel;
   final MyFollowModel myFollowModel;

@@ -93,10 +93,19 @@ class CustomChatRenderSliver extends RenderSliver {
       return false;
     }
   }
-
+  //记录是否可以判断点击事件，如果有滑动就取消
+  bool _canUseHitHander=false;
   @override
   void handleEvent(PointerEvent event, SliverHitTestEntry entry) {
-    if (event is PointerUpEvent) {
+    if (event is PointerDownEvent) {
+        _canUseHitHander=true;
+    } else if (event is PointerMoveEvent) {
+      _canUseHitHander=false;
+    } else if (event is PointerUpEvent) {
+      if(!_canUseHitHander){
+        return;
+      }
+
 
       final double ty = constraints.scrollOffset;
       final double hitMainAxis = entry.mainAxisPosition;

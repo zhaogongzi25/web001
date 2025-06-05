@@ -1,11 +1,7 @@
 import 'package:common_base/common_base.dart';
 
 import 'package:data_center/live_old/model/room_msg.dart';
-import 'package:data_center/live_old/view_model/my_follow_model.dart';
 import 'package:flutter/material.dart';
-import '../../../../../view_model/room_msg_model.dart';
-import '../../../../../view_model/room_page_model.dart';
-import '../../live_game_caipiao/model/live_game_model.dart';
 import '../view/base_text_link.dart';
 import 'model_pack.dart';
 import 'room_chat_text.dart';
@@ -46,10 +42,12 @@ class RoomChatCellVo {
   RoomChatCellVo(
       {required this.roomMsg,
       required this.modelPack,
-
       required this.chatController}) {
     initData();
     resize();
+  }
+  void dispose(){
+    print('dispose  RoomChatCellVo');
   }
 
   //初始创建
@@ -62,7 +60,6 @@ class RoomChatCellVo {
     textLink = RoomChatText(
         roomMsg: roomMsg,
         modelPack: modelPack,
-
         baseStyle: textStyle, );
   }
 
@@ -81,7 +78,7 @@ class RoomChatCellVo {
 
   //记算当前cell的尺寸，用于在列表中的排序位置，所有需要显示的对象都是需要进行先记算
   void resize() {
-    if (niceImage != null && textLink != null) {
+    if (niceImage != null && textLink != null&& textLink!.textPainter!=null) {
       rect = Rect.fromLTWH(
         0, //初始先设定为0.组织后第一个的宽度，再变量所有记录修改位置用于显示
         0,
