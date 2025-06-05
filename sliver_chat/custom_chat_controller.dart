@@ -138,6 +138,10 @@ class CustomcChatController {
   void moveBottomOfpushData(){
 
     if(!scrollButtonState.value){
+      if(dragScrollEvent==true){
+        //当手滑动到的底部的不显按钮的情况下，需要重置手势，
+        dragScrollEvent=false;
+      }
       moveBottom();
     }
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:live/page/home/room/sliver_chat/view/text_link_region.dart';
 
 import '../chatcell/room_chat_cell_vo.dart';
+import 'end_base_icon.dart';
 import 'head_base_icon.dart';
 
 //基本文本包含富文本点击的文本对象，描述文本显示内容，和点击事件的内容
@@ -13,7 +14,7 @@ class BaseTextLink {
   // int headLen = 0;
 
   //基础文本最大宽度
-  double maxWidth = 240.w;
+  double maxWidth = 550.w;
 
 
   //多行文本和单行的高度偏移。如多行我们会让记录网往小一点显示，
@@ -22,8 +23,8 @@ class BaseTextLink {
   //存放头部标签一般一个，也有可能会多个，
   List<HeadBaseIcon> _headImageArr = [];
 
-  //存放头部标签一般一个，也有可能会多个，
-  List<HeadBaseIcon> _endImageArr = [];
+  //存放尾部标签一般一个，也有可能会多个，
+  List<EndBaseIcon> _endImageArr = [];
 
   //标记是否显示
   // bool hide = true;
@@ -62,8 +63,8 @@ class BaseTextLink {
     _headImageArr.add(baseTittle);
   }
 
-  //添加头部对象，会和文本空格结合
-  void addEndImageArr(HeadBaseIcon baseTittle) {
+  //添加尾部对象，会和文本空格结合
+  void addEndImageArr(EndBaseIcon baseTittle) {
     _endImageArr.add(baseTittle);
   }
 
@@ -140,6 +141,12 @@ class BaseTextLink {
       baseTittle.startLeft = startLeft;
       baseTittle.draw(canvas, vo, ty);
       startLeft += baseTittle.getWidth();
+    }
+    startLeft = 0.0;
+    for (EndBaseIcon endBaseIcon in _endImageArr) {
+      endBaseIcon.startLeft = startLeft;
+      endBaseIcon.draw(canvas, vo, ty);
+
     }
   }
   //绘制文本信息

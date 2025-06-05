@@ -79,7 +79,7 @@ class _CustomChatViewState extends State<CustomChatView>
   //当数据变化时来判断是否需要刷新ui
   void refreshListView() {
     if (mounted) {
-      // setState(() {});
+      setState(() {});
     }
 
   }
