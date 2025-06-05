@@ -11,7 +11,7 @@ import '../view/base_nine_image.dart';
 class RoomChatCellVo {
 
   //内容距离边缘区域值 左上右下 可以设置不一样的值
-  Rect ctxPodding = Rect.fromLTRB(10.w, 8.w, 15.w, 8.w);
+  Rect ctxPodding = Rect.fromLTRB(10.w, 8.w, 25.w, 8.w);
 
   //基础文本颜色，
   TextStyle textStyle = TextStyle(

@@ -19,7 +19,7 @@ class CustomChatView extends StatefulWidget {
 
 class _CustomChatViewState extends State<CustomChatView>
     with SingleTickerProviderStateMixin {
-  final ValueNotifier<bool> _scrollButtonState = ValueNotifier<bool>(false);
+
   CustomcChatController? _controller;
 
   Widget? _chatScrollButton;
@@ -72,13 +72,14 @@ class _CustomChatViewState extends State<CustomChatView>
     return _chatScrollButton!;
   }
 
-  bool _dragScrollEvent = false;
+
 
   //当数据变化时来判断是否需要刷新ui
   void refreshListView() {
     if (mounted) {
-      setState(() {});
+      // setState(() {});
     }
+
   }
 
   @override
@@ -88,16 +89,16 @@ class _CustomChatViewState extends State<CustomChatView>
   }
 
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (_dragScrollEvent) {
+    if (  _controller!.dragScrollEvent) {
       double currentOffset = _controller!.scrollController.offset;
       double maxScrollExtent =
           _controller!.scrollController.position.maxScrollExtent;
       if (maxScrollExtent > CustomChatRenderSliver.num001) {
-        _scrollButtonState.value = !(maxScrollExtent <= currentOffset);
+        _controller!.scrollButtonState.value = !(maxScrollExtent <= currentOffset);
       }
     }
     if (notification is UserScrollNotification) {
-      _dragScrollEvent = true;
+      _controller!.dragScrollEvent = true;
     }
     return false;
   }
@@ -111,15 +112,15 @@ class _CustomChatViewState extends State<CustomChatView>
             onNotification: _handleScrollNotification, // 注册回调函数
             child: _maskWidget()),
         ValueListenableBuilder<bool>(
-          valueListenable: _scrollButtonState,
+          valueListenable: _controller!.scrollButtonState,
           builder: (context, value, child) {
-            if (_scrollButtonState.value) {
+            if (_controller!.scrollButtonState.value) {
               return Positioned(
                   bottom: 5.w,
                   child: InkWell(
                     onTap: () {
-                      _dragScrollEvent = false;
-                      _scrollButtonState.value = false;
+                      _controller!.dragScrollEvent = false;
+                      _controller!.scrollButtonState.value = false;
                       _controller!.moveBottom();
                     },
                     child: _madkScrollButton(),

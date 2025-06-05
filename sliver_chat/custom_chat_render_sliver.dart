@@ -13,12 +13,14 @@ class CustomChatRenderSliver extends RenderSliver {
         _refreshNum = refrishnum,
         _totalExtent = totalExtent;
 
+  //存放所有记录的数组，当删除前排数据，需要重新按顺序重置所有对象的位置，现在是自动删除，逐个添加所以不可以人工修改数组
   final List<RoomChatCellVo> _data;
+
 
   int _refreshNum;
 
   int get refreshNum => _refreshNum;
-
+  //刷新变化装太值，布局已计算好，但图片或其它数据还在准备中，当图片和数据准备好后，需要刷新列表的渲染，需要通过markNeedsLayout（）
   set refreshNum(int value) {
     if (_refreshNum == value) return;
     _refreshNum = value;
@@ -29,7 +31,7 @@ class CustomChatRenderSliver extends RenderSliver {
   double _totalExtent;
 
   double get totalExtent => _totalExtent;
-
+  //列表总高度
   set totalExtent(double value) {
     if (_totalExtent == value) return;
     _totalExtent = value;

@@ -14,13 +14,14 @@ class CustomcChatController {
   final ScrollController scrollController;
   final Function refreshUi;
   List<RoomChatCellVo> data = [];
-
+  bool dragScrollEvent = false;
   //刷新变量，用于改变让updateRenderObject能够更新到变化才会刷行ui
   int refreshNum = 0;
 
   //标记动画的滑动方向，是否移动到地步
   bool _animationMoveBottom = true;
-
+  //是否显示滑到底部按钮
+  final ValueNotifier<bool> scrollButtonState = ValueNotifier<bool>(false);
   //播放开始时间
   double _startTm = 0.0;
 
@@ -133,6 +134,28 @@ class CustomcChatController {
   void moveBottom({double? time}) {
     _animationMoveBottom = true;
     _starAnimation(time: time ?? 0.25);//默认滑动时间为0.25秒
+  }
+  void moveBottomOfpushData(){
+
+    if(scrollButtonState.value){
+
+      if (scrollController.hasClients) {
+        if (scrollController.position.hasPixels) {
+          _startMovePosition = scrollController.position.pixels;
+        } else {
+          // 如果还没有像素，说明列表还没渲染，起始位置为 0
+          _startMovePosition = 0.0;
+        }
+        scrollController.jumpTo(_startMovePosition);
+        print('_startMovePosition        $_startMovePosition');
+
+      }
+    }else{
+      moveBottom();
+    }
+
+
+
   }
 
   //设定动画的播放时间，用于驱动列表的位置，
