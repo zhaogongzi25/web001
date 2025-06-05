@@ -137,20 +137,7 @@ class CustomcChatController {
   }
   void moveBottomOfpushData(){
 
-    if(scrollButtonState.value){
-
-      if (scrollController.hasClients) {
-        if (scrollController.position.hasPixels) {
-          _startMovePosition = scrollController.position.pixels;
-        } else {
-          // 如果还没有像素，说明列表还没渲染，起始位置为 0
-          _startMovePosition = 0.0;
-        }
-        scrollController.jumpTo(_startMovePosition);
-        print('_startMovePosition        $_startMovePosition');
-
-      }
-    }else{
+    if(!scrollButtonState.value){
       moveBottom();
     }
 

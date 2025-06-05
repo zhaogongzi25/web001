@@ -11,7 +11,7 @@ import 'head_base_icon.dart';
 
 class LevelBaseIcon extends HeadBaseIcon {
   final int level;
-  final Offset pos;
+
 
   LevelBaseIcon({
     required super.url,
@@ -19,7 +19,7 @@ class LevelBaseIcon extends HeadBaseIcon {
     required super.titleLen,
     required super.boxRect,
     required this.level,
-    required this.pos,
+
   });
 
   //显示文本
@@ -49,8 +49,8 @@ class LevelBaseIcon extends HeadBaseIcon {
       _labelPainter?.paint(
         canvas,
         Offset(
-          drawToRect!.left + drawToRect!.width - rw-30.w,
-          drawToRect!.top + pos.dy,
+          drawToRect!.left + drawToRect!.width ,
+          drawToRect!.top +2.w ,
         ),
 
 

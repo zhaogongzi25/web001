@@ -28,6 +28,8 @@ class _CustomChatViewState extends State<CustomChatView>
   void initState() {
     super.initState();
 
+    print('CustomChatView  initState');
+
     _controller = CustomcChatController(
       refreshUi: refreshListView,
       scrollController: ScrollController(),
@@ -151,7 +153,7 @@ class _CustomChatViewState extends State<CustomChatView>
   //上部分渐变效果，原chat复制过来
   Widget _maskWidget() {
     return ShaderMask(
-        key: UniqueKey(),
+        // key: UniqueKey(),
         shaderCallback: (Rect bounds) {
           Shader shader = _getOrCreateShader(bounds);
           return shader;

@@ -1,7 +1,9 @@
 import 'package:common_base/common_base.dart';
 
 import 'package:data_center/live_old/model/room_msg.dart';
+import 'package:data_center/live_old/view_model/my_follow_model.dart';
 import 'package:flutter/material.dart';
+import '../../../../../view_model/room_msg_model.dart';
 import '../view/base_text_link.dart';
 import 'room_chat_text.dart';
 import '../custom_chat_controller.dart';
@@ -11,7 +13,7 @@ import '../view/base_nine_image.dart';
 class RoomChatCellVo {
 
   //内容距离边缘区域值 左上右下 可以设置不一样的值
-  Rect ctxPodding = Rect.fromLTRB(10.w, 8.w, 25.w, 8.w);
+  Rect ctxPodding = Rect.fromLTRB(15.w, 8.w, 15.w, 8.w);
 
   //基础文本颜色，
   TextStyle textStyle = TextStyle(
@@ -32,9 +34,10 @@ class RoomChatCellVo {
   //传入房间的聊天信息
   final RoomMsg roomMsg;
 
-
+  final RoomMsgModel roomMsgModel;
+  final MyFollowModel myFollowModel;
   //传入房间信息roomMsg 和chatController控制器
-  RoomChatCellVo({required this.roomMsg, required this.chatController}) {
+  RoomChatCellVo(  {required this.roomMsg,required this.roomMsgModel, required this.myFollowModel, required this.chatController}) {
     initData();
     resize();
   }
@@ -46,7 +49,7 @@ class RoomChatCellVo {
       // url: 'https://zhaogongzi25.github.io/web001/bg_216_96.png',
       nineSize: 10, //只能是像素，不需要.w
     );
-    textLink = RoomChatText(roomMsg, baseStyle: textStyle);
+    textLink = RoomChatText(roomMsg: roomMsg,roomMsgModel:roomMsgModel,myFollowModel:myFollowModel , baseStyle: textStyle);
   }
 
   //传递点击事件

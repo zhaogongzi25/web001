@@ -129,6 +129,7 @@ class CustomChatRenderSliver extends RenderSliver {
     if (geometry!.paintExtent <= 0.0) {
       return;
     }
+
     final double ty = constraints.scrollOffset - offset.dy;
     final double th = constraints.viewportMainAxisExtent;
     for (RoomChatCellVo infoVo in _data) {
