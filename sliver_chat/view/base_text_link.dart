@@ -52,15 +52,18 @@ class BaseTextLink {
 
  final double maxWidth;
 
+
  TextStyle? baseStyle;
 
-  BaseTextLink({required TextStyle textStyle,required this.maxWidth}) {
+  BaseTextLink({required TextStyle textStyle,required this.maxWidth }) {
     baseStyle=textStyle;
     initData();
     _buildToPainter(textContent!, links);
   }
 
+
   void initData() {
+
     textContent = '测试文本';
 
   }

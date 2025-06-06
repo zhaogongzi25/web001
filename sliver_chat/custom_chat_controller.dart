@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:common_base/common_base.dart';
+import 'package:data_center/live_old/model/data_manager.dart';
+import 'package:data_center/live_old/utility/string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
@@ -37,6 +39,7 @@ class CustomcChatController {
     required this.refreshUi, // 需要传入 setState 或类似的刷新函数
     required this.width, //
   }) {
+    maxLen=   dataMgr.getConfig(ConfigKeys.livechatnumyh_open) ?? 200;
     animationControl.addListener(() {
       // 确保 ScrollController 已经 attached 到一个 Scrollable
       if (scrollController.hasClients) {
@@ -103,10 +106,12 @@ class CustomcChatController {
   }
 
   //清理超出的数量，删除前部分， 当超过1000记录删除前面100条
-  static int maxLen=15;
+  static int maxLen=1000;
   void _clearOldData() {
 
-    int killNum = 4;
+
+
+    int killNum = 100;
     if (data.length >= maxLen) {
       double killHeight = 0;
       while (data.length > maxLen - killNum) {

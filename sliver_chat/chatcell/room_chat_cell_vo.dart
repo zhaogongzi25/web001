@@ -22,7 +22,7 @@ class RoomChatCellVo {
   //基础文本颜色，字号，行距，
   //   height ??= 2.5.w;  //默认
   TextStyle textStyle =
-      TextStyle(color: Colors.white, fontSize: 24.sp, height: 2.5.sp, fontWeight: FontWeight.w400); //原来chat的数值
+      TextStyle(color: Colors.white, fontSize: 24.sp, height: 2.5.w, fontWeight: FontWeight.w400); //原来chat的数值
 
   //最终绘制的矩形。top为起始位置， height为当条记录的高度
   Rect? rect;
@@ -43,8 +43,12 @@ class RoomChatCellVo {
 
   final double width;
 
+
+  int idnum=9;
+  static int  skipNum=0;
   //传入房间信息roomMsg 和chatController控制器
   RoomChatCellVo({required this.roomMsg, required this.modelPack, required this.width, required this.chatController}) {
+    idnum=skipNum++;
     initData();
     resize();
   }
@@ -63,6 +67,7 @@ class RoomChatCellVo {
     );
 
     textLink = RoomChatText(
+
       roomMsg: roomMsg,
       modelPack: modelPack,
       textStyle: textStyle,

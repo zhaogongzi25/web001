@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:data_center/data_center.dart';
 import 'package:data_center/live_old/model/data_manager.dart';
@@ -50,6 +51,45 @@ class _SliverMainState extends State<SliverMain> {
       roomPageModel: _roomPageModel!,
       chatContext: context,
     );
+    // _oneByonePush(2000);
+  }
+  //自动刷新数据
+  void _oneByonePush(tm) {
+    if (_customcChatController != null) {
+      int len = _customcChatController!.data.length;
+      if (len > 9995 || (len - 9904).abs() < 5) {
+        tm = 3000;
+      }
+    }
+    Future.delayed(Duration(milliseconds: tm), () {
+      if (_customcChatController != null) {
+        //暂时直接对应该当前的房间信息，然后显示要显示的记录 进行对比，没有就添加
+        int idx = Random().nextInt(_roomMsgModel!.msgList.length);
+        RoomMsg roomMsg = _roomMsgModel!.msgList[idx];
+        roomMsg = roomMsg.clone();
+        if (roomMsg.id > 0) {
+          RoomPlayer? player = RoomChatText.getRoomPlayerByUserId(roomMsg.userId);
+          if (player == null) {
+            if (mounted) {
+              _oneByonePush(Random().nextInt(1000) + 1);
+            }
+            return;
+          }
+        }
+        RoomChatCellVo addVo = RoomChatCellVo(
+          chatController: _customcChatController!,
+          roomMsg: roomMsg,
+          modelPack: _modelPack!,
+          width: _customcChatController!.width,
+        );
+        _customcChatController!.pushData(addVo);
+        _customcChatController!.moveBottomOfpushData();
+        if (mounted) {
+          _oneByonePush(Random().nextInt(1000) + 1);
+          setState(() {});
+        }
+      }
+    });
   }
 
   final Map<int, bool> _useData = {};
@@ -77,10 +117,10 @@ class _SliverMainState extends State<SliverMain> {
     _useData.addEntries(<int, bool>{roomMsg.id: true}.entries);
     print('新添加对象 id = ${roomMsg.id}');
     RoomChatCellVo addVo = RoomChatCellVo(
-        chatController: _customcChatController!,
-        roomMsg: roomMsg,
-        modelPack: _modelPack!,
-        width: _customcChatController!.width,
+      chatController: _customcChatController!,
+      roomMsg: roomMsg,
+      modelPack: _modelPack!,
+      width: _customcChatController!.width,
     );
     _customcChatController!.pushData(addVo);
     _customcChatController!.moveBottomOfpushData();
@@ -113,7 +153,7 @@ class _SliverMainState extends State<SliverMain> {
           height: 430.w,
         ),
         Container(
-          // color: Colors.white,
+            // color: Colors.white,
             margin: chatMargin,
             height: h,
             child: Container(margin: lineMargin, child: _body()))
@@ -133,7 +173,7 @@ class _SliverMainState extends State<SliverMain> {
     //刷新数据的方法还要结合app机制
     _refreshMsglIst();
     return CustomChatView(
-      ctxWidth: ScreenUtil().screenWidth - chatMargin!.right-lineMargin.left,
+      ctxWidth: ScreenUtil().screenWidth - chatMargin!.right - lineMargin.left,
       onCreated: (CustomcChatController controller) {
         _customcChatController = controller;
         _refreshMsglIst();

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:common_base/common_base.dart';
+import 'package:data_center/live_old/generated/l10n.dart';
 
 import 'package:data_center/live_old/model/data_manager.dart';
 
@@ -35,6 +36,7 @@ class RoomChatText extends BaseTextLink {
   final ModelPack modelPack;
 
   RoomChatText({
+
     required this.roomMsg,
     required this.modelPack,
     required super.maxWidth,
@@ -50,14 +52,12 @@ class RoomChatText extends BaseTextLink {
       textContent = '独家主播福利,等你来解锁！尽情畅享私\n密时刻,体验无与伦比的乐趣！';
     }
     //行距不一样。
-    baseStyle = TextStyle(color: Colors.white, fontSize: 24.sp, height: 3.sp);
+    baseStyle = TextStyle(color: Colors.white, fontSize: 24.sp, height: 3.w);
 
     addEndImageArr(
       EndBaseIcon(
-          titleLen: 4,
           url: 'assets/new_live_room/new_room_chat_card.png',
-          textStyle: baseStyle!,
-          boxRect: Rect.fromLTRB(10.w, -10.w, 0.w, 15.w),
+          boxRect: Rect.fromLTWH(0.w, 5.w, 100.w, 34.w),
           onTap: () {
             print('立即解锁');
             ChatEventClass().onJiesuo(modelPack);
@@ -106,7 +106,7 @@ class RoomChatText extends BaseTextLink {
   }
 
   //单纯给文本设置颜色，第一次添加都必按顺序排列在文本结构中
-  String _selLinksStr(String str, Color color,{FontWeight? fontWeight}) {
+  String _selLinksStr(String str, Color color, {FontWeight? fontWeight}) {
     links.add({
       'text': str,
       'color': color,
@@ -130,30 +130,31 @@ class RoomChatText extends BaseTextLink {
 
   void _makeChatSys(RoomMsg msg, RoomPlayer player, Map<String, dynamic> temp) {
     int value = temp['optcode'] ?? 0;
-    if (value == ChatContentType.ChatContent_caipiaoXiazhu) {
+
+    if (value == ChatContentType.ChatContent_guanzhu) {
+      //关注 5
       _addSysIcon('系统');
       String nikeName = _addNikeNameAndTap(msg, player);
-      // getTextSpan('${temp!['cp_type_string']}', Colours.text_yellow,
-      //     chatDefFontSize, FontWeight.w600,
-      String cpType = _selLinksStr(temp['cp_type_string'], Colours.text_yellow,fontWeight: FontWeight.w600);
-      String totalAmount = _selLinksStr(((temp['total_amount']) / 1.0).toString(), Colours.text_yellow);
-      textContent = '用户${nikeName}在${cpType}玩法中，已成功下注了${totalAmount}元';
-      //添加跟投按钮，
-      addEndImageArr(
-        EndBaseIcon(
-            titleLen: 3,
-            url: 'assets/live_game/gentou.png',
-            textStyle: baseStyle!,
-            boxRect: Rect.fromLTRB(-5.w, -8.w, 5.w, 8.w),
-            onTap: () {
-              ChatEventClass().onTapGetzhuEvent(temp, modelPack);
-            }),
-      );
+      String user_nickname = _selLinksStr(temp['user_nickname'], Colours.text_blue);
+      textContent = '${nikeName}关注了${user_nickname}';
+    } else if (value == ChatContentType.ChatContent_jinyan) {
+      //禁言 1
+      var flag = (temp['time_str'] == null || temp['time_str'] == "");
+      var isGlobal = (temp['room_id'] != null && temp['room_id'] == 0);
+      var time_str = flag ? '' : temp['time_str'].toString();
+      RoomPlayer? tempPlay = dataMgr.findObj(TableNames.roomPlayer, temp['user_id']) as RoomPlayer?;
+      _addSysIcon('系统');
+      if (tempPlay != null) {
+        createPlayInfoView(tempPlay);
+        var baseStr = flag ? S.current.l_id_10168 : (isGlobal ? S.current.l_id_14516 : S.current.l_id_10169);
+        textContent = _addNikeNameAndTap(msg, tempPlay) + baseStr + time_str;
+      } else {
+        textContent = '禁言  RoomPlayer  为空';
+      }
     } else if (value == ChatContentType.ChatContent_shortId) {
-      textContent = '未知数据 --- optcode = $value';
+      //短语 18
       if (temp['short_id'] != null) {
         int idx = temp['short_id'];
-        textContent = '未知数据 --- optcode = $value  short_d =$idx  ';
         var paraseList = dataMgr.chatPhrase;
         //如果大于主播短语索引，则取主播短语数组
         if (idx >= AppDefines.PODCAST_CHAT_PHRASE_BEGIN_IDX) {
@@ -161,28 +162,46 @@ class RoomChatText extends BaseTextLink {
           idx -= AppDefines.PODCAST_CHAT_PHRASE_BEGIN_IDX;
         }
         //显示相应短语
-        if (paraseList.length >= idx + 1) {
+        if (idx < paraseList.length) {
           textContent = _addNikeNameAndTap(msg, player) + ':' + paraseList[idx];
           createPlayInfoView(player);
         }
+      } else {
+        textContent = '未知数据 --- optcode = $value';
       }
-    } else if (value == ChatContentType.ChatContent_guanzhu) {
+    } else if (value == ChatContentType.ChatContent_caipiaoXiazhu) {
+      //彩票下注19
       _addSysIcon('系统');
       String nikeName = _addNikeNameAndTap(msg, player);
-      String user_nickname = _selLinksStr(temp['user_nickname'], Colours.text_blue);
-      textContent = '${nikeName}关注了${user_nickname}';
+      String cpType = _selLinksStr(temp['cp_type_string'], Colours.text_yellow, fontWeight: FontWeight.w600);
+      String totalAmount = _selLinksStr(((temp['total_amount']) / 1.0).toString(), Colours.text_yellow);
+      textContent = '用户${nikeName}在${cpType}玩法中，已成功下注了${totalAmount}元 ';
+      //添加跟投按钮，
+      if(LiveGameType.GameNoGenTou.contains(temp['cp_type'])){
 
+      }else{
+        addEndImageArr(
+          EndBaseIcon(
+              url: 'assets/live_game/gentou.png',
+              boxRect: Rect.fromLTWH(5.w, 5.w, 66.w, 32.w),
+              onTap: () {
+                ChatEventClass().onTapGetzhuEvent(temp, modelPack);
+              }),
+        );
+      }
 
+    } else if (value == ChatContentType.ChatContent_caipiaoZhongjiang) {
+      // 彩票中奖 20
+      _addZhongjiangIcon('中奖');
+      String nikeName = _addNikeNameAndTap(msg, player);
+      String cp_name = _selLinksStr(temp['cp_name'], Colours.text_yellow, fontWeight: FontWeight.w600);
+      String pay_amount = _selLinksStr(((temp['pay_amount']) / 1.0).toString(), Colours.text_yellow);
+      textContent = '恭喜${nikeName}在${cp_name}中了${pay_amount}元';
     } else if (value == ChatContentType.ChatContent_caipiaoZhongjiangEffect) {
+      // 彩票中奖特效 21
       _addCaiJinIcon('彩金');
       String pay_amount = _selLinksStr(((temp['pay_amount']) / 1.0).toString(), Colours.text_yellow);
       textContent = '恭喜您中奖了获得彩金$pay_amount元';
-    } else if (value == ChatContentType.ChatContent_caipiaoZhongjiang) {
-      _addZhongjiangIcon('中奖');
-      String nikeName = _addNikeNameAndTap(msg, player);
-      String cp_name = _selLinksStr(temp['cp_name'], Colours.text_yellow,fontWeight: FontWeight.w600);
-      String pay_amount = _selLinksStr(((temp['pay_amount']) / 1.0).toString(), Colours.text_yellow);
-      textContent = '恭喜${nikeName}在${cp_name}中了${pay_amount}元';
     } else {
       textContent = '未知数据 --- optcode = $value';
     }
