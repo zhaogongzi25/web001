@@ -48,7 +48,7 @@ class RoomChatCellVo {
     initData();
     resize();
   }
-  
+
 
   void dispose() {
     // print('dispose  RoomChatCellVo');

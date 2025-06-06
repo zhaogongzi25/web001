@@ -110,9 +110,10 @@ class _SliverMainState extends State<SliverMain> {
     return Column(
       children: [
         SizedBox(
-          height: 400.w,
+          height: 430.w,
         ),
         Container(
+          // color: Colors.white,
             margin: chatMargin,
             height: h,
             child: Container(margin: lineMargin, child: _body()))

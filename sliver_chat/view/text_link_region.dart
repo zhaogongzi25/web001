@@ -46,6 +46,7 @@ Tuple2<List<InlineSpan>, List<TextLinkRegion>> buildSpansAndRegions({
       final String linkText = linkDef['text']!;
       final String? url = linkDef['url'];
       final Color? color = linkDef['color'];
+      final FontWeight? fontWeight = linkDef['fontWeight'];
       final VoidCallback? onTap = linkDef['onTap'];
       final int linkIndexInRemaining = remainingText.indexOf(linkText);
       if (linkIndexInRemaining != -1) {
@@ -64,12 +65,14 @@ Tuple2<List<InlineSpan>, List<TextLinkRegion>> buildSpansAndRegions({
             text: linkText,
             style: baseStyle.copyWith(
               // Copy base style and add link specific style
+              fontWeight:fontWeight??baseStyle.fontWeight,
               color: color ?? Colors.blueAccent, // Example link style
               // decoration: TextDecoration.underline,
             ),
             // No recognizer here! Handled in RenderSliver.
           ),
         );
+
         // Add the link region
         linkRegions.add(
           TextLinkRegion(

@@ -75,6 +75,7 @@ class CustomChatRenderSliver extends RenderSliver {
     required double crossAxisPosition,
   }) {
     //区域判断
+
     final bool isHit = geometry!.hitTestExtent > 0 &&
         mainAxisPosition >= 0.0 &&
         mainAxisPosition < geometry!.hitTestExtent &&
@@ -110,6 +111,8 @@ class CustomChatRenderSliver extends RenderSliver {
       final double ty = constraints.scrollOffset;
       final double hitMainAxis = entry.mainAxisPosition;
       final double hitCrossAxis = entry.crossAxisPosition;
+
+      // print('ty $ty  hitMainAxis $hitMainAxis  hitCrossAxis$hitCrossAxis ');
       for (RoomChatCellVo vo in _data) {
         double toy = vo.rect!.top - ty;
         if (!(hitMainAxis > toy + vo.ctxPodding.top &&

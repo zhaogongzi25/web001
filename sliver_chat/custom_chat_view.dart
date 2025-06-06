@@ -164,6 +164,7 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
 
   Widget _listRender() {
     return CustomScrollView(
+      physics: BouncingScrollPhysics(),
       controller: _controller!.scrollController,
       slivers: <Widget>[
         CustomCavasWidget(

@@ -9,11 +9,13 @@ import 'package:data_center/live_old/model/data_manager.dart';
 
 import 'package:data_center/live_old/model/room_msg.dart';
 import 'package:data_center/live_old/model/room_player.dart';
+import 'package:data_center/live_old/utility/app_define_info.dart';
 
 import 'package:data_center/live_old/utility/colors.dart';
 import 'package:data_center/live_old/utility/string.dart';
 
 import 'package:data_center/live_old/widget/style_widget.dart';
+import 'package:data_center/models/chat/chat.dart';
 
 import 'package:data_center/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
@@ -41,10 +43,14 @@ class RoomChatText extends BaseTextLink {
 
   void _addDujiaXingxi() {
     fontBaseLeft = 80.w;
-    textContent = '独家主播福利,等你来解锁！尽情畅享私\n密时刻,体验无与伦比的乐趣！';
+    UserChat anchor = modelPack.roomPageModel.anchor!;
+    if (anchor.isLoveValueOn && !anchor.isFolder) {
+      textContent = '主播私聊已开启！解锁即刻进入私密频\n道,与主播一对一亲密互动！';
+    } else {
+      textContent = '独家主播福利,等你来解锁！尽情畅享私\n密时刻,体验无与伦比的乐趣！';
+    }
     //行距不一样。
-    baseStyle= TextStyle(
-        color: Colors.white, fontSize: 24.sp ,height: 3.sp);
+    baseStyle = TextStyle(color: Colors.white, fontSize: 24.sp, height: 3.sp);
 
     addEndImageArr(
       EndBaseIcon(
@@ -62,8 +68,8 @@ class RoomChatText extends BaseTextLink {
       FreeBaseIcon(
           url: 'assets/live_room/room_chat_card_title.png',
           drawRect: Rect.fromLTWH(
-            0,
-            15.w,
+            0.w,
+            10.w,
             70.w,
             70.w,
           ),
@@ -77,6 +83,7 @@ class RoomChatText extends BaseTextLink {
     RoomMsg msg = roomMsg;
     String content = roomMsg.data['content'] ?? '';
     Map<String, dynamic> temp = jsonDecode(content);
+
     if (roomMsg.contentType == ChatType.Chat_text) {
       _makeChatText(msg, player!);
       return;
@@ -98,12 +105,12 @@ class RoomChatText extends BaseTextLink {
     }
   }
 
-
   //单纯给文本设置颜色，第一次添加都必按顺序排列在文本结构中
-  String _selLinksStr(String str, Color color) {
+  String _selLinksStr(String str, Color color,{FontWeight? fontWeight}) {
     links.add({
       'text': str,
       'color': color,
+      'fontWeight': fontWeight,
     });
     return str;
   }
@@ -126,9 +133,11 @@ class RoomChatText extends BaseTextLink {
     if (value == ChatContentType.ChatContent_caipiaoXiazhu) {
       _addSysIcon('系统');
       String nikeName = _addNikeNameAndTap(msg, player);
-      String cpType = _selLinksStr(temp['cp_type_string'], Colours.text_yellow);
+      // getTextSpan('${temp!['cp_type_string']}', Colours.text_yellow,
+      //     chatDefFontSize, FontWeight.w600,
+      String cpType = _selLinksStr(temp['cp_type_string'], Colours.text_yellow,fontWeight: FontWeight.w600);
       String totalAmount = _selLinksStr(((temp['total_amount']) / 1.0).toString(), Colours.text_yellow);
-      textContent = '用户${nikeName}在${cpType}的玩法中，已成功下注${totalAmount}元';
+      textContent = '用户${nikeName}在${cpType}玩法中，已成功下注了${totalAmount}元';
       //添加跟投按钮，
       addEndImageArr(
         EndBaseIcon(
@@ -140,10 +149,38 @@ class RoomChatText extends BaseTextLink {
               ChatEventClass().onTapGetzhuEvent(temp, modelPack);
             }),
       );
+    } else if (value == ChatContentType.ChatContent_shortId) {
+      textContent = '未知数据 --- optcode = $value';
+      if (temp['short_id'] != null) {
+        int idx = temp['short_id'];
+        textContent = '未知数据 --- optcode = $value  short_d =$idx  ';
+        var paraseList = dataMgr.chatPhrase;
+        //如果大于主播短语索引，则取主播短语数组
+        if (idx >= AppDefines.PODCAST_CHAT_PHRASE_BEGIN_IDX) {
+          paraseList = dataMgr.podcastChatPhrase;
+          idx -= AppDefines.PODCAST_CHAT_PHRASE_BEGIN_IDX;
+        }
+        //显示相应短语
+        if (paraseList.length >= idx + 1) {
+          textContent = _addNikeNameAndTap(msg, player) + ':' + paraseList[idx];
+          createPlayInfoView(player);
+        }
+      }
+    } else if (value == ChatContentType.ChatContent_guanzhu) {
+      _addSysIcon('系统');
+      String nikeName = _addNikeNameAndTap(msg, player);
+      String user_nickname = _selLinksStr(temp['user_nickname'], Colours.text_blue);
+      textContent = '${nikeName}关注了${user_nickname}';
+
+
+    } else if (value == ChatContentType.ChatContent_caipiaoZhongjiangEffect) {
+      _addCaiJinIcon('彩金');
+      String pay_amount = _selLinksStr(((temp['pay_amount']) / 1.0).toString(), Colours.text_yellow);
+      textContent = '恭喜您中奖了获得彩金$pay_amount元';
     } else if (value == ChatContentType.ChatContent_caipiaoZhongjiang) {
       _addZhongjiangIcon('中奖');
       String nikeName = _addNikeNameAndTap(msg, player);
-      String cp_name = _selLinksStr(temp['cp_name'], Colours.text_yellow);
+      String cp_name = _selLinksStr(temp['cp_name'], Colours.text_yellow,fontWeight: FontWeight.w600);
       String pay_amount = _selLinksStr(((temp['pay_amount']) / 1.0).toString(), Colours.text_yellow);
       textContent = '恭喜${nikeName}在${cp_name}中了${pay_amount}元';
     } else {
@@ -159,6 +196,10 @@ class RoomChatText extends BaseTextLink {
   //加中奖图标
   void _addZhongjiangIcon(String value) {
     _addHeadBaseIcon(len: 3, imgUrl: 'assets/live_game/zhongjiang.png');
+  }
+
+  void _addCaiJinIcon(String value) {
+    _addHeadBaseIcon(len: 3, imgUrl: 'assets/live_game/caijin.png');
   }
 
   //对头部图标的统一入口，只包含了图片，
@@ -208,15 +249,8 @@ class RoomChatText extends BaseTextLink {
     );
   }
 
-//创建聊天内容的文本组织信息
-  void _makeChatText(RoomMsg msg, RoomPlayer player) {
-    String content = roomMsg.getValue('content', null);
-    String baseStr = '';
-    Map<String, dynamic> data = jsonDecode(content);
-    if (data.containsKey('text')) {
-      baseStr = data['text'];
-    }
-    textContent = _addNikeNameAndTap(msg, player) + ':' + baseStr;
+  //用户多个icon
+  void createPlayInfoView(RoomPlayer player) {
     _addUserLevelIcon(player.level);
     //国王图标，网络地址
     String vipIconUrl = getVipIconUrl(player.vipLevel);
@@ -268,5 +302,17 @@ class RoomChatText extends BaseTextLink {
         ),
       );
     }
+  }
+
+//创建聊天内容的文本组织信息
+  void _makeChatText(RoomMsg msg, RoomPlayer player) {
+    String content = roomMsg.getValue('content', null);
+    String baseStr = '';
+    Map<String, dynamic> data = jsonDecode(content);
+    if (data.containsKey('text')) {
+      baseStr = data['text'];
+    }
+    textContent = _addNikeNameAndTap(msg, player) + ':' + baseStr;
+    createPlayInfoView(player);
   }
 }
