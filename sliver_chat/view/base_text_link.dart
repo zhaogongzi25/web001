@@ -6,6 +6,7 @@ import 'package:live/page/home/room/sliver_chat/view/text_link_region.dart';
 
 import '../chatcell/room_chat_cell_vo.dart';
 import 'end_base_icon.dart';
+import 'free_base_icon.dart';
 import 'head_base_icon.dart';
 
 //基本文本包含富文本点击的文本对象，描述文本显示内容，和点击事件的内容
@@ -18,13 +19,17 @@ class BaseTextLink {
 
 
   //多行文本和单行的高度偏移。如多行我们会让记录网往小一点显示，
-  double multipleLinesH = 0.0;
+  double multipleLinesH = 0.w;
+  double fontBaseLeft=0.w;
 
   //存放头部标签一般一个，也有可能会多个，
   List<HeadBaseIcon> _headImageArr = [];
 
   //存放尾部标签一般一个，也有可能会多个，
   List<EndBaseIcon> _endImageArr = [];
+
+
+  List<FreeBaseIcon> _freeImage = [];
 
 
   //标记是否显示
@@ -69,6 +74,11 @@ class BaseTextLink {
     _endImageArr.add(baseTittle);
   }
 
+  //添加尾部对象，会和文本空格结合
+  void addFreeImageArr(FreeBaseIcon baseTittle) {
+    _freeImage.add(baseTittle);
+  }
+
   //获得头部共有的Icon图标占用的文本宽度，用于显示文本缩进位置
   int _getHeadTitleFontLen() {
     int len = 0;
@@ -109,12 +119,13 @@ class BaseTextLink {
     if (clickedLink != null) {
       if (clickedLink.onTap != null) {
         clickedLink.onTap?.call();
+        return true;
       }
     }
     for (EndBaseIcon endBaseIcon in _endImageArr){
-      endBaseIcon.hitTest(vo, clikpos);
+        endBaseIcon.hitTest(vo, clikpos);
     }
-    return true;
+    return false;
   }
 
   void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
@@ -157,15 +168,27 @@ class BaseTextLink {
       endBaseIcon.draw(canvas, vo, ty);
 
     }
+
+    for (FreeBaseIcon freeBaseIcon in _freeImage) {
+
+      freeBaseIcon.draw(canvas, vo, ty);
+
+    }
   }
   //绘制文本信息
   void _drawBaseTextLink(Canvas canvas, RoomChatCellVo vo, double ty) {
     vo.textLink!.textPainter!.paint(
       canvas,
       Offset(
-        vo.ctxPodding.left,
+        vo.ctxPodding.left+fontBaseLeft,
         vo.ctxPodding.top + vo.rect!.top - ty + multipleLinesH / 2.0,
       ),
+    );
+  }
+  Offset getDrawRect(){
+    return Offset(
+      textPainter!.width+fontBaseLeft,
+        textPainter!.height+multipleLinesH,
     );
   }
 }

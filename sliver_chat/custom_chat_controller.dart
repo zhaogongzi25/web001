@@ -103,10 +103,10 @@ class CustomcChatController {
   }
 
   //清理超出的数量，删除前部分， 当超过1000记录删除前面100条
-  static int maxLen=100;
+  static int maxLen=15;
   void _clearOldData() {
 
-    int killNum = 10;
+    int killNum = 4;
     if (data.length >= maxLen) {
       double killHeight = 0;
       while (data.length > maxLen - killNum) {

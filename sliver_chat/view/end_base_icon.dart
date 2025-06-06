@@ -117,7 +117,7 @@ class EndBaseIcon {
           drawRect.height;
 
       drawToRect = Rect.fromLTWH(
-        ttx - drawRect.left,
+        ttx - drawRect.left+vo.textLink!.fontBaseLeft,
         tty - drawRect.top + vo.textLink!.multipleLinesH / 2.0,
         drawRect.width,
         drawRect.height,

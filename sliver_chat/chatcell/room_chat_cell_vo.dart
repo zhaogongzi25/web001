@@ -87,11 +87,12 @@ class RoomChatCellVo {
   //记算当前cell的尺寸，用于在列表中的排序位置，所有需要显示的对象都是需要进行先记算
   void resize() {
     if (niceImage != null && textLink != null && textLink!.textPainter != null) {
+      Offset wh= textLink!.getDrawRect();
       rect = Rect.fromLTWH(
         0, //初始先设定为0.组织后第一个的宽度，再变量所有记录修改位置用于显示
         0,
-        textLink!.textPainter!.width + (ctxPodding.left + ctxPodding.right),
-        textLink!.textPainter!.height + (ctxPodding.top + ctxPodding.bottom) + textLink!.multipleLinesH,
+        wh.dx+ (ctxPodding.left + ctxPodding.right),
+        wh.dy+ (ctxPodding.top + ctxPodding.bottom)  ,
       );
     } else {
       //现在都是设定有背景和文本的方法 不会出现到这里的显示内容

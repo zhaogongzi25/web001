@@ -1,4 +1,5 @@
 import 'package:data_center/live_old/view_model/my_follow_model.dart';
+import 'package:data_center/models/chat/chat.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../../../view_model/room_msg_model.dart';
@@ -13,12 +14,14 @@ class ModelPack{
   final RoomPageModel roomPageModel;
   final BuildContext chatContext;
 
+
   ModelPack({
     required this.roomMsgModel,
     required this.myFollowModel,
     required this.liveGameModel,
     required this.roomPageModel,
     required this.chatContext,
+
 
   });
 }

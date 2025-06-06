@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:common_base/common_base.dart';
 
+
 import 'package:data_center/live_old/model/data_manager.dart';
 
 import 'package:data_center/live_old/model/room_msg.dart';
@@ -15,12 +16,14 @@ import 'package:data_center/live_old/utility/string.dart';
 
 import 'package:data_center/live_old/widget/style_widget.dart';
 
+
 import 'package:data_center/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:live/page/home/room/sliver_chat/chatcell/chat_event_class.dart';
 import 'package:live/page/home/room/sliver_chat/view/head_base_icon.dart';
 
 import '../view/end_base_icon.dart';
+import '../view/free_base_icon.dart';
 import '../view/tittle_base_icon.dart';
 import '../view/base_text_link.dart';
 
@@ -34,12 +37,42 @@ class RoomChatText extends BaseTextLink {
   RoomChatText({
     required this.roomMsg,
     required this.modelPack,
-    required super.baseStyle, required super.maxWidth,
+    required super.baseStyle,
+    required super.maxWidth,
   });
+
+
+  void _addDujiaXingxi() {
+    fontBaseLeft = 80.w;
+    textContent = '独家主播福利,等你来解锁！尽情畅享私\n密时刻,体验无与伦比的乐趣！';
+
+    addEndImageArr(
+      EndBaseIcon(
+          titleLen: 4,
+          url: 'assets/new_live_room/new_room_chat_card.png',
+          textStyle: baseStyle,
+          boxRect: Rect.fromLTRB(10.w, -10.w, 0.w, 15.w),
+          onTap: () {
+            print('立即解锁');
+            ChatEventClass().onJiesuo(modelPack);
+          }),
+    );
+
+    addFreeImageArr(
+      FreeBaseIcon(
+          url: 'assets/live_room/room_chat_card_title.png',
+          drawRect: Rect.fromLTWH(
+            0,
+            0,
+            70.w,
+            70.w,
+          ),
+          onTap: () {}),
+    );
+  }
 
   @override
   void initData() {
-
     RoomPlayer? player = getRoomPlayerByUserId(roomMsg.userId);
     RoomMsg msg = roomMsg;
     String content = roomMsg.data['content'] ?? '';
@@ -47,19 +80,20 @@ class RoomChatText extends BaseTextLink {
     if (roomMsg.contentType == ChatType.Chat_text) {
       _makeChatText(msg, player!);
       return;
-    }else if (roomMsg.contentType == ChatType.Chat_sys) {
-      _makeChatSys(msg, player!,temp);
+    } else if (roomMsg.contentType == ChatType.Chat_sys) {
+      _makeChatSys(msg, player!, temp);
       return;
     }
     //默认程序不应该到这里，将逐条补充内容
-    textContent='未知--> roomMsg.contentType = ${roomMsg.contentType }  roomMsg.id  =${roomMsg.id} ';
-
-    if (roomMsg.id! < 0) {
+    textContent = '未知--> roomMsg.contentType = ${roomMsg.contentType}  roomMsg.id  =${roomMsg.id} ';
+    if (roomMsg.id == -9999999) {
+      _addDujiaXingxi();
+    } else if (roomMsg.id! < 0) {
       _addSysIcon('系统');
-      if (temp.containsKey('text')&&((temp['text']).toString()).length>0) {
+      if (temp.containsKey('text') && ((temp['text']).toString()).length > 0) {
         textContent = (temp['text']);
-      }else{
-        textContent='信息内容为空。roomMsg.contentType = ${roomMsg.contentType }  roomMsg.id  =${roomMsg.id} ';
+      } else {
+        textContent = '信息内容为空。roomMsg.contentType = ${roomMsg.contentType}  roomMsg.id  =${roomMsg.id} ';
       }
     }
   }
@@ -73,7 +107,6 @@ class RoomChatText extends BaseTextLink {
     return str;
   }
 
-
   //添加用户名，并按等级设置颜色 包含点击
   String _addNikeNameAndTap(RoomMsg msg, RoomPlayer player) {
     links.add({
@@ -86,7 +119,8 @@ class RoomChatText extends BaseTextLink {
     });
     return player.nickname;
   }
-  void _makeChatSys(RoomMsg msg, RoomPlayer player,Map<String, dynamic>  temp){
+
+  void _makeChatSys(RoomMsg msg, RoomPlayer player, Map<String, dynamic> temp) {
     int value = temp['optcode'] ?? 0;
     if (value == ChatContentType.ChatContent_caipiaoXiazhu) {
       _addSysIcon('系统');
@@ -94,13 +128,13 @@ class RoomChatText extends BaseTextLink {
       String cpType = _selLinksStr(temp['cp_type_string'], Colours.text_yellow);
       String totalAmount = _selLinksStr(((temp['total_amount']) / 1.0).toString(), Colours.text_yellow);
       textContent = '用户${nikeName}在${cpType}的玩法中，已成功下注${totalAmount}元';
-      //添加跟注按钮，
+      //添加跟投按钮，
       addEndImageArr(
         EndBaseIcon(
             titleLen: 3,
             url: 'assets/live_game/gentou.png',
             textStyle: baseStyle,
-            boxRect: Rect.fromLTRB(-5.w, -6.w, 5.w, 6.w),
+            boxRect: Rect.fromLTRB(-5.w, -8.w, 5.w, 8.w),
             onTap: () {
               ChatEventClass().onTapGetzhuEvent(temp, modelPack);
             }),
@@ -145,10 +179,11 @@ class RoomChatText extends BaseTextLink {
         : null;
     return player;
   }
-  void _addUserLevelIcon(int level){
+
+  void _addUserLevelIcon(int level) {
     int lv = level;
 
-    double rw = (25 / 2).w;
+    double rw = (30 / 2).w;
     if (lv < 10) {
       if (Platform.isAndroid) {
         rw = 18.w;
@@ -180,8 +215,8 @@ class RoomChatText extends BaseTextLink {
     if (data.containsKey('text')) {
       baseStr = data['text'];
     }
-    textContent = _addNikeNameAndTap(msg, player) + baseStr;
-    _addUserLevelIcon( player.level);
+    textContent = _addNikeNameAndTap(msg, player) +':'+ baseStr;
+    _addUserLevelIcon(player.level);
     //国王图标，网络地址
     String vipIconUrl = getVipIconUrl(player.vipLevel);
     if (vipIconUrl.isNotEmpty) {

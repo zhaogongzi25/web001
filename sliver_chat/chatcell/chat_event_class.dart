@@ -1,9 +1,12 @@
 
 //功能模块
 import 'package:common_base/common_base.dart';
+import 'package:common_base/toast.dart';
+import 'package:common_base/utils.dart';
 import 'package:common_base/utils/utility.dart';
 import 'package:data_center/data_center.dart';
 import 'package:data_center/live_old/constants.dart';
+import 'package:data_center/live_old/manager/preload_mgr.dart';
 import 'package:data_center/live_old/model/data_manager.dart';
 import 'package:data_center/live_old/model/room_msg.dart';
 import 'package:data_center/live_old/model/room_player.dart';
@@ -12,17 +15,106 @@ import 'package:data_center/live_old/utility/colors.dart';
 import 'package:data_center/live_old/utility/string.dart';
 import 'package:data_center/live_old/view_model/my_follow_model.dart';
 import 'package:data_center/live_old/widget/style_widget.dart';
+import 'package:data_center/models/chat/chat.dart';
 import 'package:data_center/utils/chat_utils.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 import 'package:live/page/home/room/sliver_chat/chatcell/model_pack.dart';
+import 'package:wordchat/views/benefit/benefit_dialog.dart';
 
 import '../../../../../view_model/room_msg_model.dart';
 import '../../../../../view_model/room_page_model.dart';
 import '../../live_game_caipiao/model/live_game_model.dart';
 
 class ChatEventClass{
+  void onJiesuo(ModelPack modelPack) async {
+    BuildContext context = modelPack.chatContext;
+    RoomPageModel roomPageModel = modelPack.roomPageModel;
+    UserChat anchor = roomPageModel.anchor!;
+    if (!context.mounted) {
+      return;
+    }
+    if (anchor.isGamePodcast) {
+      Toast.showToast('主播尚未开启私聊');
+      return;
+    }
+    if (dataCenter.userAnchorMgr.isBenefitOpen) {
+      return;
+    }
+    if (dataCenter.clientLimitMgr
+        .getIsButtonDisabled('room_bottom_input')) {
+      return;
+    }
+    dataCenter.clientLimitMgr
+        .setButtonDisabled(true, 'room_bottom_input', 500);
+
+
+
+    if (!dataCenter.userAnchorMgr.isBenefitCanClick)
+      return;
+    dataCenter.userAnchorMgr.isBenefitClick = false;
+
+    // 需要查询的话
+    if (dataCenter.userAnchorMgr.isNeedCheckBenefit) {
+      // 转菊花
+      // showDialog(
+      //     context: context,
+      //     barrierDismissible: false,
+      //     barrierColor: Colors.transparent,
+      //     builder: (_) {
+      //       return Container(
+      //         width: ScreenUtil().screenWidth,
+      //         height: ScreenUtil().screenHeight,
+      //         alignment: Alignment.center,
+      //         child: SpinKitFadingCircle(color: Colours.gray_66),
+      //       );
+      //     });
+      // 请求福利数据
+      await dataCenter.userAnchorMgr.checkBenefitData(
+          roomPageModel.curRoomInfo.id!);
+      // 把菊花pop掉
+      //Routes.instance!.popUntilLivePage(Constants.navigatorKey.currentContext!);
+    }
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      enableDrag: false,
+      barrierColor: Colours.bottom_sheet_black_bg,
+      backgroundColor: Colors.transparent,
+      context: Constants.navigatorKey.currentContext!,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
+        ),
+      ),
+      builder: (context) => Container(
+        decoration: new BoxDecoration(
+          image: DecorationImage(
+            image: preloadMgr.getImageAssetWidget(
+                Utils.getAssetRealPath(
+                    'assets/plugin/wordchat/images/common/bg_benefit.png')),
+            fit: BoxFit.fill,
+          ),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(40.w),
+            topRight: Radius.circular(40.w),
+          ),
+        ),
+        height: 978.w,
+        // color: Colors.red,
+        child: BenefitDialog(
+          roomId: roomPageModel.curRoomInfo.id!,
+          loveValue:
+          dataCenter.anchorSettingMgr.loveValue,
+          isFolder: dataCenter.userAnchorMgr.isFolder,
+          isFriend: dataCenter.userAnchorMgr.isFriend,
+        ),
+      ),
+    );
+
+  }
 
   void onTapNikeName(RoomPlayer roomPlayer, RoomMsg _chatRoom,ModelPack modelPack) {
     if ((
