@@ -52,7 +52,7 @@ class HeadBaseIcon {
       )..layout(minWidth: 0, maxWidth: double.infinity);
       fontRect = textPainter.size;
     } catch (e) {
-
+      print('查看数据');
       print('不应该到这');
     } finally {
 

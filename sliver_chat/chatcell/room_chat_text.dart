@@ -34,7 +34,7 @@ class RoomChatText extends BaseTextLink {
   RoomChatText({
     required this.roomMsg,
     required this.modelPack,
-    required super.baseStyle,
+    required super.baseStyle, required super.maxWidth,
   });
 
   @override
@@ -145,19 +145,9 @@ class RoomChatText extends BaseTextLink {
         : null;
     return player;
   }
+  void _addUserLevelIcon(int level){
+    int lv = level;
 
-//创建聊天内容的文本组织信息
-  void _makeChatText(RoomMsg msg, RoomPlayer player) {
-    String content = roomMsg.getValue('content', null);
-    String baseStr = '';
-    Map<String, dynamic> data = jsonDecode(content);
-    if (data.containsKey('text')) {
-      baseStr = data['text'];
-    }
-
-    textContent = _addNikeNameAndTap(msg, player) + baseStr;
-
-    int lv = player.level;
     double rw = (25 / 2).w;
     if (lv < 10) {
       if (Platform.isAndroid) {
@@ -168,18 +158,30 @@ class RoomChatText extends BaseTextLink {
     } else if (lv > 90 && lv < 100) {
       rw = 18.w;
     }
+
     addIconTittleToHead(
       TittleBaseIcon(
         titleLen: lv >= 100 ? 4 : 3,
         //这里需要优化，如果是100级以上需要加长一个字，还要讨论
-        url: 'assets/new_rank/${getNewRankIcon(player.level)}.png',
+        url: 'assets/new_rank/${getNewRankIcon(lv)}.png',
         textStyle: baseStyle,
         boxRect: Rect.fromLTRB(lv >= 100 ? 4.w : 0.w, 0.w, -2.w, 0.w),
         pos: Offset(28.w - rw, 2.w),
-        title: '${player.level}',
+        title: '$lv',
       ),
     );
+  }
 
+//创建聊天内容的文本组织信息
+  void _makeChatText(RoomMsg msg, RoomPlayer player) {
+    String content = roomMsg.getValue('content', null);
+    String baseStr = '';
+    Map<String, dynamic> data = jsonDecode(content);
+    if (data.containsKey('text')) {
+      baseStr = data['text'];
+    }
+    textContent = _addNikeNameAndTap(msg, player) + baseStr;
+    _addUserLevelIcon( player.level);
     //国王图标，网络地址
     String vipIconUrl = getVipIconUrl(player.vipLevel);
     if (vipIconUrl.isNotEmpty) {

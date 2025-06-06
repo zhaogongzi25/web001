@@ -14,7 +14,7 @@ class BaseTextLink {
   // int headLen = 0;
 
   //基础文本最大宽度
-  double maxWidth = 550.w;
+
 
 
   //多行文本和单行的高度偏移。如多行我们会让记录网往小一点显示，
@@ -25,6 +25,7 @@ class BaseTextLink {
 
   //存放尾部标签一般一个，也有可能会多个，
   List<EndBaseIcon> _endImageArr = [];
+
 
   //标记是否显示
   // bool hide = true;
@@ -44,11 +45,11 @@ class BaseTextLink {
   //文本行数列表，layout后才能有数据
   List<LineMetrics>? lines;
 
-
+ final double maxWidth;
 
   final TextStyle baseStyle;
 
-  BaseTextLink({required this.baseStyle}) {
+  BaseTextLink({required this.baseStyle,required this.maxWidth}) {
     initData();
     _buildToPainter(textContent!, links);
   }
@@ -128,7 +129,7 @@ class BaseTextLink {
     );
     List<InlineSpan> textSpans = spanAndRegionData.item1;
     linkRegions = spanAndRegionData.item2;
-    try {
+
       textPainter = TextPainter(
         text: TextSpan(children: textSpans),
         textDirection: TextDirection.ltr,
@@ -136,12 +137,7 @@ class BaseTextLink {
 
       lines = textPainter?.computeLineMetrics();
       multipleLinesH = lines!.length > 1 ? -2.w : 0.w;
-    } catch (e) {
 
-      print('不应该到这  BaseTextLink');
-    } finally {
-
-    }
 
   }
 

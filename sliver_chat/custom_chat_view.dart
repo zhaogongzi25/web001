@@ -10,12 +10,15 @@ import 'custom_chat_controller.dart';
 //显示聊天室窗口 回调控制器
 class CustomChatView extends StatefulWidget {
   final void Function(CustomcChatController) onCreated;
+  //设置聊天框的宽度
+  final double ctxWidth;
 
-  const CustomChatView({super.key, required this.onCreated});
+  const CustomChatView({super.key, required this.onCreated, required this.ctxWidth});
 
   @override
   _CustomChatViewState createState() => _CustomChatViewState();
 }
+
 
 class _CustomChatViewState extends State<CustomChatView> with SingleTickerProviderStateMixin {
   CustomcChatController? _controller;
@@ -29,6 +32,7 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
     print('CustomChatView  initState');
 
     _controller = CustomcChatController(
+      width: widget.ctxWidth,
       refreshUi: refreshListView,
       scrollController: ScrollController(),
       animationControl: AnimationController(
@@ -36,14 +40,15 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
         duration: Duration(milliseconds: 1000), //这里设置1秒是以后所有需要播放动画可以在这个范围内，参数在移动到底部可选0-1秒来确定滑动时间
       ),
     );
+
     // _controller!.scrollController.addListener(_onScroll);
     widget.onCreated(_controller!);
   }
 
-  Widget _madkScrollButton() {
+  Widget _makeScrollButton() {
     if (_chatScrollButton == null) {
       _chatScrollButton = Container(
-        margin: EdgeInsets.only(left: 25.w, bottom: 5.w),
+        margin: EdgeInsets.only(left: 5.w, bottom: 5.w),
         padding: EdgeInsets.only(left: 15.w, right: 20.w, top: 5.w, bottom: 5.w),
         decoration: new BoxDecoration(
           color: Color(0xEAFFFFFF), // 边色与边宽度
@@ -115,7 +120,7 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
                       _controller!.scrollButtonState.value = false;
                       _controller!.moveBottom();
                     },
-                    child: _madkScrollButton(),
+                    child: _makeScrollButton(),
                   ));
             } else {
               return SizedBox(width: 1, height: 1);

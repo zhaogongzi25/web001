@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:data_center/data_center.dart';
 import 'package:data_center/live_old/model/data_manager.dart';
 import 'package:data_center/live_old/model/room_msg.dart';
 import 'package:data_center/live_old/model/room_player.dart';
 import 'package:data_center/live_old/view_model/my_follow_model.dart';
+import 'package:data_center/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live/page/home/room/live_game_caipiao/model/live_game_model.dart';
@@ -31,10 +33,12 @@ class _SliverMainState extends State<SliverMain> {
   RoomPageModel? _roomPageModel;
   LiveGameModel? _liveGameModel;
   ModelPack? _modelPack;
+  EdgeInsets? chatMargin;
 
   @override
   void initState() {
     super.initState();
+    chatMargin = EdgeInsets.only(right: 182.w - widgetSpanPadding.right);
     _roomMsgModel = Provider.of<RoomMsgModel>(context, listen: false);
     _myFollowModel = Provider.of<MyFollowModel>(context, listen: false);
     _roomPageModel = Provider.of<RoomPageModel>(context, listen: false);
@@ -48,20 +52,15 @@ class _SliverMainState extends State<SliverMain> {
     );
   }
 
+  final Map<int, bool> _useData = {};
+
 //数据显示暂是不改app逻辑硬对比的方法来添加到聊天列表中
   void _refreshMsglIst() {
     if (_customcChatController != null) {
       //暂时直接对应该当前的房间信息，然后显示要显示的记录 进行对比，没有就添加
-      for (int i=0;i< _roomMsgModel!.msgList.length;i++) {
-        RoomMsg roomMsg=_roomMsgModel!.msgList[i];
-        bool needAdd = true;
-        //判断对应的记录在列表中是否已有
-        for (RoomChatCellVo roomChatCellVo in _customcChatController!.data) {
-          if (roomChatCellVo.roomMsg.id == roomMsg.id) {
-            needAdd = false;
-          }
-        }
-        if (needAdd) {
+      for (int i = 0; i < _roomMsgModel!.msgList.length; i++) {
+        RoomMsg roomMsg = _roomMsgModel!.msgList[i];
+        if (!_useData.containsKey(roomMsg.id)) {
           if (roomMsg.id! < 0) {
             ///系统消息
             _makeRoomChatCellVo(roomMsg);
@@ -73,13 +72,21 @@ class _SliverMainState extends State<SliverMain> {
       }
     }
   }
-  void _makeRoomChatCellVo(RoomMsg roomMsg){
-    RoomChatCellVo addVo =
-    RoomChatCellVo(chatController: _customcChatController!, roomMsg: roomMsg, modelPack: _modelPack!);
+
+  void _makeRoomChatCellVo(RoomMsg roomMsg) {
+    _useData.addEntries(<int, bool>{roomMsg.id: true}.entries);
+    print('新添加对象 id = ${roomMsg.id}');
+    RoomChatCellVo addVo = RoomChatCellVo(
+        chatController: _customcChatController!,
+        roomMsg: roomMsg,
+        modelPack: _modelPack!,
+        width: _customcChatController!.width,
+    );
     _customcChatController!.pushData(addVo);
     _customcChatController!.moveBottomOfpushData();
     _refreshMsglIst();
   }
+
   void _createMsglineView(RoomMsg roomMsg, RoomPlayer? player) {
     RoomPlayer? player = RoomChatText.getRoomPlayerByUserId(roomMsg.userId);
     //添加逻辑，还没懂 item.userId == 1的逻辑，
@@ -99,12 +106,18 @@ class _SliverMainState extends State<SliverMain> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.only(left: 20.w, top: 450.w),
-        width: 600.w,
-        height: 450.w,
-        // color: Colors.white,
-        child: _body());
+    double h = dataCenter.pkActivityMgr.activity.chatWidgetH(context);
+    return Column(
+      children: [
+        SizedBox(
+          height: 400.w,
+        ),
+        Container(
+            margin: chatMargin,
+            height: h,
+            child: Container(margin: lineMargin, child: _body()))
+      ],
+    );
   }
 
   Widget _body() {
@@ -119,6 +132,7 @@ class _SliverMainState extends State<SliverMain> {
     //刷新数据的方法还要结合app机制
     _refreshMsglIst();
     return CustomChatView(
+      ctxWidth: ScreenUtil().screenWidth - chatMargin!.right-lineMargin.left,
       onCreated: (CustomcChatController controller) {
         _customcChatController = controller;
         _refreshMsglIst();

@@ -85,16 +85,16 @@ class BaseNineImage {
     final strokePaint = Paint()
       ..color = bgLineColor // 红色边框
       ..style = PaintingStyle.stroke // 描边样式
-      ..strokeWidth = 1.0; // 边框宽度
+      ..strokeWidth = 2.w; // 边框宽度
 
 
     Radius radius = Radius.circular(20.w); // 所有角都使用 20.w 的圆角
     final rrect = RRect.fromRectAndRadius(
         Rect.fromLTWH(
           0,
-          (vo.rect!.top - ty + 1),
+          (vo.rect!.top - ty + 3.w),
           vo.rect!.width,
-          vo.rect!.height - 2,
+          vo.rect!.height - 6.w,
         ),
         radius); // 创建 RRect 对象
     canvas.drawRRect(rrect, fillPaint);
