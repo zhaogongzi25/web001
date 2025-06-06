@@ -54,8 +54,8 @@ class FreeBaseIcon {
           vo.ctxPodding.top  ;
 
       drawToRect = Rect.fromLTWH(
-        ttx - drawRect.left,
-        tty - drawRect.top + vo.textLink!.multipleLinesH / 2.0,
+        ttx + drawRect.left,
+        tty + drawRect.top + vo.textLink!.multipleLinesH / 2.0,
         drawRect.width,
         drawRect.height,
       );

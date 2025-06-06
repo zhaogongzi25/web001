@@ -52,9 +52,10 @@ class BaseTextLink {
 
  final double maxWidth;
 
-  final TextStyle baseStyle;
+ TextStyle? baseStyle;
 
-  BaseTextLink({required this.baseStyle,required this.maxWidth}) {
+  BaseTextLink({required TextStyle textStyle,required this.maxWidth}) {
+    baseStyle=textStyle;
     initData();
     _buildToPainter(textContent!, links);
   }
@@ -135,7 +136,7 @@ class BaseTextLink {
     List<Map<String, dynamic>> linkArr = arr;
     final spanAndRegionData = buildSpansAndRegions(
       fullText: text,
-      baseStyle: baseStyle,
+      baseStyle: baseStyle!,
       linkDefinitions: linkArr,
     );
     List<InlineSpan> textSpans = spanAndRegionData.item1;

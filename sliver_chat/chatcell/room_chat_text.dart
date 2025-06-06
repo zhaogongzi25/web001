@@ -5,7 +5,6 @@ import 'dart:io';
 
 import 'package:common_base/common_base.dart';
 
-
 import 'package:data_center/live_old/model/data_manager.dart';
 
 import 'package:data_center/live_old/model/room_msg.dart';
@@ -15,7 +14,6 @@ import 'package:data_center/live_old/utility/colors.dart';
 import 'package:data_center/live_old/utility/string.dart';
 
 import 'package:data_center/live_old/widget/style_widget.dart';
-
 
 import 'package:data_center/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
@@ -37,20 +35,22 @@ class RoomChatText extends BaseTextLink {
   RoomChatText({
     required this.roomMsg,
     required this.modelPack,
-    required super.baseStyle,
     required super.maxWidth,
+    required super.textStyle,
   });
-
 
   void _addDujiaXingxi() {
     fontBaseLeft = 80.w;
     textContent = '独家主播福利,等你来解锁！尽情畅享私\n密时刻,体验无与伦比的乐趣！';
+    //行距不一样。
+    baseStyle= TextStyle(
+        color: Colors.white, fontSize: 24.sp ,height: 3.sp);
 
     addEndImageArr(
       EndBaseIcon(
           titleLen: 4,
           url: 'assets/new_live_room/new_room_chat_card.png',
-          textStyle: baseStyle,
+          textStyle: baseStyle!,
           boxRect: Rect.fromLTRB(10.w, -10.w, 0.w, 15.w),
           onTap: () {
             print('立即解锁');
@@ -63,7 +63,7 @@ class RoomChatText extends BaseTextLink {
           url: 'assets/live_room/room_chat_card_title.png',
           drawRect: Rect.fromLTWH(
             0,
-            0,
+            15.w,
             70.w,
             70.w,
           ),
@@ -97,6 +97,7 @@ class RoomChatText extends BaseTextLink {
       }
     }
   }
+
 
   //单纯给文本设置颜色，第一次添加都必按顺序排列在文本结构中
   String _selLinksStr(String str, Color color) {
@@ -133,7 +134,7 @@ class RoomChatText extends BaseTextLink {
         EndBaseIcon(
             titleLen: 3,
             url: 'assets/live_game/gentou.png',
-            textStyle: baseStyle,
+            textStyle: baseStyle!,
             boxRect: Rect.fromLTRB(-5.w, -8.w, 5.w, 8.w),
             onTap: () {
               ChatEventClass().onTapGetzhuEvent(temp, modelPack);
@@ -166,7 +167,7 @@ class RoomChatText extends BaseTextLink {
       HeadBaseIcon(
         titleLen: len,
         url: imgUrl,
-        textStyle: baseStyle,
+        textStyle: baseStyle!,
         boxRect: Rect.fromLTRB(0.w, 0.w, 0.w, 0.w),
       ),
     );
@@ -199,7 +200,7 @@ class RoomChatText extends BaseTextLink {
         titleLen: lv >= 100 ? 4 : 3,
         //这里需要优化，如果是100级以上需要加长一个字，还要讨论
         url: 'assets/new_rank/${getNewRankIcon(lv)}.png',
-        textStyle: baseStyle,
+        textStyle: baseStyle!,
         boxRect: Rect.fromLTRB(lv >= 100 ? 4.w : 0.w, 0.w, -2.w, 0.w),
         pos: Offset(28.w - rw, 2.w),
         title: '$lv',
@@ -215,7 +216,7 @@ class RoomChatText extends BaseTextLink {
     if (data.containsKey('text')) {
       baseStr = data['text'];
     }
-    textContent = _addNikeNameAndTap(msg, player) +':'+ baseStr;
+    textContent = _addNikeNameAndTap(msg, player) + ':' + baseStr;
     _addUserLevelIcon(player.level);
     //国王图标，网络地址
     String vipIconUrl = getVipIconUrl(player.vipLevel);
@@ -225,7 +226,7 @@ class RoomChatText extends BaseTextLink {
         TittleBaseIcon(
           titleLen: 4,
           url: 'assets/new_rank/rank_61_70.png',
-          textStyle: baseStyle,
+          textStyle: baseStyle!,
           boxRect: Rect.fromLTRB(0.w, 0.w, -2.w, 0.w),
           pos: Offset(14.w, 2.w),
           title: "国王",
@@ -239,7 +240,7 @@ class RoomChatText extends BaseTextLink {
           boxRect: Rect.fromLTRB(-2.w, 0.w, -2.w, 0.w),
           titleLen: 2,
           url: 'assets/common/room_admin.png',
-          textStyle: baseStyle,
+          textStyle: baseStyle!,
         ),
       );
     }
@@ -250,7 +251,7 @@ class RoomChatText extends BaseTextLink {
           titleLen: 2,
           boxRect: Rect.fromLTRB(-2.w, 0.w, -2.w, 0.w),
           url: 'assets/common/icon_luckey_num.png',
-          textStyle: baseStyle,
+          textStyle: baseStyle!,
         ),
       );
     }
@@ -260,7 +261,7 @@ class RoomChatText extends BaseTextLink {
         TittleBaseIcon(
           titleLen: 2,
           url: 'assets/live_game/gametype_v3/panlu/bg_red.png',
-          textStyle: baseStyle,
+          textStyle: baseStyle!,
           boxRect: Rect.fromLTRB(-2.w, 0.w, -2.w, 0.w),
           pos: Offset(0.w, 4.w),
           title: "守",

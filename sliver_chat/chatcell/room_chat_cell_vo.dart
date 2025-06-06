@@ -19,9 +19,10 @@ class RoomChatCellVo {
   // right: isShouldWrap! ? 16.w : 8.w),
   Rect ctxPodding = Rect.fromLTRB(12.w, 8.w, 16.w, 8.w);
 
-  //基础文本颜色，
+  //基础文本颜色，字号，行距，
+  //   height ??= 2.5.w;  //默认
   TextStyle textStyle =
-      TextStyle(color: Colors.white, fontSize: 24.sp, height: 2.5.w, fontWeight: FontWeight.w400); //原来chat的数值
+      TextStyle(color: Colors.white, fontSize: 24.sp, height: 2.5.sp, fontWeight: FontWeight.w400); //原来chat的数值
 
   //最终绘制的矩形。top为起始位置， height为当条记录的高度
   Rect? rect;
@@ -47,7 +48,7 @@ class RoomChatCellVo {
     initData();
     resize();
   }
-
+  
 
   void dispose() {
     // print('dispose  RoomChatCellVo');
@@ -64,12 +65,10 @@ class RoomChatCellVo {
     textLink = RoomChatText(
       roomMsg: roomMsg,
       modelPack: modelPack,
-      baseStyle: textStyle,
-      maxWidth: width-ctxPodding.left-ctxPodding.right,
+      textStyle: textStyle,
+      maxWidth: width - ctxPodding.left - ctxPodding.right,
     );
-
   }
-
 
   //传递点击事件
   bool hitTest(RoomChatCellVo vo, Offset clikPos) {
@@ -87,12 +86,12 @@ class RoomChatCellVo {
   //记算当前cell的尺寸，用于在列表中的排序位置，所有需要显示的对象都是需要进行先记算
   void resize() {
     if (niceImage != null && textLink != null && textLink!.textPainter != null) {
-      Offset wh= textLink!.getDrawRect();
+      Offset wh = textLink!.getDrawRect();
       rect = Rect.fromLTWH(
         0, //初始先设定为0.组织后第一个的宽度，再变量所有记录修改位置用于显示
         0,
-        wh.dx+ (ctxPodding.left + ctxPodding.right),
-        wh.dy+ (ctxPodding.top + ctxPodding.bottom)  ,
+        wh.dx + (ctxPodding.left + ctxPodding.right),
+        wh.dy + (ctxPodding.top + ctxPodding.bottom),
       );
     } else {
       //现在都是设定有背景和文本的方法 不会出现到这里的显示内容
