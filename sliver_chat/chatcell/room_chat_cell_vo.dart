@@ -39,12 +39,15 @@ class RoomChatCellVo {
   //传入房间的聊天信息
   final RoomMsg roomMsg;
 
+  //数据对象包，存放要向下传递的model
   final ModelPack modelPack;
 
+  //传入聊天框宽度， 最能设置每行最大自动换行
   final double width;
 
 
-  int idnum=9;
+  //临时独立id用测试传递测试内网存变化
+  int idnum=0;
   static int  skipNum=0;
   //传入房间信息roomMsg 和chatController控制器
   RoomChatCellVo({required this.roomMsg, required this.modelPack, required this.width, required this.chatController}) {
@@ -62,17 +65,15 @@ class RoomChatCellVo {
   void initData() {
     niceImage = BaseNineImage(
       chatController: chatController,
-      // url: 'https://zhaogongzi25.github.io/web001/bg_216_96.png',
       nineSize: 10, //只能是像素，不需要.w
     );
-
     textLink = RoomChatText(
-
       roomMsg: roomMsg,
       modelPack: modelPack,
       textStyle: textStyle,
       maxWidth: width - ctxPodding.left - ctxPodding.right,
     );
+
   }
 
   //传递点击事件

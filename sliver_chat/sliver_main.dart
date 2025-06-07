@@ -12,8 +12,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live/page/home/room/live_game_caipiao/model/live_game_model.dart';
 import 'package:live/page/home/room/sliver_chat/chatcell/model_pack.dart';
 import 'package:live/page/home/room/sliver_chat/chatcell/room_chat_cell_vo.dart';
-import '../../../../view_model/room_msg_model.dart';
-import '../../../../view_model/room_page_model.dart';
+ 
+
+import 'package:live/view_model/room_msg_model.dart';
+import 'package:live/view_model/room_page_model.dart';
+
+
 import 'chatcell/room_chat_text.dart';
 import 'custom_chat_controller.dart';
 import 'custom_chat_view.dart';
@@ -33,6 +37,7 @@ class _SliverMainState extends State<SliverMain> {
   MyFollowModel? _myFollowModel;
   RoomPageModel? _roomPageModel;
   LiveGameModel? _liveGameModel;
+  // RoomPagePodCastModel? _roomPagePodCastModel;
   ModelPack? _modelPack;
   EdgeInsets? chatMargin;
 
@@ -44,6 +49,8 @@ class _SliverMainState extends State<SliverMain> {
     _myFollowModel = Provider.of<MyFollowModel>(context, listen: false);
     _roomPageModel = Provider.of<RoomPageModel>(context, listen: false);
     _liveGameModel = Provider.of<LiveGameModel>(context, listen: false);
+    // _roomPagePodCastModel =
+    //     Provider.of<RoomPagePodCastModel>(context, listen: false);
     _modelPack = ModelPack(
       roomMsgModel: _roomMsgModel!,
       myFollowModel: _myFollowModel!,

@@ -43,14 +43,12 @@ class HeadBaseIcon {
 
   //计算占用空间矩形，用于绘制对应该图标和文本内容的前部空格
   void _mathIconUseRect() {
-
-      TextStyle baseStyle = textStyle;
-      TextPainter textPainter = TextPainter(
-        text: TextSpan(text: _getTittleStr(), style: baseStyle),
-        textDirection: TextDirection.ltr,
-      )..layout(minWidth: 0, maxWidth: double.infinity);
-      fontRect = textPainter.size;
-
+    TextStyle baseStyle = textStyle;
+    TextPainter textPainter = TextPainter(
+      text: TextSpan(text: _getTittleStr(), style: baseStyle),
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: double.infinity);
+    fontRect = textPainter.size;
   }
 
   //获取Icon的宽度，
@@ -76,16 +74,16 @@ class HeadBaseIcon {
       Rect drawRect = Rect.fromLTWH(
         boxRect.left,
         boxRect.top,
-        fontRect!.width + boxRect.left + boxRect.right,
-        fontRect!.height + boxRect.top + boxRect.bottom,
+        boxRect.width,
+        boxRect.height,
       );
       double ttx = vo.ctxPodding.left + startLeft;
       double tty = vo.rect!.top - ty + vo.ctxPodding.top;
       drawToRect = Rect.fromLTWH(
         ttx - drawRect.left,
         tty - drawRect.top + vo.textLink!.multipleLinesH / 2.0,
-        drawRect.width,
-        drawRect.height,
+        boxRect.width,
+        boxRect.height,
       );
       //显示背景区域
       if (!_hideRectBg) {
@@ -97,15 +95,10 @@ class HeadBaseIcon {
       //绘制底图
       int imgW = _bgImage!.width;
       int imgH = _bgImage!.height;
-      double scale = max(imgW / drawRect.width, imgH / drawRect.height);
+
       Rect srcRect = Rect.fromLTWH(0.0, 0.0, imgW * 1.0, imgH * 1.0);
-      Rect dstRect = Rect.fromLTWH(
-        drawToRect!.left + (drawToRect!.width - imgW / scale) / 2.0,
-        drawToRect!.top + (drawToRect!.height - imgH / scale) / 2.0,
-        imgW / scale,
-        imgH / scale,
-      );
-      canvas.drawImageRect(_bgImage!, srcRect, dstRect, Paint());
+
+      canvas.drawImageRect(_bgImage!, srcRect, drawToRect!, Paint());
       //绘制文本
     }
   }
