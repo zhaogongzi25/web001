@@ -84,10 +84,10 @@ class BaseTextLink {
   }
 
   //获得头部共有的Icon图标占用的文本宽度，用于显示文本缩进位置
-  int _getHeadTitleFontLen() {
-    int len = 0;
+  double _getHeadTitleFontLen() {
+    double len = 0;
     for (HeadBaseIcon baseTittle in _headImageArr) {
-      len += baseTittle.titleLen;
+      len += baseTittle.titleLen.ceil();
     }
     return len;
   }

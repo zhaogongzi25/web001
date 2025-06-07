@@ -276,7 +276,7 @@ class RoomChatText extends BaseTextLink {
       //踢人 2
       _addSysIcon('系统');
       String nickname = _selLinksStr(temp['nickname'], Colours.text_blue);
-      textContent = nickname + S.current.l_id_10174;
+      textContent = nickname +':'+ S.current.l_id_10174;
     } else if (value == ChatContentType.ChatContent_liwu) {
       //礼物 3
       Item? iteminfo;
@@ -300,7 +300,7 @@ class RoomChatText extends BaseTextLink {
         String nikeName = _addNikeNameAndTap(msg, player);
         String itemInfoName = _selLinksStr('[$s]', Color(0xfff4de98), fontWeight: FontWeight.w400);
         String count = _selLinksStr(' x${temp['count']}', Color(0xfff4de98), fontWeight: FontWeight.w400);
-        textContent = addStr+nikeName + S.current.l_id_10167 + itemInfoName + count;
+        textContent = addStr+nikeName+':' + S.current.l_id_10167 + itemInfoName + count;
         //名字送出礼物x数量
       }
     } else if (value == ChatContentType.ChatContent_guanzhu) {
@@ -440,7 +440,7 @@ class RoomChatText extends BaseTextLink {
   }
 
   //对头部图标的统一入口，只包含了图片，
-  void _addHeadBaseIcon({required int len, required String imgUrl}) {
+  void _addHeadBaseIcon({required double len, required String imgUrl}) {
     addIconTittleToHead(
       HeadBaseIcon(
         titleLen: len,
@@ -461,27 +461,31 @@ class RoomChatText extends BaseTextLink {
 
   String _addUserLevelIcon(int level) {
     int lv = level;
-
+    // lv=95;
     double lw = 15.w;
     double tw=86.w;
-    String addStr="   ";//空格偏移
+    double titleLen=3.5;
+    String addStr="";//空格偏移
     if (lv < 10) {
       lw = 20.w;
       tw=80.w;
-      addStr='  ';
+      addStr='   ';
+      titleLen=3.0;
     } else if (lv > 90 && lv < 100) {
       lw = 15.w;
       tw=92.w;
-      addStr="    ";
+      addStr="";
+      titleLen=4;
     } else if (lv>= 100) {
       lw = 18.w;
       tw=92.w;
-      addStr="   ";
+      addStr="";
+      titleLen=4;
     }
 
     addIconTittleToHead(
       TittleBaseIcon(
-        titleLen: 4,
+        titleLen: titleLen,
         //这里需要优化，如果是100级以上需要加长一个字，还要讨论
         url: 'assets/new_rank/${getNewRankIcon(lv)}.png',
         textStyle: baseStyle!,
@@ -490,7 +494,9 @@ class RoomChatText extends BaseTextLink {
         title: '$lv',
       ),
     );
-    return '';
+    return addStr;
+
+
   }
 
   //用户多个icon

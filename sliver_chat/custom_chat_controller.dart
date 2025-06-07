@@ -39,6 +39,9 @@ class CustomcChatController {
     required this.refreshUi, // 需要传入 setState 或类似的刷新函数
     required this.width, //
   }) {
+
+
+
     maxLen=   dataMgr.getConfig(ConfigKeys.livechatnumyh_open) ?? 200;
     animationControl.addListener(() {
       // 确保 ScrollController 已经 attached 到一个 Scrollable

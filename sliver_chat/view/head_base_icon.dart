@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui' as ui;
+import 'package:common_base/common_base.dart';
 import 'package:flutter/material.dart';
 import '../chatcell/room_chat_cell_vo.dart';
 import 'image_load_manager.dart';
@@ -12,13 +13,13 @@ class HeadBaseIcon {
   ui.Image? _bgImage;
 
   //空格文本大小
-  Size? fontRect;
+  // Size? fontRect;
 
   //图像偏移，默认为0,0,0,0;计算出来的文字空间再扩展
   final Rect boxRect;
 
   //设定图片占用的文字宽度。用的是空格数量，和字号关联，做到图片和文字同比
-  final int titleLen;
+  final double titleLen;
 
   //文字的字号
   final TextStyle textStyle;
@@ -41,30 +42,20 @@ class HeadBaseIcon {
 
   void initData() {}
 
-  //计算占用空间矩形，用于绘制对应该图标和文本内容的前部空格
+  //单利只算一次，找个地方，记得，不要写在这里
+
   void _mathIconUseRect() {
-    TextStyle baseStyle = textStyle;
-    TextPainter textPainter = TextPainter(
-      text: TextSpan(text: _getTittleStr(), style: baseStyle),
-      textDirection: TextDirection.ltr,
-    )..layout(minWidth: 0, maxWidth: double.infinity);
-    fontRect = textPainter.size;
+
+
   }
 
+ static double? sampleCodeWidth; //一个空字符的宽度
   //获取Icon的宽度，
   double getWidth() {
-    return fontRect!.width;
+    double tw=sampleCodeWidth??20.w;  //应该到这里都算好了，
+    return tw*titleLen;
   }
-
   //传入TittleLen来标记图标的宽度，将和本字号关联，做到同比缩放
-  String _getTittleStr() {
-    String addStr = '';
-    for (int i = 0; i < titleLen; i++) {
-      addStr += '\u2003';
-    }
-    return addStr;
-  }
-
   //绘制的区域，这是在列表表中对应该布局坐标
   Rect? drawToRect;
 
