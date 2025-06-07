@@ -265,9 +265,10 @@ class RoomChatText extends BaseTextLink {
       RoomPlayer? tempPlay = dataMgr.findObj(TableNames.roomPlayer, temp['user_id']) as RoomPlayer?;
       _addSysIcon('系统');
       if (tempPlay != null) {
-        createPlayInfoView(tempPlay);
+        String addstr= createPlayInfoView(tempPlay);
         var baseStr = flag ? S.current.l_id_10168 : (isGlobal ? S.current.l_id_14516 : S.current.l_id_10169);
-        textContent = _addNikeNameAndTap(msg, tempPlay) + baseStr + time_str;
+        textContent = addstr+_addNikeNameAndTap(msg, tempPlay) + baseStr +  _selLinksStr(time_str,Colors.red);
+
       } else {
         textContent = '禁言  RoomPlayer  为空';
       }
@@ -291,14 +292,15 @@ class RoomChatText extends BaseTextLink {
         textContent = nikeName + S.current.l_id_14581 + itemInfoName + S.current.l_id_14582;
         //名字开通了xx，以后就是一家人；
       } else {
-        textContent = msg.content!.text;
+        String addStr='';
+
         if (!(roomPlayer.mysteryMan > 0 && roomPlayer.id != dataCenter.mainUser.id)) {
-          createPlayInfoView(roomPlayer);
+          addStr= createPlayInfoView(roomPlayer);
         }
         String nikeName = _addNikeNameAndTap(msg, player);
         String itemInfoName = _selLinksStr('[$s]', Color(0xfff4de98), fontWeight: FontWeight.w400);
         String count = _selLinksStr(' x${temp['count']}', Color(0xfff4de98), fontWeight: FontWeight.w400);
-        textContent = nikeName + S.current.l_id_10167 + itemInfoName + count;
+        textContent = addStr+nikeName + S.current.l_id_10167 + itemInfoName + count;
         //名字送出礼物x数量
       }
     } else if (value == ChatContentType.ChatContent_guanzhu) {
@@ -369,8 +371,9 @@ class RoomChatText extends BaseTextLink {
         }
         //显示相应短语
         if (idx < paraseList.length) {
-          textContent = _addNikeNameAndTap(msg, player) + ':' + paraseList[idx];
-          createPlayInfoView(player);
+        String addStr=   createPlayInfoView(player);
+          textContent =addStr+ _addNikeNameAndTap(msg, player) + ':' + paraseList[idx];
+
         }
       } else {
         textContent = '未知数据 --- optcode = $value';
@@ -456,39 +459,47 @@ class RoomChatText extends BaseTextLink {
     return player;
   }
 
-  void _addUserLevelIcon(int level) {
+  String _addUserLevelIcon(int level) {
     int lv = level;
 
-    double rw = (30 / 2).w;
+    double lw = 15.w;
+    double tw=86.w;
+    String addStr="   ";//空格偏移
     if (lv < 10) {
-      if (Platform.isAndroid) {
-        rw = 18.w;
-      } else {
-        rw = 15.w;
-      }
+      lw = 20.w;
+      tw=80.w;
+      addStr='  ';
     } else if (lv > 90 && lv < 100) {
-      rw = 18.w;
+      lw = 15.w;
+      tw=92.w;
+      addStr="    ";
+    } else if (lv>= 100) {
+      lw = 18.w;
+      tw=92.w;
+      addStr="   ";
     }
 
     addIconTittleToHead(
       TittleBaseIcon(
-        titleLen: lv >= 100 ? 4 : 4,
+        titleLen: 4,
         //这里需要优化，如果是100级以上需要加长一个字，还要讨论
         url: 'assets/new_rank/${getNewRankIcon(lv)}.png',
         textStyle: baseStyle!,
-        boxRect: Rect.fromLTRB(lv >= 100 ? 4.w : 0.w, 0.w, lv >= 100 ? 96.w : 86.w, 32.w),
-        pos: Offset(28.w - rw, 2.w),
+        boxRect: Rect.fromLTRB(lv >= 100 ? 4.w : 0.w, 0.w, tw, 32.w),
+        pos: Offset(  lw, 2.w),
         title: '$lv',
       ),
     );
+    return '';
   }
 
   //用户多个icon
-  void createPlayInfoView(RoomPlayer player) {
+  String createPlayInfoView(RoomPlayer player) {
+    String backStr='';
     if(_isMysteryPlayer(player)){
-      return;
+      return backStr;
     }
-    _addUserLevelIcon(player.level);
+    backStr=  _addUserLevelIcon(player.level);
     //国王图标，网络地址
     String vipIconUrl = getVipIconUrl(player.vipLevel);
     if (vipIconUrl.isNotEmpty) {
@@ -504,7 +515,7 @@ class RoomChatText extends BaseTextLink {
         ),
       );
     }
-    //是否为国王，应该判断是管理者
+    //，应该判断是管理者
     if (player.roomAdmin > 0) {
       addIconTittleToHead(
         HeadBaseIcon(
@@ -539,6 +550,7 @@ class RoomChatText extends BaseTextLink {
         ),
       );
     }
+    return backStr;
   }
 
 //创建聊天内容的文本组织信息
@@ -549,7 +561,9 @@ class RoomChatText extends BaseTextLink {
     if (data.containsKey('text')) {
       baseStr = data['text'];
     }
-    textContent = _addNikeNameAndTap(msg, player) + ':' + baseStr;
-    createPlayInfoView(player);
+    String addStr=   createPlayInfoView(player);
+    textContent = addStr+_addNikeNameAndTap(msg, player) + ':' + baseStr;
+
   }
+
 }
