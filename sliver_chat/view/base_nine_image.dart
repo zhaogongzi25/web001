@@ -38,58 +38,66 @@ class BaseNineImage {
       _drawVoNineGridImg(canvas, vo, Offset(0.0, vo.rect!.top - ty));
     }
   }
-
+  Color? bgLineColor;
+  Color? bgColor;
+  double borderWidth = 2.w;
   //绘制9宫格单色没图背景
   void _drawRoundRedBg(Canvas canvas, RoomChatCellVo vo, double ty) {
-    int vipLevel = 0;
+    if(bgLineColor==null||bgColor==null) {
+      int vipLevel = 0;
+      int roomAdmin = 0;
 
+      print('找到了角色player.roomAdmin ');
+      RoomPlayer? player = RoomChatText.getRoomPlayerByUserId(vo.roomMsg.userId);
+      if (player != null) {
+        vipLevel = player.vipLevel;
+        roomAdmin = player.roomAdmin;
+        print('找到了角色player.roomAdmin ${player.roomAdmin}');
+      }
 
-    RoomPlayer? player =RoomChatText.getRoomPlayerByUserId(vo.roomMsg.userId);
-    if (player != null) {
-      vipLevel = player.vipLevel;
-    }
-
-
-    Color bgLineColor;
-    Color bgColor;
-    switch (vipLevel) {
-      case 5:
+      switch (vipLevel) {
+        case 5:
         // 侯爵 - 蓝色
-        bgLineColor = const Color(0xff00BFFF);
-        bgColor = const Color(0x300053c4);
+          bgLineColor = const Color(0xff00BFFF);
+          bgColor = const Color(0x300053c4);
 
-        break;
-      case 6:
+          break;
+        case 6:
         // 公爵 -紫色
-        bgLineColor = const Color(0xffff00ff);
-        bgColor = const Color(0x308707c2);
+          bgLineColor = const Color(0xffff00ff);
+          bgColor = const Color(0x308707c2);
 
-        break;
-      case 7:
+          break;
+        case 7:
         // 国王 -玫红
-        bgLineColor = const Color(0xffff1493);
-        bgColor = const Color(0x30c30e5d);
-
-        break;
-      default:
-        bgLineColor = Colors.black12;
-        bgColor = Colours.public_transparent_bg;
-
-        break;
+          bgLineColor = const Color(0xffff1493);
+          bgColor = const Color(0x30c30e5d);
+          break;
+        default:
+          if (roomAdmin > 0) {
+            bgLineColor = const Color(0XFF8773FD);
+            bgColor = Colours.public_transparent_bg;
+            borderWidth = 3.w;
+          } else {
+            bgLineColor = Colors.transparent;
+            bgColor = Colours.public_transparent_bg;
+          }
+          break;
+      }
     }
 
     final fillPaint = Paint()
-      ..color = bgColor // 黑半透明 (这里使用了 50% 透明度)
+      ..color = bgColor! // 黑半透明 (这里使用了 50% 透明度)
       ..style = PaintingStyle.fill; // 填充样式
 
     final strokePaint = Paint()
-      ..color = bgLineColor // 红色边框
+      ..color = bgLineColor! // 红色边框
       ..style = PaintingStyle.stroke // 描边样式
-      ..strokeWidth = 2.w; // 边框宽度
+      ..strokeWidth =borderWidth; // 边框宽度
 
 
     Radius radius = Radius.circular(20.w); // 所有角都使用 20.w 的圆角
-    final rrect = RRect.fromRectAndRadius(
+    final rRect = RRect.fromRectAndRadius(
         Rect.fromLTWH(
           0,
           (vo.rect!.top - ty + 3.w),
@@ -97,9 +105,10 @@ class BaseNineImage {
           vo.rect!.height - 6.w,
         ),
         radius); // 创建 RRect 对象
-    canvas.drawRRect(rrect, fillPaint);
-    canvas.drawRRect(rrect, strokePaint);
+    canvas.drawRRect(rRect, fillPaint);
+    canvas.drawRRect(rRect, strokePaint);
   }
+
 
   //绘制9宫格背景
   void _drawVoNineGridImg(Canvas canvas, RoomChatCellVo vo, Offset pos) {

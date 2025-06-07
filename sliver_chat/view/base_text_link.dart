@@ -84,12 +84,14 @@ class BaseTextLink {
   }
 
   //获得头部共有的Icon图标占用的文本宽度，用于显示文本缩进位置
-  double _getHeadTitleFontLen() {
+  int _getHeadTitleFontLen() {
     double len = 0;
     for (HeadBaseIcon baseTittle in _headImageArr) {
-      len += baseTittle.titleLen.ceil();
+      len += baseTittle.titleLen;
     }
-    return len;
+
+    return len.floor();
+
   }
 
   //获取头部的空格文本
@@ -98,6 +100,7 @@ class BaseTextLink {
     for (int i = 0; i < _getHeadTitleFontLen(); i++) {
       addStr += '\u2003';
     }
+    print(' _getHeadTitleFontLen() ${ _getHeadTitleFontLen()}');
     return addStr;
   }
 
@@ -135,7 +138,7 @@ class BaseTextLink {
   void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
     String addStr = _getHeadEmptyStr();
-    String text = addStr + str;
+    String text = addStr+str;
     List<Map<String, dynamic>> linkArr = arr;
     final spanAndRegionData = buildSpansAndRegions(
       fullText: text,

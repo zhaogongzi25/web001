@@ -239,6 +239,7 @@ class RoomChatText extends BaseTextLink {
   String _addNikeNameAndTap(RoomMsg msg, RoomPlayer player) {
     bool mystery =_isMysteryPlayer(player);
     String nickName = mystery ? '神秘人' : player.nickname;
+    nickName="名"+nickName;
     Color color = player.vipLevel > 0 ? Colours.chat_user_vip : Colours.text_blue;
     links.add({
       'text': nickName,
@@ -354,10 +355,11 @@ class RoomChatText extends BaseTextLink {
         reson = S.current.l_id_14378;
       }
       if (temp['user_id'] == dataCenter.mainUser.id) {
-        textContent = S.current.l_id_14379 + reson;
+        textContent =S.current.l_id_14379 + reson;
+        //弹框
         //直播助手的提示框没添加
       } else {
-        textContent = _selLinksStr(S.current.l_id_14380, Colors.white, fontWeight: FontWeight.w600);
+        textContent ='${msg.content!.text }' + _selLinksStr(S.current.l_id_14380, Colors.white, fontWeight: FontWeight.w600);
       }
     } else if (value == ChatContentType.ChatContent_shortId) {
       //短语 18
@@ -461,36 +463,35 @@ class RoomChatText extends BaseTextLink {
 
   String _addUserLevelIcon(int level) {
     int lv = level;
-    // lv=95;
-    double lw = 15.w;
-    double tw=86.w;
-    double titleLen=3.5;
-    String addStr="";//空格偏移
+
+    double lw = 12.w;
+    double titleLen=3.4;
+    String addStr=" ";//空格偏移
+    Rect rect= Rect.fromLTWH(0.w , 2.w, 76.w, 28.w);
     if (lv < 10) {
-      lw = 20.w;
-      tw=80.w;
-      addStr='   ';
-      titleLen=3.0;
+      lw = 16.w;
+      rect= Rect.fromLTWH(0.w , 2.w, 72.w, 28.w);
+      addStr=' ';
+      titleLen=3.1;
     } else if (lv > 90 && lv < 100) {
       lw = 15.w;
-      tw=92.w;
-      addStr="";
-      titleLen=4;
+      rect= Rect.fromLTWH(0.w , 0.w, 86.w, 30.w);
+      addStr="   ";
+      titleLen=3.6;
     } else if (lv>= 100) {
       lw = 18.w;
-      tw=92.w;
-      addStr="";
-      titleLen=4;
+      rect= Rect.fromLTWH(0.w , 0.w, 86.w, 30.w);
+      addStr="   ";
+      titleLen=3.6;
     }
 
     addIconTittleToHead(
       TittleBaseIcon(
         titleLen: titleLen,
-        //这里需要优化，如果是100级以上需要加长一个字，还要讨论
         url: 'assets/new_rank/${getNewRankIcon(lv)}.png',
         textStyle: baseStyle!,
-        boxRect: Rect.fromLTRB(lv >= 100 ? 4.w : 0.w, 0.w, tw, 32.w),
-        pos: Offset(  lw, 2.w),
+        boxRect: rect,
+        pos: Offset(  lw, 0.w),
         title: '$lv',
       ),
     );
@@ -525,8 +526,8 @@ class RoomChatText extends BaseTextLink {
     if (player.roomAdmin > 0) {
       addIconTittleToHead(
         HeadBaseIcon(
-          boxRect: Rect.fromLTWH(0.w, 0.w, 32.w, 32.w),
-          titleLen: 2,
+          boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
+          titleLen: 1.5,
           url: 'assets/common/room_admin.png',
           textStyle: baseStyle!,
         ),
@@ -536,8 +537,8 @@ class RoomChatText extends BaseTextLink {
     if (player.luckNum != null && player.luckNum! > 0) {
       addIconTittleToHead(
         HeadBaseIcon(
-          titleLen: 2,
-          boxRect: Rect.fromLTWH(0.w, 0.w, 32.w, 32.w),
+          titleLen: 1.5,
+          boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
           url: 'assets/common/icon_luckey_num.png',
           textStyle: baseStyle!,
         ),
@@ -546,14 +547,12 @@ class RoomChatText extends BaseTextLink {
     if (player.userDefend > 0) //守护图标
     {
       addIconTittleToHead(
-        TittleBaseIcon(
-          titleLen: 2,
-          url: 'assets/live_game/gametype_v3/panlu/bg_red.png',
-          textStyle: baseStyle!,
-          boxRect: Rect.fromLTRB(0.w, 0.w, 32.w, 32.w),
-          pos: Offset(0.w, 4.w),
-          title: "守",
-        ),
+      HeadBaseIcon(
+        titleLen: 1.5,
+        boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
+        url: 'assets/common/icon_luckey_num.png',
+        textStyle: baseStyle!,
+      ),
       );
     }
     return backStr;

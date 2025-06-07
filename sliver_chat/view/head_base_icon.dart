@@ -27,6 +27,7 @@ class HeadBaseIcon {
   //是否绘制测试的背景区域颜色， 用于调整当前字号，正式版本删除绘制测试区域的方法，
   bool _hideRectBg = true;
 
+
   HeadBaseIcon({
     required String url,
     required this.textStyle,
@@ -71,18 +72,25 @@ class HeadBaseIcon {
       double ttx = vo.ctxPodding.left + startLeft;
       double tty = vo.rect!.top - ty + vo.ctxPodding.top;
       drawToRect = Rect.fromLTWH(
-        ttx - drawRect.left,
-        tty - drawRect.top + vo.textLink!.multipleLinesH / 2.0,
+        ttx + drawRect.left,
+        tty + drawRect.top + vo.textLink!.multipleLinesH / 2.0,
         boxRect.width,
         boxRect.height,
       );
       //显示背景区域
+      // _hideRectBg=false;
       if (!_hideRectBg) {
         canvas.drawRect(
-          drawToRect!, // Draw only the visible intersection
-          Paint()..color = Colors.green,
+          Rect.fromLTWH(
+            ttx,
+            tty,
+            getWidth(),
+            32.w,
+          ), // Draw only the visible intersection
+          Paint()..color = Color(0xFF000000 | Random().nextInt(0xFFFFFF + 1)),
         );
       }
+
       //绘制底图
       int imgW = _bgImage!.width;
       int imgH = _bgImage!.height;
