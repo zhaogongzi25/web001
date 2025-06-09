@@ -109,12 +109,14 @@ class _SliverMainState extends State<SliverMain> {
       for (int i = 0; i < _roomMsgModel!.msgList.length; i++) {
         RoomMsg roomMsg = _roomMsgModel!.msgList[i];
         if (!_useData.containsKey(roomMsg.id)) {
-          if (roomMsg.id! < 0) {
+          if (roomMsg.id < 0) {
             ///系统消息。不需要判断用户信息是否在内存中
             _makeRoomChatCellVo(roomMsg);
           } else {
+
             _createMsglineView(roomMsg, null);
           }
+
           return;
         }
       }

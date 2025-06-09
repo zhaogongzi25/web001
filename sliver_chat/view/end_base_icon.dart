@@ -43,7 +43,7 @@ class EndBaseIcon {
 
   bool hitTest(RoomChatCellVo vo, Offset clikPos) {
     //写法有点罗说，需要在创建的时候就算出位置
-
+ print(clikPos);
     LineMetrics lineMetrics =
         vo.textLink!.lines![vo.textLink!.lines!.length - 1];
 

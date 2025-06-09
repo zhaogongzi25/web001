@@ -121,7 +121,7 @@ class CustomChatRenderSliver extends RenderSliver {
           continue;
         }
         if (hitCrossAxis < vo.ctxPodding.left ||
-            hitCrossAxis > vo.width - vo.ctxPodding.right) {
+            hitCrossAxis > vo.width- vo.ctxPodding.right) {
           //左右边界超出，跳过
           continue;
         }

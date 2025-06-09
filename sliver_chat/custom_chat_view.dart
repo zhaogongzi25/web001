@@ -91,9 +91,9 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
     if (_controller!.dragScrollEvent) {
       double currentOffset = _controller!.scrollController.offset;
       double maxScrollExtent = _controller!.scrollController.position.maxScrollExtent;
-      if (maxScrollExtent > CustomChatRenderSliver.num001) {
-        _controller!.scrollButtonState.value = !(maxScrollExtent <= currentOffset);
-      }
+      // if (maxScrollExtent > CustomChatRenderSliver.num001) {
+      //   _controller!.scrollButtonState.value = !(maxScrollExtent <= currentOffset);
+      // }
     }
     if (notification is UserScrollNotification) {
       _controller!.dragScrollEvent = true;

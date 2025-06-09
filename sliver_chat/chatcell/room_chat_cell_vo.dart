@@ -119,5 +119,10 @@ class RoomChatCellVo {
       //现在都是设定有背景和文本的方法 不会出现到这里的显示内容
       rect = Rect.fromLTWH(0, 0, 0, 0);
     }
+
+    chatController.resetListPosAll();
+
   }
+
+
 }

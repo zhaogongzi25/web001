@@ -107,6 +107,16 @@ class CustomcChatController {
     }
     data.add(vo);
   }
+  void resetListPosAll(){
+
+    double top = 0.0;
+    for (int i=0;i< data.length;i++) {
+      RoomChatCellVo vo=data[i];
+      vo.rect = Rect.fromLTWH(0.0, top, vo.rect!.width, vo.rect!.height);
+      top += vo.rect!.height;
+    }
+    refreshUi();
+  }
 
   //清理超出的数量，删除前部分， 当超过1000记录删除前面100条
   static int maxLen=1000;
