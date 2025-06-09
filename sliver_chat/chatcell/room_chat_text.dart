@@ -89,18 +89,23 @@ class RoomChatText extends BaseTextLink {
       _makeSpecialInfo(roomMsg);
     } else {
       RoomPlayer? player = getRoomPlayerByUserId(roomMsg.userId);
-      if (roomMsg.contentType == ChatType.Chat_text) {
-        //文本
-        _makeChatText(roomMsg, player!);
-      } else if (roomMsg.contentType == ChatType.Chat_sys) {
-        //系统消息
-        String content = roomMsg.data['content'] ?? '';
-        Map<String, dynamic> temp = jsonDecode(content);
-        _makeChatSys(roomMsg, player!, temp);
-      } else {
-        // _addSysIcon('系统');
-        textContent = '未知消息 contentType = ${roomMsg.contentType}  id  =${roomMsg.id} ';
+      if(player==null){
+        textContent = 'RoomPLayer ==null contentType = ${roomMsg.contentType}  id  =${roomMsg.id} ';
+      }else{
+        if (roomMsg.contentType == ChatType.Chat_text) {
+          //文本
+          _makeChatText(roomMsg, player);
+        } else if (roomMsg.contentType == ChatType.Chat_sys) {
+          //系统消息
+          String content = roomMsg.data['content'] ?? '';
+          Map<String, dynamic> temp = jsonDecode(content);
+          _makeChatSys(roomMsg, player, temp);
+        } else {
+          // _addSysIcon('系统');
+          textContent = '未知消息 contentType = ${roomMsg.contentType}  id  =${roomMsg.id} ';
+        }
       }
+
     }
   }
 
