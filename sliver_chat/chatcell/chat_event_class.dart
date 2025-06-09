@@ -20,17 +20,17 @@ import 'package:data_center/utils/chat_utils.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
-import 'package:live/page/home/room/sliver_chat/chatcell/model_pack.dart';
+
 import 'package:wordchat/views/benefit/benefit_dialog.dart';
 
-import '../../../../../view_model/room_msg_model.dart';
-import '../../../../../view_model/room_page_model.dart';
-import '../../live_game_caipiao/model/live_game_model.dart';
+import 'model_pack.dart';
+
+
 
 class ChatEventClass{
   void onJiesuo(ModelPack modelPack) async {
     BuildContext context = modelPack.chatContext;
-    RoomPageModel roomPageModel = modelPack.roomPageModel;
+    dynamic roomPageModel = modelPack.roomPageModel;
     UserChat anchor = roomPageModel.anchor!;
     if (!context.mounted) {
       return;
@@ -123,7 +123,7 @@ class ChatEventClass{
         dataCenter.mainUser.isAdmin == 0) {
       return;
     }
-    RoomMsgModel roomMsgModel = modelPack.roomMsgModel;
+    dynamic roomMsgModel = modelPack.roomMsgModel;
     MyFollowModel myFollowModel = modelPack.myFollowModel;
     if (roomMsgModel.msgBuildContext != null) {
       showModalBottomSheet(
@@ -142,8 +142,8 @@ class ChatEventClass{
     }
   }
   void onTapGetzhuEvent(temp,ModelPack modelPack) async {
-    LiveGameModel _liveGameModel=modelPack.liveGameModel;
-    RoomPageModel _roomPageModel=modelPack.roomPageModel;
+    dynamic _liveGameModel=modelPack.liveGameModel;
+    dynamic _roomPageModel=modelPack.roomPageModel;
     BuildContext _chatContext=modelPack.chatContext;
     if (dataCenter.clientLimitMgr.getIsButtonDisabled('genTouBtn')) {
       return;

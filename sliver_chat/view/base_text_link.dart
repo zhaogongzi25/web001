@@ -1,8 +1,9 @@
 
 import 'package:common_base/common_base.dart';
+import 'package:data_center/utils/sliver_chat/view/text_link_region.dart';
 
 import 'package:flutter/material.dart';
-import 'package:live/page/home/room/sliver_chat/view/text_link_region.dart';
+
 
 import '../chatcell/room_chat_cell_vo.dart';
 import 'end_base_icon.dart';

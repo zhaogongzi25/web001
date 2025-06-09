@@ -1,8 +1,8 @@
 import 'package:common_base/common_base.dart';
 import 'package:flutter/material.dart';
-import 'package:live/page/home/room/sliver_chat/view/head_base_icon.dart';
 
 import '../chatcell/room_chat_cell_vo.dart';
+import 'head_base_icon.dart';
 
 class TittleBaseIcon extends HeadBaseIcon {
   final String title;

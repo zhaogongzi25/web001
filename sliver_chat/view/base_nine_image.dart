@@ -47,12 +47,12 @@ class BaseNineImage {
       int vipLevel = 0;
       int roomAdmin = 0;
 
-      print('找到了角色player.roomAdmin ');
+
       RoomPlayer? player = RoomChatText.getRoomPlayerByUserId(vo.roomMsg.userId);
       if (player != null) {
         vipLevel = player.vipLevel;
         roomAdmin = player.roomAdmin;
-        print('找到了角色player.roomAdmin ${player.roomAdmin}');
+        // print('找到了角色player.roomAdmin ${player.roomAdmin}');
       }
 
       switch (vipLevel) {

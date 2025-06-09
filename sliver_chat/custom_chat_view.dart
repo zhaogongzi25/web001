@@ -2,10 +2,11 @@ import 'package:common_base/common_base.dart';
 import 'package:custom_image/custom_image.dart';
 import 'package:data_center/live_old/generated/l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:live/page/home/room/sliver_chat/custom_chat_render_sliver.dart';
+
 
 import 'custom_cavas_widget.dart';
 import 'custom_chat_controller.dart';
+import 'custom_chat_render_sliver.dart';
 
 //显示聊天室窗口 回调控制器
 class CustomChatView extends StatefulWidget {

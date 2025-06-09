@@ -10,14 +10,12 @@ import 'package:data_center/utils/chat_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:live/page/home/room/live_game_caipiao/model/live_game_model.dart';
-import 'package:live/page/home/room/sliver_chat/chatcell/model_pack.dart';
-import 'package:live/page/home/room/sliver_chat/chatcell/room_chat_cell_vo.dart';
- 
 
 import 'package:live/view_model/room_msg_model.dart';
 import 'package:live/view_model/room_page_model.dart';
 
-
+import 'chatcell/model_pack.dart';
+import 'chatcell/room_chat_cell_vo.dart';
 import 'chatcell/room_chat_text.dart';
 import 'custom_chat_controller.dart';
 import 'custom_chat_view.dart';
@@ -25,8 +23,10 @@ import 'custom_chat_view.dart';
 import 'package:provider/provider.dart';
 
 class SliverMain extends StatefulWidget {
-  const SliverMain({super.key});
+  final dynamic roomPagePodCastModel;
+  const SliverMain({super.key, this.roomPagePodCastModel});
 
+  // Provider.of<RoomPagePodCastModel>(context, listen: false)
   @override
   _SliverMainState createState() => _SliverMainState();
 }
@@ -37,7 +37,6 @@ class _SliverMainState extends State<SliverMain> {
   MyFollowModel? _myFollowModel;
   RoomPageModel? _roomPageModel;
   LiveGameModel? _liveGameModel;
-  // RoomPagePodCastModel? _roomPagePodCastModel;
   ModelPack? _modelPack;
   EdgeInsets? chatMargin;
 
@@ -56,10 +55,12 @@ class _SliverMainState extends State<SliverMain> {
       myFollowModel: _myFollowModel!,
       liveGameModel: _liveGameModel!,
       roomPageModel: _roomPageModel!,
+      roomPagePodCastModel: widget.roomPagePodCastModel,
       chatContext: context,
     );
     // _oneByonePush(2000);
   }
+
   //自动刷新数据
   void _oneByonePush(tm) {
     if (_customcChatController != null) {
@@ -109,7 +110,7 @@ class _SliverMainState extends State<SliverMain> {
         RoomMsg roomMsg = _roomMsgModel!.msgList[i];
         if (!_useData.containsKey(roomMsg.id)) {
           if (roomMsg.id! < 0) {
-            ///系统消息
+            ///系统消息。不需要判断用户信息是否在内存中
             _makeRoomChatCellVo(roomMsg);
           } else {
             _createMsglineView(roomMsg, null);

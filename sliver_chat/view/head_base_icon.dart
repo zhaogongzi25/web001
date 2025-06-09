@@ -18,7 +18,7 @@ class HeadBaseIcon {
   //图像偏移，默认为0,0,0,0;计算出来的文字空间再扩展
   final Rect boxRect;
 
-  //设定图片占用的文字宽度。用的是空格数量，和字号关联，做到图片和文字同比
+  //设定图片占用的文字宽度。用的是空格数量，和字号关联，做到图片和文字同比static String sampleSpace='\u2002'; //一个空字符的宽度
   final int titleLen;
 
   //文字的字号
