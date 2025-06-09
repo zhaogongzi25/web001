@@ -84,24 +84,31 @@ class BaseTextLink {
   }
 
   //获得头部共有的Icon图标占用的文本宽度，用于显示文本缩进位置
-  int _getHeadTitleFontLen() {
+  double _getHeadTitleFontLen() {
     double len = 0;
     for (HeadBaseIcon baseTittle in _headImageArr) {
       len += baseTittle.titleLen;
     }
 
-    return len.floor();
+    return len;
 
   }
 
   //获取头部的空格文本
   String _getHeadEmptyStr() {
     String addStr = '';
-    for (int i = 0; i < _getHeadTitleFontLen(); i++) {
+    double len=_getHeadTitleFontLen();
+    for (int i = 0; i < len.floor(); i++) {
       addStr += '\u2003';
     }
-    print(' _getHeadTitleFontLen() ${ _getHeadTitleFontLen()}');
+    int addlen= ((len-len.floor())*10).floor();
+    for (int i = 0; i <addlen/3; i++) {
+      addStr +=' ';
+    }
+    print('len  ${len.floor()} addlen ${addlen}    ');
+
     return addStr;
+
   }
 
   //点击测试

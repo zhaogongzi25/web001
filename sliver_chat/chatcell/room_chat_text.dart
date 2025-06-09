@@ -239,7 +239,7 @@ class RoomChatText extends BaseTextLink {
   String _addNikeNameAndTap(RoomMsg msg, RoomPlayer player) {
     bool mystery =_isMysteryPlayer(player);
     String nickName = mystery ? '神秘人' : player.nickname;
-    nickName="名"+nickName;
+
     Color color = player.vipLevel > 0 ? Colours.chat_user_vip : Colours.text_blue;
     links.add({
       'text': nickName,
@@ -374,7 +374,7 @@ class RoomChatText extends BaseTextLink {
         //显示相应短语
         if (idx < paraseList.length) {
         String addStr=   createPlayInfoView(player);
-          textContent =addStr+ _addNikeNameAndTap(msg, player) + ':' + paraseList[idx];
+          textContent = addStr+ _addNikeNameAndTap(msg, player) + ':' + paraseList[idx];
 
         }
       } else {
@@ -465,8 +465,8 @@ class RoomChatText extends BaseTextLink {
     int lv = level;
 
     double lw = 12.w;
-    double titleLen=3.4;
-    String addStr=" ";//空格偏移
+    double titleLen=3.2;
+    String addStr="";//空格偏移
     Rect rect= Rect.fromLTWH(0.w , 2.w, 76.w, 28.w);
     if (lv < 10) {
       lw = 16.w;
@@ -476,12 +476,12 @@ class RoomChatText extends BaseTextLink {
     } else if (lv > 90 && lv < 100) {
       lw = 15.w;
       rect= Rect.fromLTWH(0.w , 0.w, 86.w, 30.w);
-      addStr="   ";
+      addStr="";
       titleLen=3.6;
     } else if (lv>= 100) {
       lw = 18.w;
       rect= Rect.fromLTWH(0.w , 0.w, 86.w, 30.w);
-      addStr="   ";
+      addStr="";
       titleLen=3.6;
     }
 
