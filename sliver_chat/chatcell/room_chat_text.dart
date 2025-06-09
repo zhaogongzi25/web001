@@ -200,15 +200,17 @@ class RoomChatText extends BaseTextLink {
     } else if (notice.data['userId'].abs() == ChatContentType.ChatContext_tiaodan_connect) {
       //跳蛋(进直播间的连结消息)9003
       _addHudongIcon('互动');
-      textContent = "主播已连接" + _selLinksStr('跳蛋', Colours.chat_tiaodan);
+      textContent = "主播已连接"+ _selLinksStr('跳蛋', Colours.chat_tiaodan);
       addEndImageArr(
         EndBaseIcon(
             url: 'assets/live_game/tiaodou.png',
             boxRect: Rect.fromLTWH(5.w, 5.w, 86.w, 32.w),
             onTap: () {
+
               dataCenter.roomExtendMgr.callEggBuy();
             }),
       );
+
     } else {
       _addSysIcon('系统');
       if (notice.contentType == ChatType.Chat_none) {
@@ -407,6 +409,8 @@ class RoomChatText extends BaseTextLink {
       String totalAmount = _selLinksStr(((temp['total_amount']) / 1.0).toString(), Colours.text_yellow);
       textContent = '用户${nikeName}在${cpType}玩法中，已成功下注了${totalAmount}元 ';
       //添加跟投按钮，
+
+
       if (LiveGameType.GameNoGenTou.contains(temp['cp_type'])) {
       } else {
         addEndImageArr(
@@ -436,9 +440,9 @@ class RoomChatText extends BaseTextLink {
       _addCaiJinIcon('彩金');
       String total_pay_amout = _selLinksStr(((temp['total_pay_amout']) / 1.0).toString(), Colors.red);
       textContent = '恭喜获得彩金分红$total_pay_amout火力';
-    } else if (value == ChatContentType.ChatContent_xinyuandan) {
+
     } else {
-      textContent = '未知数据 --- optcode = $value';
+      textContent = '异常数据 --- optcode = $value';
     }
   }
 
@@ -491,8 +495,8 @@ class RoomChatText extends BaseTextLink {
     Rect rect = Rect.fromLTWH(0.w, 0.w, 76.w, 32.w);
     if (lv < 10) {
       lw = 16.w;
-      //和系统按钮一样大
-      rect = Rect.fromLTWH(0.w, 0.w, 66.w, 32.w);
+
+      rect = Rect.fromLTWH(0.w, 0.w, 66.w, 32.w);     //和系统，互动，按钮一样大
       titleLen = 6;
     } else if (lv > 90 && lv < 100) {
       lw = 15.w;
@@ -500,9 +504,10 @@ class RoomChatText extends BaseTextLink {
       titleLen = 7;
     } else if (lv >= 100) {
       lw = 18.w;
-      rect = Rect.fromLTWH(0.w, 0.w, 86.w, 32.w);
-      titleLen = 7;
+      rect = Rect.fromLTWH(0.w, 0.w, 90.w, 32.w);
+      titleLen = 8;
     }
+
 
     addIconTittleToHead(
       TittleBaseIcon(

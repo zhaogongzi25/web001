@@ -1,9 +1,7 @@
-
 import 'package:common_base/common_base.dart';
 import 'package:data_center/utils/sliver_chat/view/text_link_region.dart';
 
 import 'package:flutter/material.dart';
-
 
 import '../chatcell/room_chat_cell_vo.dart';
 import 'end_base_icon.dart';
@@ -17,11 +15,9 @@ class BaseTextLink {
 
   //基础文本最大宽度
 
-
-
   //多行文本和单行的高度偏移。如多行我们会让记录网往小一点显示，
   double multipleLinesH = 0.w;
-  double fontBaseLeft=0.w;
+  double fontBaseLeft = 0.w;
 
   //存放头部标签一般一个，也有可能会多个，
   List<HeadBaseIcon> _headImageArr = [];
@@ -29,9 +25,7 @@ class BaseTextLink {
   //存放尾部标签一般一个，也有可能会多个，
   List<EndBaseIcon> _endImageArr = [];
 
-
   List<FreeBaseIcon> _freeImage = [];
-
 
   //标记是否显示
   // bool hide = true;
@@ -46,27 +40,23 @@ class BaseTextLink {
   String? textContent;
 
   //链接内容
-  List<Map<String, dynamic>> links=[];
+  List<Map<String, dynamic>> links = [];
 
   //文本行数列表，layout后才能有数据
   List<LineMetrics>? lines;
 
- final double maxWidth;
+  final double maxWidth;
 
+  TextStyle? baseStyle;
 
- TextStyle? baseStyle;
-
-  BaseTextLink({required TextStyle textStyle,required this.maxWidth }) {
-    baseStyle=textStyle;
+  BaseTextLink({required TextStyle textStyle, required this.maxWidth}) {
+    baseStyle = textStyle;
     initData();
     _buildToPainter(textContent!, links);
   }
 
-
   void initData() {
-
     textContent = '测试文本';
-
   }
 
   //添加头部对象，会和文本空格结合
@@ -92,33 +82,26 @@ class BaseTextLink {
     }
 
     return len;
-
   }
 
   //获取头部的空格文本
   String _getHeadEmptyStr() {
     String addStr = '';
-    double len=_getHeadTitleFontLen();
+    double len = _getHeadTitleFontLen();
     for (int i = 0; i < len.floor(); i++) {
-      addStr += HeadBaseIcon.sampleSpace ;
+      addStr += HeadBaseIcon.sampleSpace;
     }
 
-
     return addStr;
-
-
   }
 
   //点击测试
   bool hitTest(RoomChatCellVo vo, Offset clikpos) {
-
-
     final Offset pointInTextLayout = Offset(
       clikpos.dx - vo.ctxPodding.left, // corresponds to dx
       clikpos.dy - vo.ctxPodding.top - multipleLinesH / 2.0, // corresponds to dy
     );
-    final TextPosition textPosition =
-        vo.textLink!.textPainter!.getPositionForOffset(pointInTextLayout);
+    final TextPosition textPosition = vo.textLink!.textPainter!.getPositionForOffset(pointInTextLayout);
     final int clickedCharacterIndex = textPosition.offset;
     TextLinkRegion? clickedLink;
     for (final linkRegion in vo.textLink!.linkRegions!) {
@@ -134,8 +117,8 @@ class BaseTextLink {
         return true;
       }
     }
-    for (EndBaseIcon endBaseIcon in _endImageArr){
-        endBaseIcon.hitTest(vo, clikpos);
+    for (EndBaseIcon endBaseIcon in _endImageArr) {
+      endBaseIcon.hitTest(vo, clikpos);
     }
     return false;
   }
@@ -143,7 +126,7 @@ class BaseTextLink {
   void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
     String addStr = _getHeadEmptyStr();
-    String text = addStr+str;
+    String text = addStr + str;
     List<Map<String, dynamic>> linkArr = arr;
     final spanAndRegionData = buildSpansAndRegions(
       fullText: text,
@@ -153,15 +136,13 @@ class BaseTextLink {
     List<InlineSpan> textSpans = spanAndRegionData.item1;
     linkRegions = spanAndRegionData.item2;
 
-      textPainter = TextPainter(
-        text: TextSpan(children: textSpans),
-        textDirection: TextDirection.ltr,
-      )..layout(minWidth: 0, maxWidth: maxWidth);
+    textPainter = TextPainter(
+      text: TextSpan(children: textSpans),
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: maxWidth);
 
-      lines = textPainter?.computeLineMetrics();
-      multipleLinesH = lines!.length > 1 ? -2.w : 0.w;
-
-
+    lines = textPainter?.computeLineMetrics();
+    multipleLinesH = lines!.length > 1 ? -2.w : 0.w;
   }
 
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {
@@ -178,29 +159,28 @@ class BaseTextLink {
     for (EndBaseIcon endBaseIcon in _endImageArr) {
       endBaseIcon.startLeft = startLeft;
       endBaseIcon.draw(canvas, vo, ty);
-
     }
 
     for (FreeBaseIcon freeBaseIcon in _freeImage) {
-
       freeBaseIcon.draw(canvas, vo, ty);
-
     }
   }
+
   //绘制文本信息
   void _drawBaseTextLink(Canvas canvas, RoomChatCellVo vo, double ty) {
     vo.textLink!.textPainter!.paint(
       canvas,
       Offset(
-        vo.ctxPodding.left+fontBaseLeft,
+        vo.ctxPodding.left + fontBaseLeft,
         vo.ctxPodding.top + vo.rect!.top - ty + multipleLinesH / 2.0,
       ),
     );
   }
-  Offset getDrawRect(){
+
+  Offset getDrawRect() {
     return Offset(
-      textPainter!.width+fontBaseLeft,
-        textPainter!.height+multipleLinesH,
+      textPainter!.width + fontBaseLeft,
+      textPainter!.height + multipleLinesH,
     );
   }
 }
