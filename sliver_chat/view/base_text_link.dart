@@ -99,15 +99,12 @@ class BaseTextLink {
     String addStr = '';
     double len=_getHeadTitleFontLen();
     for (int i = 0; i < len.floor(); i++) {
-      addStr += '\u2003';
+      addStr += HeadBaseIcon.sampleSpace ;
     }
-    int addlen= ((len-len.floor())*10).floor();
-    for (int i = 0; i <addlen/3; i++) {
-      addStr +=' ';
-    }
-    print('len  ${len.floor()} addlen ${addlen}    ');
+
 
     return addStr;
+
 
   }
 

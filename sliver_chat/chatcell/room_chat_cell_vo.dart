@@ -66,7 +66,7 @@ class RoomChatCellVo {
     if(HeadBaseIcon.sampleCodeWidth==null){
       TextStyle baseStyle = textStyle;
       TextPainter textPainter = TextPainter(
-        text: TextSpan(text: '\u2003', style: baseStyle),
+        text: TextSpan(text:HeadBaseIcon.sampleSpace , style: baseStyle),
         textDirection: TextDirection.ltr,
       )..layout(minWidth: 0, maxWidth: double.infinity);
       HeadBaseIcon.sampleCodeWidth=textPainter.width;
