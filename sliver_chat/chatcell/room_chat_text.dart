@@ -23,16 +23,14 @@ import 'package:data_center/live_old/widget/style_widget.dart';
 import 'package:data_center/models/chat/chat.dart';
 
 import 'package:data_center/utils/chat_utils.dart';
-import 'package:data_center/utils/sliver_chat/chatcell/room_chat_cell_vo.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
-// import 'package:provider/provider.dart';
 
 import '../../../live_old/model/video.dart';
 import '../view/end_base_icon.dart';
 import '../view/free_base_icon.dart';
 import '../view/head_base_icon.dart';
-import '../view/image_load_manager.dart';
 import '../view/tittle_base_icon.dart';
 import '../view/base_text_link.dart';
 
@@ -40,13 +38,10 @@ import 'chat_event_class.dart';
 import 'model_pack.dart';
 
 class RoomChatText extends BaseTextLink {
-  //聊天记录对象
-  // final RoomMsg roomMsg;
-  // final ModelPack modelPack;
+
 
   RoomChatText({
-    // required this.roomMsg,
-    // required this.modelPack,
+
     required super.roomChatCellVo,
     required super.perentResetSize,
     required super.maxWidth,
@@ -60,7 +55,7 @@ class RoomChatText extends BaseTextLink {
 
   void makeAsyncData() {
     RoomMsg roomMsg = roomChatCellVo.roomMsg;
-    if (roomMsg.id < 0) {
+     if (roomMsg.id < 0) {
       _makeSpecialInfo(roomMsg);
       buildToPainter(textContent!, links);
     } else {
@@ -111,13 +106,13 @@ class RoomChatText extends BaseTextLink {
     addFreeImageArr(
       FreeBaseIcon(
           url: 'assets/live_room/room_chat_card_title.png',
+          roomChatCellVo: roomChatCellVo,
           drawRect: Rect.fromLTWH(
             0.w,
-            10.w,
+            5.w,
             70.w,
             70.w,
-          ),
-          onTap: () {}),
+          )),
     );
   }
 
@@ -306,12 +301,9 @@ class RoomChatText extends BaseTextLink {
     // shaortid 有可能刚好是0
     if (msg.shortId != 0) {
       value = msg.optcode;
-    } else if (msg.optcode == ChatContentType.ChatContent_shortId &&
-        msg.shortId == 0) {
+    } else if (msg.optcode == ChatContentType.ChatContent_shortId && msg.shortId == 0) {
       value = msg.optcode;
     }
-
-
 
     if (value == ChatContentType.ChatContent_jinyan) {
       //禁言 1
@@ -372,8 +364,6 @@ class RoomChatText extends BaseTextLink {
         });
       }
       textContent = S.current.l_id_14381 + temp['desc'];
-
-
     } else if (value == ChatContentType.ChatContent_meiqian) {
       //付费房钱不够退出 9
       // 弹窗逻辑不走这里
@@ -418,7 +408,7 @@ class RoomChatText extends BaseTextLink {
       }
     } else if (value == ChatContentType.ChatContent_shortId) {
       //短语 18
-      String str='${msg.content!.text}';
+      String str = '${msg.content!.text}';
       if (temp['short_id'] != null) {
         int idx = temp['short_id'];
         var paraseList = dataMgr.chatPhrase;
@@ -429,12 +419,11 @@ class RoomChatText extends BaseTextLink {
         }
         //显示相应短语
         if (idx < paraseList.length) {
-          str=  paraseList[idx];
+          str = paraseList[idx];
         }
       }
       _createPlayInfoView(player);
-      textContent= _addNikeNameAndTap(msg, player) + ':'+str;
-
+      textContent = _addNikeNameAndTap(msg, player) + ':' + str;
     } else if (value == ChatContentType.ChatContent_caipiaoXiazhu) {
       //彩票下注19
 
@@ -475,10 +464,8 @@ class RoomChatText extends BaseTextLink {
       String totalPayAmout = _selLinksStr(((temp['total_pay_amout']) / 1.0).toString(), Colors.red);
       textContent = '恭喜获得彩金分红$totalPayAmout火力';
     } else {
-
       textContent = '异常数据    ${msg.optcode} --${msg.contentType}';
     }
-
   }
 
   //加系统图标
@@ -506,8 +493,8 @@ class RoomChatText extends BaseTextLink {
       HeadBaseIcon(
         titleLen: len,
         url: imgUrl,
-        textStyle: baseStyle!,
         boxRect: Rect.fromLTWH(0.w, 0.w, 66.w, 32.w),
+        roomChatCellVo: roomChatCellVo,
       ),
     );
   }
@@ -515,19 +502,19 @@ class RoomChatText extends BaseTextLink {
   //获取用户RoomPlayer
   void _getRoomPlayerByUserId(int userId, Function(RoomPlayer?) bFun) {
     // Future.delayed(Duration(milliseconds: Random().nextInt(3000)), () {
-      RoomPlayer? basePlayer = dataMgr.findObj(TableNames.roomPlayer, userId) != null
-          ? dataMgr.findObj(TableNames.roomPlayer, userId) as RoomPlayer
-          : null;
-      if (basePlayer == null) {
-        ModelPack modelPack = roomChatCellVo.modelPack;
-        int roomId = modelPack.roomPageModel.curRoomInfo.id!;
-        RoomMsg roomMsg = roomChatCellVo.roomMsg;
-        dataMgr.getRoomPlayer(roomMsg.userId, roomId: roomId).then((value) {
-          bFun(value);
-        });
-      } else {
-        bFun(basePlayer);
-      }
+    RoomPlayer? basePlayer = dataMgr.findObj(TableNames.roomPlayer, userId) != null
+        ? dataMgr.findObj(TableNames.roomPlayer, userId) as RoomPlayer
+        : null;
+    if (basePlayer == null) {
+      ModelPack modelPack = roomChatCellVo.modelPack;
+      int roomId = modelPack.roomPageModel.curRoomInfo.id!;
+      RoomMsg roomMsg = roomChatCellVo.roomMsg;
+      dataMgr.getRoomPlayer(roomMsg.userId, roomId: roomId).then((value) {
+        bFun(value);
+      });
+    } else {
+      bFun(basePlayer);
+    }
     // });
   }
 
@@ -551,7 +538,6 @@ class RoomChatText extends BaseTextLink {
       rect = Rect.fromLTWH(-5.w, 0.w, 88.w, 32.w);
       titleLen = 8;
     }
-
     addIconTittleToHead(
       TittleBaseIcon(
         titleLen: titleLen,
@@ -560,6 +546,7 @@ class RoomChatText extends BaseTextLink {
         boxRect: rect,
         pos: Offset(lw, 3.w),
         title: '$lv',
+        roomChatCellVo: roomChatCellVo,
       ),
     );
     //返回因等级的变化图标的宽度引起的偏移，在titleLen中已表现了icon的宽度
@@ -578,7 +565,7 @@ class RoomChatText extends BaseTextLink {
         HeadBaseIcon(
           titleLen: 8,
           url: vipIconUrl,
-          textStyle: baseStyle!,
+          roomChatCellVo: roomChatCellVo,
           boxRect: Rect.fromLTWH(0.w, 0.w, 86.w, 32.w),
         ),
       );
@@ -591,7 +578,7 @@ class RoomChatText extends BaseTextLink {
           boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
           titleLen: num3,
           url: 'assets/common/room_admin.png',
-          textStyle: baseStyle!,
+          roomChatCellVo: roomChatCellVo,
         ),
       );
     }
@@ -602,7 +589,7 @@ class RoomChatText extends BaseTextLink {
           titleLen: num3,
           boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
           url: 'assets/common/icon_luckey_num.png',
-          textStyle: baseStyle!,
+          roomChatCellVo: roomChatCellVo,
         ),
       );
     }
@@ -613,7 +600,7 @@ class RoomChatText extends BaseTextLink {
           titleLen: num3,
           boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
           url: 'assets/common/icon_luckey_num.png',
-          textStyle: baseStyle!,
+          roomChatCellVo: roomChatCellVo,
         ),
       );
     }
@@ -625,14 +612,32 @@ class RoomChatText extends BaseTextLink {
     if (player == null) {
       textContent = 'RoomPlayer is null ${roomMsg.userId} ';
     } else {
-      String content = roomMsg.getValue('content', null);
-      String baseStr = '';
-      Map<String, dynamic> data = jsonDecode(content);
-      if (data.containsKey('text')) {
-        baseStr = data['text'];
+      // String content = roomMsg.getValue('content', null);
+      // String baseStr = '';
+      // Map<String, dynamic> data = jsonDecode(content);
+      // if (data.containsKey('text')) {
+      //   baseStr = data['text'];
+      // }
+
+      String showText = msg.content?.text ?? '';
+      if (showText.isNotEmpty && //不为空
+          showText.startsWith(secrecyTag)) {
+        //安全标记开头
+        ModelPack modelPack = roomChatCellVo.modelPack;
+        Room chatRoom = modelPack.roomPageModel.selfRoom;
+        if (dataCenter.mainUser.id == chatRoom.id || //我是主播
+            (msg.userId == dataCenter.mainUser.id)) {
+          //消息是我自己发的)
+          //去除开始标记
+          showText = showText.substring(secrecyTag.length);
+        } else {
+          //直接隐藏内容
+          showText = S.current.l_id_10165;
+        }
       }
+
       _createPlayInfoView(player);
-      textContent = '${_addNikeNameAndTap(msg, player)}:$baseStr';
+      textContent = '${_addNikeNameAndTap(msg, player)}:$showText';
     }
   }
 }

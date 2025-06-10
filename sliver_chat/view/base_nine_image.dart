@@ -127,10 +127,13 @@ class BaseNineImage {
 
   //加载9宫格图片
   Future<void> _loadImage(String url) async {
-    ImageLoadManager.getImageLocalorNetFun(url, (ui.Image value) {
-      image = value;
-      chatController.refreshNum++;
-      chatController.refreshUi();
+    ImageLoadManager.getImageLocalorNetFun(url, (ui.Image? value) {
+      if(value!=null){
+        image = value;
+        chatController.refreshNum++;
+        chatController.refreshUi();
+      }
+
     });
   }
 }

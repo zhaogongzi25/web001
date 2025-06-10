@@ -7,14 +7,15 @@ import 'head_base_icon.dart';
 class TittleBaseIcon extends HeadBaseIcon {
   final String title;
   final Offset pos;
+  final TextStyle textStyle;
 
   TittleBaseIcon({
     required super.url,
-    required super.textStyle,
+    required this.textStyle,
     required super.titleLen,
     required super.boxRect,
     required this.title,
-    required this.pos,
+    required this.pos, required super.roomChatCellVo,
   });
 
   //显示文本

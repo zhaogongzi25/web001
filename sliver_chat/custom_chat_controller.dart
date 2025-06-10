@@ -98,21 +98,43 @@ class CustomcChatController {
     data.add(vo);
     resetListPosAll();
   }
-
+  //刷新重新统计高度叠加
+  int _startTotalIdx=0;
   void resetListPosAll(){
+
+
+    int beginIdx=-1;
     double top = 0.0;
-    int num=0;
-    int noRight=0;
-    for (int i=0;i< data.length;i++) {
+
+    //取到开始要重新遍历的位置，便重新遍历就不必要多次重置
+    if(_startTotalIdx>0 &&_startTotalIdx<data.length){
+      RoomChatCellVo beGinVo=data[_startTotalIdx-1];
+      if(beGinVo.rect.height!=0){
+        top=  beGinVo.rect.top+beGinVo.rect.height; //起始位置为上一个的位置加上一个位置的高度得到开始的位置
+      }else{
+        _startTotalIdx=0;
+      }
+    }
+    //其实应该是自行遍历全部，以下逻辑是为了如果以有高度的内容之前的就不再相加，在大数据之后可以减少运算
+    //简单的逻辑就是对所有的位置从上到下进行一次遍历，考虑到大量数据的时间记录之前的计算好的位置就不必要重复再相加
+    for (int i=_startTotalIdx;i< data.length;i++) {
       RoomChatCellVo vo=data[i];
       vo.rect = Rect.fromLTWH(0.0, top, vo.rect.width, vo.rect.height);
       top += vo.rect.height;
       if(vo.rect.height==0){
-        noRight++;
+        if(beginIdx==-1){
+          beginIdx=max(i,0);
+        }
       }
-      num++;
     }
-    // print('重新计算高度。  数量 $num    还有$noRight 没好');
+    // print('重新计算高度。 开始 $_startTotalIdx   没好的beginIdx $beginIdx       数量 $num    还有$noRight 没好');
+    if(beginIdx==-1){
+      _startTotalIdx=max(data.length-1,0);
+    }else{
+      _startTotalIdx=max(beginIdx-1, 0);
+    }
+
+
     if (!animationControl.isAnimating&&!scrollButtonState.value) {
         dragScrollEvent=false; //需要将手势装态归零，因为当前的是在底部
         moveBottom();
@@ -123,8 +145,10 @@ class CustomcChatController {
   //清理超出的数量，删除前部分， 当超过1000记录删除前面100条
   static int maxLen=10000;
   void _clearOldData() {
+
     int killNum = min(1000, (maxLen/10).toInt());
     if (data.length >= maxLen) {
+      _startTotalIdx=0;
       double killHeight = 0;
       while (data.length > maxLen - killNum) {
           killHeight += data[0].rect.height;

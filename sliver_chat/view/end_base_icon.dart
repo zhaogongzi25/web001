@@ -30,7 +30,7 @@ class EndBaseIcon {
     required this.boxRect,
       this.onTap,
   }) {
-    ImageLoadManager.getImageLocalorNetFun(url, (ui.Image value) {
+    ImageLoadManager.getImageLocalorNetFun(url, (ui.Image? value) {
       _bgImage = value;
     });
 

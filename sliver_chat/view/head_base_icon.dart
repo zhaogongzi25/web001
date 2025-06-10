@@ -1,16 +1,16 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:common_base/common_base.dart';
+import 'package:data_center/utils/sliver_chat/view/icon/base_icon.dart';
 import 'package:flutter/material.dart';
 import '../chatcell/room_chat_cell_vo.dart';
 import 'image_load_manager.dart';
 
-class HeadBaseIcon {
+class HeadBaseIcon  extends BaseIcon{
   //起始位置，后续逐个叠加在文本的开始使用.
   double startLeft = 0.0;
 
-  //背景图片
-  ui.Image? _bgImage;
+
 
   //空格文本大小
   // Size? fontRect;
@@ -21,34 +21,22 @@ class HeadBaseIcon {
   //设定图片占用的文字宽度。用的是空格数量，和字号关联，做到图片和文字同比static String sampleSpace='\u2002'; //一个空字符的宽度
   final int titleLen;
 
-  //文字的字号
-  final TextStyle textStyle;
+
 
   //是否绘制测试的背景区域颜色， 用于调整当前字号，正式版本删除绘制测试区域的方法，
   bool _hideRectBg = true;
 
 
   HeadBaseIcon({
-    required String url,
-    required this.textStyle,
+    required super.url,
+
     required this.titleLen,
-    required this.boxRect,
+    required this.boxRect, required super.roomChatCellVo,
   }) {
-    ImageLoadManager.getImageLocalorNetFun(url, (ui.Image value) {
-      _bgImage = value;
-    });
-    _mathIconUseRect();
-    initData();
-  }
-
-  void initData() {}
-
-  //单利只算一次，找个地方，记得，不要写在这里
-
-  void _mathIconUseRect() {
 
 
   }
+
 
  // static String sampleSpace='\u2009'; //一个空字符的宽度
  static String sampleSpace='\u2002'; //一个空字符的宽度
@@ -60,11 +48,11 @@ class HeadBaseIcon {
   }
   //传入TittleLen来标记图标的宽度，将和本字号关联，做到同比缩放
   //绘制的区域，这是在列表表中对应该布局坐标
-  Rect? drawToRect;
+
 
   //将内容绘制到空格范围内容
   void draw(Canvas canvas, RoomChatCellVo vo, double ty) {
-    if (_bgImage != null) {
+    if (bgImage != null) {
       Rect drawRect = Rect.fromLTWH(
         boxRect.left,
         boxRect.top,
@@ -94,12 +82,12 @@ class HeadBaseIcon {
       }
 
       //绘制底图
-      int imgW = _bgImage!.width;
-      int imgH = _bgImage!.height;
+      int imgW = bgImage!.width;
+      int imgH = bgImage!.height;
 
       Rect srcRect = Rect.fromLTWH(0.0, 0.0, imgW * 1.0, imgH * 1.0);
 
-      canvas.drawImageRect(_bgImage!, srcRect, drawToRect!, Paint());
+      canvas.drawImageRect(bgImage!, srcRect, drawToRect!, Paint());
       //绘制文本
     }
   }

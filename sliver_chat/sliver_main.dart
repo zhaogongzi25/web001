@@ -58,7 +58,7 @@ class _SliverMainState extends State<SliverMain> {
       roomPagePodCastModel: widget.roomPagePodCastModel,
       chatContext: context,
     );
-    // _oneByonePush(2000);
+    _oneByonePush(2000);
   }
 
   //自动刷新数据
@@ -79,7 +79,16 @@ class _SliverMainState extends State<SliverMain> {
         int idx = Random().nextInt(_roomMsgModel!.msgList.length);
         RoomMsg roomMsg = _roomMsgModel!.msgList[idx];
         roomMsg = roomMsg.clone();
-        String content = roomMsg.getValue('content', null);
+
+
+
+
+        if(roomMsg.id==-2){
+          roomMsg.id=-1;
+          String str='数据总 ${_customcChatController!.data.length}    随机  ${Random().nextInt(9999)} - ${Random().nextInt(9999)}';
+          roomMsg.setValue('content', jsonEncode({"text":"❤️‍🔥❤${str}️❤️‍🔥 \n $str  \n$str"}));
+        }
+
 
 
         RoomChatCellVo addVo = RoomChatCellVo(
@@ -90,7 +99,7 @@ class _SliverMainState extends State<SliverMain> {
         );
         _customcChatController!.pushData(addVo);
         if (mounted) {
-          _oneByonePush(Random().nextInt(2) + 1);
+          _oneByonePush(Random().nextInt(30) + 300);
         }
       }
     });
