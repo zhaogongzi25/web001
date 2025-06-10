@@ -6,6 +6,8 @@ import 'package:data_center/live_old/utility/colors.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../../live_old/model/data_manager.dart';
+import '../../../live_old/utility/string.dart';
 import '../chatcell/room_chat_text.dart';
 import '../custom_chat_controller.dart';
 import '../chatcell/room_chat_cell_vo.dart';
@@ -30,6 +32,7 @@ class BaseNineImage {
       _loadImage(url);
     }
   }
+
   //如果有9宫格图，没有现在绘制的是聊天对象的背景，还需要分离
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {
     if (image == null) {
@@ -38,52 +41,50 @@ class BaseNineImage {
       _drawVoNineGridImg(canvas, vo, Offset(0.0, vo.rect!.top - ty));
     }
   }
-  Color? bgLineColor;
-  Color? bgColor;
-  double borderWidth = 2.w;
+
   //绘制9宫格单色没图背景
-  void _drawRoundRedBg(Canvas canvas, RoomChatCellVo vo, double ty) {
-    if(bgLineColor==null||bgColor==null) {
-      int vipLevel = 0;
-      int roomAdmin = 0;
+
+  void _drawRoundRedBg(Canvas canvas, RoomChatCellVo vo, double ty) async {
 
 
-      RoomPlayer? player = RoomChatText.getRoomPlayerByUserId(vo.roomMsg.userId);
-      if (player != null) {
-        vipLevel = player.vipLevel;
-        roomAdmin = player.roomAdmin;
-        // print('找到了角色player.roomAdmin ${player.roomAdmin}');
-      }
+    Color? bgLineColor;
+    Color? bgColor;
+    double borderWidth = 2.w;
+    int vipLevel = 0;
+    int roomAdmin = 0;
+    if (vo.roomMsg.id >= 0 && vo.player != null) {
+      vipLevel = vo.player!.vipLevel;
+      roomAdmin = vo.player!.roomAdmin;
+    }
 
-      switch (vipLevel) {
-        case 5:
+    switch (vipLevel) {
+      case 5:
         // 侯爵 - 蓝色
-          bgLineColor = const Color(0xff00BFFF);
-          bgColor = const Color(0x300053c4);
+        bgLineColor = const Color(0xff00BFFF);
+        bgColor = const Color(0x300053c4);
 
-          break;
-        case 6:
+        break;
+      case 6:
         // 公爵 -紫色
-          bgLineColor = const Color(0xffff00ff);
-          bgColor = const Color(0x308707c2);
+        bgLineColor = const Color(0xffff00ff);
+        bgColor = const Color(0x308707c2);
 
-          break;
-        case 7:
+        break;
+      case 7:
         // 国王 -玫红
-          bgLineColor = const Color(0xffff1493);
-          bgColor = const Color(0x30c30e5d);
-          break;
-        default:
-          if (roomAdmin > 0) {
-            bgLineColor = const Color(0XFF8773FD);
-            bgColor = Colours.public_transparent_bg;
-            borderWidth = 3.w;
-          } else {
-            bgLineColor = Colors.transparent;
-            bgColor = Colours.public_transparent_bg;
-          }
-          break;
-      }
+        bgLineColor = const Color(0xffff1493);
+        bgColor = const Color(0x30c30e5d);
+        break;
+      default:
+        if (roomAdmin > 0) {
+          bgLineColor = const Color(0XFF8773FD);
+          bgColor = Colours.public_transparent_bg;
+          borderWidth = 3.w;
+        } else {
+          bgLineColor = Colors.transparent;
+          bgColor = Colours.public_transparent_bg;
+        }
+        break;
     }
 
     final fillPaint = Paint()
@@ -93,8 +94,7 @@ class BaseNineImage {
     final strokePaint = Paint()
       ..color = bgLineColor! // 红色边框
       ..style = PaintingStyle.stroke // 描边样式
-      ..strokeWidth =borderWidth; // 边框宽度
-
+      ..strokeWidth = borderWidth; // 边框宽度
 
     Radius radius = Radius.circular(20.w); // 所有角都使用 20.w 的圆角
     final rRect = RRect.fromRectAndRadius(
@@ -109,7 +109,6 @@ class BaseNineImage {
     canvas.drawRRect(rRect, strokePaint);
   }
 
-
   //绘制9宫格背景
   void _drawVoNineGridImg(Canvas canvas, RoomChatCellVo vo, Offset pos) {
     if (image != null) {
@@ -123,13 +122,9 @@ class BaseNineImage {
       final paint = ui.Paint();
 
       canvas.drawImageNine(image!, center, dst, paint);
-
- 
- 
-
     }
-
   }
+
   //加载9宫格图片
   Future<void> _loadImage(String url) async {
     ImageLoadManager.getImageLocalorNetFun(url, (ui.Image value) {

@@ -98,7 +98,6 @@ class CustomcChatController {
     _clearOldData();
     data.add(vo);
     resetListPosAll();
-
   }
   void resetListPosAll(){
     double top = 0.0;
@@ -107,8 +106,12 @@ class CustomcChatController {
       vo.rect = Rect.fromLTWH(0.0, top, vo.rect.width, vo.rect.height);
       top += vo.rect.height;
     }
-    refreshUi();
+    if (!animationControl.isAnimating&&!scrollButtonState.value) {
+        dragScrollEvent=false; //需要将手势装态归零，因为当前的是在底部
+        moveBottom();
+    }
 
+    refreshUi();
   }
   //清理超出的数量，删除前部分， 当超过1000记录删除前面100条
   static int maxLen=1000;
@@ -149,20 +152,7 @@ class CustomcChatController {
     _animationMoveBottom = true;
     _starAnimation(time: time ?? 0.25);//默认滑动时间为0.25秒
   }
-  //推入的消息，如果是在查看显示到底部按钮，将不处理自动滑动到底部
-  void moveBottomOfpushData(){
 
-    if(!scrollButtonState.value){
-      if(dragScrollEvent==true){
-        //当手滑动到的底部的不显按钮的情况下，需要重置手势，
-        dragScrollEvent=false;
-      }
-      moveBottom();
-    }
-
-
-
-  }
 
   //设定动画的播放时间，用于驱动列表的位置，
   void _starAnimation({required double time}) {

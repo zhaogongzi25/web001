@@ -3,6 +3,7 @@ import 'package:common_base/common_base.dart';
 import 'package:data_center/live_old/model/room_msg.dart';
 import 'package:flutter/material.dart';
 
+import '../../../live_old/model/room_player.dart';
 import '../view/base_text_link.dart';
 import '../view/head_base_icon.dart';
 import 'model_pack.dart';
@@ -32,6 +33,8 @@ class RoomChatCellVo {
   //9宫格对象，当没有图片，也可以是纯色背景和边框。用于扩容做为背景显示
   BaseNineImage? niceImage;
 
+
+
   //文本内容显示。
   BaseTextLink? textLink;
 
@@ -44,6 +47,7 @@ class RoomChatCellVo {
   //数据对象包，存放要向下传递的model
   final ModelPack modelPack;
 
+  RoomPlayer? player;
   //传入聊天框宽度， 最能设置每行最大自动换行
   final double width;
 
@@ -84,8 +88,9 @@ class RoomChatCellVo {
     );
     textLink = RoomChatText(
       perentResetSize: resize,
-      roomMsg: roomMsg,
-      modelPack: modelPack,
+      // roomMsg: roomMsg,
+      roomChatCellVo:this,
+      // modelPack: modelPack,
       textStyle: textStyle,
       maxWidth: width - ctxPodding.left - ctxPodding.right,
     );

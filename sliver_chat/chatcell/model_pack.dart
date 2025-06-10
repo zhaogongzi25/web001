@@ -12,7 +12,7 @@ class ModelPack{
   final MyFollowModel myFollowModel;
   final LiveGameModel liveGameModel;
   final RoomPageModel roomPageModel;
-  final dynamic? roomPagePodCastModel;
+  final dynamic roomPagePodCastModel;
   final BuildContext chatContext;
 
   ModelPack( {

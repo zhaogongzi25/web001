@@ -145,6 +145,8 @@ class BaseTextLink {
 
     lines = textPainter?.computeLineMetrics();
     multipleLinesH = lines!.length > 1 ? -2.w : 0.w;
+
+    perentResetSize();
   }
 
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {

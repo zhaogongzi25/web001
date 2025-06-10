@@ -78,7 +78,6 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
   void refreshListView() {
     if (mounted) {
       setState(() {});
-
     }
   }
 

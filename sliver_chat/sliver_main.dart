@@ -75,15 +75,7 @@ class _SliverMainState extends State<SliverMain> {
         int idx = Random().nextInt(_roomMsgModel!.msgList.length);
         RoomMsg roomMsg = _roomMsgModel!.msgList[idx];
         roomMsg = roomMsg.clone();
-        if (roomMsg.id > 0) {
-          RoomPlayer? player = RoomChatText.getRoomPlayerByUserId(roomMsg.userId);
-          if (player == null) {
-            if (mounted) {
-              _oneByonePush(Random().nextInt(1000) + 1);
-            }
-            return;
-          }
-        }
+
         RoomChatCellVo addVo = RoomChatCellVo(
           chatController: _customcChatController!,
           roomMsg: roomMsg,
@@ -91,7 +83,7 @@ class _SliverMainState extends State<SliverMain> {
           width: _customcChatController!.width,
         );
         _customcChatController!.pushData(addVo);
-        _customcChatController!.moveBottomOfpushData();
+
         if (mounted) {
           _oneByonePush(Random().nextInt(1000) + 1);
           setState(() {});
@@ -109,19 +101,13 @@ class _SliverMainState extends State<SliverMain> {
       for (int i = 0; i < _roomMsgModel!.msgList.length; i++) {
         RoomMsg roomMsg = _roomMsgModel!.msgList[i];
         if (!_useData.containsKey(roomMsg.id)) {
-          if (roomMsg.id < 0) {
-            ///系统消息。不需要判断用户信息是否在内存中
-            _makeRoomChatCellVo(roomMsg);
-          } else {
-            _makeRoomChatCellVo(roomMsg);
-            // _createMsglineView(roomMsg, null);
-          }
+          _makeRoomChatCellVo(roomMsg);
 
-          return;
         }
       }
     }
   }
+
 
   void _makeRoomChatCellVo(RoomMsg roomMsg) {
     _useData.addEntries(<int, bool>{roomMsg.id: true}.entries);
@@ -133,26 +119,11 @@ class _SliverMainState extends State<SliverMain> {
       width: _customcChatController!.width,
     );
     _customcChatController!.pushData(addVo);
-    _customcChatController!.moveBottomOfpushData();
-    _refreshMsglIst();
+
+
   }
 
-  void _createMsglineView(RoomMsg roomMsg, RoomPlayer? player) {
-    RoomPlayer? player = RoomChatText.getRoomPlayerByUserId(roomMsg.userId);
-    //添加逻辑，还没懂 item.userId == 1的逻辑，
-    if (player != null || roomMsg.userId == 1) {
-      _makeRoomChatCellVo(roomMsg);
-    } else {
-      //没有player缓存，就需要等待加载
-      int roomId = _roomPageModel!.curRoomInfo.id!;
-      dataMgr.getRoomPlayer(roomMsg.userId, roomId: roomId).then((value) {
-        if (value != null) {
-          _createMsglineView(roomMsg, value); //Container();
-          _roomMsgModel!.setMsgChangeFlag();
-        }
-      });
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
