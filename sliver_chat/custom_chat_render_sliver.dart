@@ -52,7 +52,7 @@ class CustomChatRenderSliver extends RenderSliver {
 
     geometry = SliverGeometry(
       scrollExtent: max(
-        scrollExtent,
+        _totalExtent,
         constraints.remainingPaintExtent + CustomChatRenderSliver.num001,
       ),
       //0.001是始终让组件接受滑动事件，因为当内容小于视口时原本不支持滑动事件

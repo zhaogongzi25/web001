@@ -77,7 +77,7 @@ class EndBaseIcon {
 
   //将内容绘制到空格范围内容
   void draw(Canvas canvas, RoomChatCellVo vo, double ty) {
-    if (_bgImage != null) {
+    if (_bgImage != null&&vo.textLink!.lines!=null) {
       Rect drawRect = Rect.fromLTWH(
         boxRect.left,
         boxRect.top,

@@ -48,11 +48,13 @@ class BaseTextLink {
   final double maxWidth;
 
   TextStyle? baseStyle;
-
-  BaseTextLink({required TextStyle textStyle, required this.maxWidth}) {
+  final VoidCallback perentResetSize;
+  BaseTextLink({required TextStyle textStyle,    required this.perentResetSize,required this.maxWidth}) {
     baseStyle = textStyle;
+
     initData();
-    _buildToPainter(textContent!, links);
+
+
   }
 
   void initData() {
@@ -123,7 +125,7 @@ class BaseTextLink {
     return false;
   }
 
-  void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
+  void buildToPainter(String str, List<Map<String, dynamic>> arr) {
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
     String addStr = _getHeadEmptyStr();
     String text = addStr + str;
@@ -146,6 +148,7 @@ class BaseTextLink {
   }
 
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {
+
     _drawBaseTextLink(canvas, vo, ty);
 
     //绘制开头的icon列表，因第个独立，它们并不知到排列顺序，需要逐个计算起始位置
@@ -168,13 +171,16 @@ class BaseTextLink {
 
   //绘制文本信息
   void _drawBaseTextLink(Canvas canvas, RoomChatCellVo vo, double ty) {
-    vo.textLink!.textPainter!.paint(
-      canvas,
-      Offset(
-        vo.ctxPodding.left + fontBaseLeft,
-        vo.ctxPodding.top + vo.rect!.top - ty + multipleLinesH / 2.0,
-      ),
-    );
+    if(textPainter!=null){
+      textPainter!.paint(
+        canvas,
+        Offset(
+          vo.ctxPodding.left + fontBaseLeft,
+          vo.ctxPodding.top + vo.rect.top - ty + multipleLinesH / 2.0,
+        ),
+      );
+    }
+
   }
 
   Offset getDrawRect() {

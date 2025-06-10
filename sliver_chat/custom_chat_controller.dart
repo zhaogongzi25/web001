@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:common_base/common_base.dart';
 import 'package:data_center/live_old/model/data_manager.dart';
 import 'package:data_center/live_old/utility/string.dart';
 import 'package:flutter/cupertino.dart';
@@ -80,7 +79,7 @@ class CustomcChatController {
   void dispose() {
     animationControl.dispose();
     scrollController.dispose();
-    print('销毁   CustomcChatController ');
+    // print('销毁   CustomcChatController ');
 
 
 
@@ -89,35 +88,28 @@ class CustomcChatController {
 
   //总列表的高度，因为记录中都有进行了逐条排序，只需要最后一个的位置和高度就得到总长度，不需要逐个相加，
   double getTotalHeight() {
-    // double num = 0;
-    // for (RoomChatCellVo vo in data) {
-    //   num += vo.rect!.height;
-    // }
+
     return data.length > 0
-        ? data[data.length - 1].rect!.top + data[data.length - 1].rect!.height
+        ? data[data.length - 1].rect.top + data[data.length - 1].rect.height
         : 0;
   }
  //推入对象必须是组总好的RoomChatCellVo对象
   void pushData(RoomChatCellVo vo) {
     _clearOldData();
-    if(data.length >0){
-      //逐个加入，只需要取出上一个的位置，然后加上上一个的高度就得到当前Cell的位置，
-      double top=data[data.length-1].rect!.top+data[data.length-1].rect!.height;
-      vo.rect = Rect.fromLTWH(0.0,  top, vo.rect!.width, vo.rect!.height);
-    }
     data.add(vo);
+    resetListPosAll();
+
   }
   void resetListPosAll(){
-
     double top = 0.0;
     for (int i=0;i< data.length;i++) {
       RoomChatCellVo vo=data[i];
-      vo.rect = Rect.fromLTWH(0.0, top, vo.rect!.width, vo.rect!.height);
-      top += vo.rect!.height;
+      vo.rect = Rect.fromLTWH(0.0, top, vo.rect.width, vo.rect.height);
+      top += vo.rect.height;
     }
     refreshUi();
-  }
 
+  }
   //清理超出的数量，删除前部分， 当超过1000记录删除前面100条
   static int maxLen=1000;
   void _clearOldData() {
@@ -128,7 +120,7 @@ class CustomcChatController {
     if (data.length >= maxLen) {
       double killHeight = 0;
       while (data.length > maxLen - killNum) {
-          killHeight += data[0].rect!.height;
+          killHeight += data[0].rect.height;
           data[0].dispose();
           data.removeAt(0);
       }
@@ -137,8 +129,8 @@ class CustomcChatController {
       double top = 0.0;
       for (int i=0;i< data.length;i++) {
         RoomChatCellVo vo=data[i];
-        vo.rect = Rect.fromLTWH(0.0, top, vo.rect!.width, vo.rect!.height);
-        top += vo.rect!.height;
+        vo.rect = Rect.fromLTWH(0.0, top, vo.rect.width, vo.rect.height);
+        top += vo.rect.height;
       }
       if (scrollController.hasClients) {
         if (scrollController.position.hasContentDimensions) {

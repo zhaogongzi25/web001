@@ -113,8 +113,8 @@ class _SliverMainState extends State<SliverMain> {
             ///系统消息。不需要判断用户信息是否在内存中
             _makeRoomChatCellVo(roomMsg);
           } else {
-
-            _createMsglineView(roomMsg, null);
+            _makeRoomChatCellVo(roomMsg);
+            // _createMsglineView(roomMsg, null);
           }
 
           return;
