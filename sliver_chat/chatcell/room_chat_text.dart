@@ -1,6 +1,7 @@
 //聊天消息
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:common_base/common_base.dart';
 import 'package:data_center/data_center.dart';
@@ -31,6 +32,7 @@ import '../../../live_old/model/video.dart';
 import '../view/end_base_icon.dart';
 import '../view/free_base_icon.dart';
 import '../view/head_base_icon.dart';
+import '../view/image_load_manager.dart';
 import '../view/tittle_base_icon.dart';
 import '../view/base_text_link.dart';
 
@@ -41,12 +43,11 @@ class RoomChatText extends BaseTextLink {
   //聊天记录对象
   // final RoomMsg roomMsg;
   // final ModelPack modelPack;
-  final RoomChatCellVo roomChatCellVo;
 
   RoomChatText({
     // required this.roomMsg,
     // required this.modelPack,
-    required this.roomChatCellVo,
+    required super.roomChatCellVo,
     required super.perentResetSize,
     required super.maxWidth,
     required super.textStyle,
@@ -58,14 +59,13 @@ class RoomChatText extends BaseTextLink {
   }
 
   void makeAsyncData() {
-    RoomMsg roomMsg=roomChatCellVo.roomMsg;
+    RoomMsg roomMsg = roomChatCellVo.roomMsg;
     if (roomMsg.id < 0) {
       _makeSpecialInfo(roomMsg);
       buildToPainter(textContent!, links);
-
     } else {
       _getRoomPlayerByUserId(roomMsg.userId, (RoomPlayer? player) {
-        roomChatCellVo.player=player;
+        roomChatCellVo.player = player;
         if (roomMsg.contentType == ChatType.Chat_text) {
           //文本
           _makeChatText(roomMsg, player);
@@ -78,16 +78,14 @@ class RoomChatText extends BaseTextLink {
           textContent = '未知消息 contentType = ${roomMsg.contentType}  id  =${roomMsg.id} ';
         }
         buildToPainter(textContent!, links);
-
       });
     }
   }
 
   //独家消息
   void _addDujiaXingxi() {
-    ModelPack modelPack= roomChatCellVo.modelPack;
+    ModelPack modelPack = roomChatCellVo.modelPack;
     fontBaseLeft = 80.w;
-
 
     dynamic roomPageModel = modelPack.roomPageModel;
     UserChat anchor = roomPageModel.anchor;
@@ -106,7 +104,6 @@ class RoomChatText extends BaseTextLink {
           url: 'assets/new_live_room/new_room_chat_card.png',
           boxRect: Rect.fromLTWH(0.w, 10.w, 100.w, 32.w),
           onTap: () {
-
             ChatEventClass().onJiesuo(modelPack);
           }),
     );
@@ -125,118 +122,129 @@ class RoomChatText extends BaseTextLink {
   }
 
   void _makeSpecialInfo(RoomMsg notice) {
-    ModelPack modelPack= roomChatCellVo.modelPack;
-    if (notice.id.abs() == 9999999) {
+    ModelPack modelPack = roomChatCellVo.modelPack;
+
+    // if (notice.id != -9999999) {
+
+    if (notice.id == -1) {
+      _addSysIcon('系统');
+      textContent = '${notice.content!.text!}';
+    } else if (notice.id == -9999999) {
       //独家信息
       _addDujiaXingxi();
-    } else if (notice.data['userId'].abs() == ChatContentType.ChatContent_simulate) {
-      // pk
-      _addSysIcon('系统');
-
-      int startIndex = 0;
-      String textSpans = '';
-      while (startIndex < notice.content!.text!.length) {
-        int poundIndex = notice.content!.text!.indexOf('#', startIndex);
-        if (poundIndex != -1) {
-          // 添加 # 前的文本
-          textSpans += _selLinksStr(notice.content!.text!.substring(startIndex, poundIndex), Colours.text_blue);
-          // 添加 # 内的文本
-          int endIndex = notice.content!.text!.indexOf('#', poundIndex + 1);
-          if (endIndex != -1) {
-            textSpans += _selLinksStr(notice.content!.text!.substring(poundIndex + 1, endIndex), Colours.text_blue);
-            startIndex = endIndex + 1;
+    } else {
+      if (!notice.data.containsKey('userId')) {
+        textContent = '--------${_selLinksStr('需要核对消息  异常', Colors.red)}-------- \n ' + (' ${notice.content!.text!}');
+        return;
+      }
+      if (notice.data['userId'].abs() == ChatContentType.ChatContent_simulate) {
+        _addSysIcon('系统');
+        int startIndex = 0;
+        String textSpans = '';
+        while (startIndex < notice.content!.text!.length) {
+          int poundIndex = notice.content!.text!.indexOf('#', startIndex);
+          if (poundIndex != -1) {
+            // 添加 # 前的文本
+            textSpans += _selLinksStr(notice.content!.text!.substring(startIndex, poundIndex), Colours.text_blue);
+            // 添加 # 内的文本
+            int endIndex = notice.content!.text!.indexOf('#', poundIndex + 1);
+            if (endIndex != -1) {
+              textSpans += _selLinksStr(notice.content!.text!.substring(poundIndex + 1, endIndex), Colours.text_blue);
+              startIndex = endIndex + 1;
+            } else {
+              // 没有匹配的 #，将剩余文本全部设置为白色
+              textSpans += _selLinksStr(notice.content!.text!.substring(poundIndex + 1), Colours.text_blue);
+              startIndex = notice.content!.text!.length;
+            }
           } else {
-            // 没有匹配的 #，将剩余文本全部设置为白色
-            textSpans += _selLinksStr(notice.content!.text!.substring(poundIndex + 1), Colours.text_blue);
+            // 没有 #，将剩余文本全部设置为白色
+            textSpans += _selLinksStr(notice.content!.text!.substring(startIndex), Colors.white);
             startIndex = notice.content!.text!.length;
           }
-        } else {
-          // 没有 #，将剩余文本全部设置为白色
-          textSpans += _selLinksStr(notice.content!.text!.substring(startIndex), Colors.white);
-          startIndex = notice.content!.text!.length;
         }
-      }
-      textContent = textSpans;
-    } else if (notice.data['userId'].abs() == ChatContentType.ChatContext_tiaodan ||
-        notice.data['userId'].abs() == ChatContentType.ChatContext_yuwangzhilun ||
-        notice.data['userId'].abs() == ChatContentType.ChatContext_xinyuandan) {
-      // static const int ChatContext_tiaodan = 9000; //跳蛋
-      // static const int ChatContext_yuwangzhilun = 9001; //欲望之论
-      // static const int ChatContext_xinyuandan = 9002; //心愿单
+        textContent = textSpans;
+      } else if (notice.data['userId'].abs() == ChatContentType.ChatContext_tiaodan ||
+          notice.data['userId'].abs() == ChatContentType.ChatContext_yuwangzhilun ||
+          notice.data['userId'].abs() == ChatContentType.ChatContext_xinyuandan) {
+        // static const int ChatContext_tiaodan = 9000; //跳蛋
+        // static const int ChatContext_yuwangzhilun = 9001; //欲望之论
+        // static const int ChatContext_xinyuandan = 9002; //心愿单
 
-      String textSpans = '';
-      _addHuDongIcon('互动');
-      RegExp exp = RegExp(r"#(\d)(.*?)#\1", multiLine: true);
-      Iterable<RegExpMatch> matches = exp.allMatches(notice.content!.text!);
+        String textSpans = '';
+        _addHuDongIcon('互动');
+        RegExp exp = RegExp(r"#(\d)(.*?)#\1", multiLine: true);
+        Iterable<RegExpMatch> matches = exp.allMatches(notice.content!.text!);
 
-      for (var match in matches) {
-        String matchGroupstr = match.group(2).toString();
+        for (var match in matches) {
+          String matchGroupstr = match.group(2).toString();
 
-        switch (match.group(1)) {
-          case '1':
-            textSpans += _selLinksStr(matchGroupstr, Colours.text_blue, onTap: () {
-              Room chatRoom = modelPack.roomPageModel.selfRoom;
-              if ((notice.data['mysteryMan'] != null &&
-                      notice.data['mysteryMan'] > 0 &&
-                      notice.data['gameUserId'] != dataCenter.mainUser.id) &&
-                  dataCenter.mainUser.isAdmin == 0) {
-                return;
-              };
-              if (modelPack.chatContext.mounted) {
-                showModalBottomSheet(
-                  barrierColor: Colours.bottom_sheet_black_bg,
-                  backgroundColor: Colors.transparent,
-                  context: modelPack.chatContext,
-                  builder: (context) {
-                    Widget memberInfoNew = getMemberWidget!(chatRoom.id, notice.data['gameUserId']);
-                    return SizedBox(
-                        height: ScreenUtil().bottomBarHeight > 0 ? 615.w : 575.w,
-                        child: ChangeNotifierProvider.value(value: modelPack.myFollowModel, child: memberInfoNew));
-                  },
-                );
+          switch (match.group(1)) {
+            case '1':
+              textSpans += _selLinksStr(matchGroupstr, Colours.text_blue, onTap: () {
+                Room chatRoom = modelPack.roomPageModel.selfRoom;
+                if ((notice.data['mysteryMan'] != null &&
+                        notice.data['mysteryMan'] > 0 &&
+                        notice.data['gameUserId'] != dataCenter.mainUser.id) &&
+                    dataCenter.mainUser.isAdmin == 0) {
+                  return;
+                }
+                ;
+                if (modelPack.chatContext.mounted) {
+                  showModalBottomSheet(
+                    barrierColor: Colours.bottom_sheet_black_bg,
+                    backgroundColor: Colors.transparent,
+                    context: modelPack.chatContext,
+                    builder: (context) {
+                      Widget memberInfoNew = getMemberWidget!(chatRoom.id, notice.data['gameUserId']);
+                      return SizedBox(
+                          height: ScreenUtil().bottomBarHeight > 0 ? 615.w : 575.w,
+                          child: ChangeNotifierProvider.value(value: modelPack.myFollowModel, child: memberInfoNew));
+                    },
+                  );
+                }
+              });
+              break;
+            case '2': //只要是2 的都是 白色文字
+              textSpans += _selLinksStr(matchGroupstr, Colors.white);
+              break;
+            case '3':
+              if (notice.data['userId'].abs() == ChatContentType.ChatContext_tiaodan) {
+                textSpans += _selLinksStr(matchGroupstr, Colours.chat_tiaodan);
+              } else if (notice.data['userId'].abs() == ChatContentType.ChatContext_yuwangzhilun) {
+                textSpans += _selLinksStr(matchGroupstr, Colours.chat_yuwangzhilun);
+              } else if (notice.data['userId'].abs() == ChatContentType.ChatContext_xinyuandan) {
+                textSpans += _selLinksStr(matchGroupstr, Colours.chat_xinyuandan);
               }
-            });
-            break;
-          case '2': //只要是2 的都是 白色文字
-            textSpans += _selLinksStr(matchGroupstr, Colors.white);
-            break;
-          case '3':
-            if (notice.data['userId'].abs() == ChatContentType.ChatContext_tiaodan) {
-              textSpans += _selLinksStr(matchGroupstr, Colours.chat_tiaodan);
-            } else if (notice.data['userId'].abs() == ChatContentType.ChatContext_yuwangzhilun) {
-              textSpans += _selLinksStr(matchGroupstr, Colours.chat_yuwangzhilun);
-            } else if (notice.data['userId'].abs() == ChatContentType.ChatContext_xinyuandan) {
-              textSpans += _selLinksStr(matchGroupstr, Colours.chat_xinyuandan);
-            }
 
-            break;
-          case '4':
-            textSpans += _selLinksStr(matchGroupstr, Colours.chat_result);
+              break;
+            case '4':
+              textSpans += _selLinksStr(matchGroupstr, Colours.chat_result);
 
-            break;
+              break;
+          }
         }
-      }
-      textContent = textSpans;
-    } else if (notice.data['userId'].abs() == ChatContentType.ChatContext_tiaodan_connect) {
-      //跳蛋(进直播间的连结消息)9003
-      _addHuDongIcon('互动');
-      textContent = "主播已连接" + _selLinksStr('跳蛋', Colours.chat_tiaodan);
-      addEndImageArr(
-        EndBaseIcon(
-            url: 'assets/live_game/tiaodou.png',
-            boxRect: Rect.fromLTWH(5.w, 5.w, 86.w, 32.w),
-            onTap: () {
-              dataCenter.roomExtendMgr.callEggBuy();
-            }),
-      );
-    } else {
-      _addSysIcon('系统');
-      if (notice.contentType == ChatType.Chat_none) {
-        String content = notice.getValue('content', null);
-        Map<String, dynamic> data = jsonDecode(content);
-        textContent = data['text'] ?? '';
+        textContent = textSpans;
+      } else if (notice.data['userId'].abs() == ChatContentType.ChatContext_tiaodan_connect) {
+        //跳蛋(进直播间的连结消息)9003
+        _addHuDongIcon('互动');
+        textContent = "主播已连接" + _selLinksStr('跳蛋', Colours.chat_tiaodan);
+        addEndImageArr(
+          EndBaseIcon(
+              url: 'assets/live_game/tiaodou.png',
+              boxRect: Rect.fromLTWH(5.w, 5.w, 86.w, 32.w),
+              onTap: () {
+                dataCenter.roomExtendMgr.callEggBuy();
+              }),
+        );
       } else {
-        textContent = '2未知信息 - contentType = ${notice.contentType}  id  =${notice.id} ';
+        _addSysIcon('系统');
+        if (notice.contentType == ChatType.Chat_none) {
+          String content = notice.getValue('content', null);
+          Map<String, dynamic> data = jsonDecode(content);
+          textContent = data['text'] ?? '';
+        } else {
+          textContent = '2未知信息 - contentType = ${notice.contentType}  id  =${notice.id} ';
+        }
       }
     }
   }
@@ -269,7 +277,7 @@ class RoomChatText extends BaseTextLink {
     if (player == null) {
       return 'null';
     }
-    ModelPack modelPack= roomChatCellVo.modelPack;
+    ModelPack modelPack = roomChatCellVo.modelPack;
 
     bool mystery = _isMysteryPlayer(player);
     String nickName = mystery ? '神秘人' : player.nickname;
@@ -288,13 +296,23 @@ class RoomChatText extends BaseTextLink {
   }
 
   void _makeChatSys(RoomMsg msg, Map<String, dynamic> temp, RoomPlayer? player) {
+    ModelPack modelPack = roomChatCellVo.modelPack;
     if (player == null) {
       textContent = '异常数据 --- RoomPlayer is null = ${msg.userId}';
       return;
     }
-    ModelPack modelPack= roomChatCellVo.modelPack;
 
     int value = temp['optcode'] ?? 0;
+    // shaortid 有可能刚好是0
+    if (msg.shortId != 0) {
+      value = msg.optcode;
+    } else if (msg.optcode == ChatContentType.ChatContent_shortId &&
+        msg.shortId == 0) {
+      value = msg.optcode;
+    }
+
+
+
     if (value == ChatContentType.ChatContent_jinyan) {
       //禁言 1
       var flag = (temp['time_str'] == null || temp['time_str'] == "");
@@ -330,7 +348,6 @@ class RoomChatText extends BaseTextLink {
         textContent = nikeName + S.current.l_id_14581 + itemInfoName + S.current.l_id_14582;
         //名字开通了xx，以后就是一家人；
       } else {
-
         if (!(roomPlayer.mysteryMan > 0 && roomPlayer.id != dataCenter.mainUser.id)) {
           _createPlayInfoView(roomPlayer);
         }
@@ -355,6 +372,8 @@ class RoomChatText extends BaseTextLink {
         });
       }
       textContent = S.current.l_id_14381 + temp['desc'];
+
+
     } else if (value == ChatContentType.ChatContent_meiqian) {
       //付费房钱不够退出 9
       // 弹窗逻辑不走这里
@@ -399,6 +418,7 @@ class RoomChatText extends BaseTextLink {
       }
     } else if (value == ChatContentType.ChatContent_shortId) {
       //短语 18
+      String str='${msg.content!.text}';
       if (temp['short_id'] != null) {
         int idx = temp['short_id'];
         var paraseList = dataMgr.chatPhrase;
@@ -409,12 +429,12 @@ class RoomChatText extends BaseTextLink {
         }
         //显示相应短语
         if (idx < paraseList.length) {
-          _createPlayInfoView(player);
-          textContent = _addNikeNameAndTap(msg, player) + ':' + paraseList[idx];
+          str=  paraseList[idx];
         }
-      } else {
-        textContent = '未知数据 --- optcode = $value';
       }
+      _createPlayInfoView(player);
+      textContent= _addNikeNameAndTap(msg, player) + ':'+str;
+
     } else if (value == ChatContentType.ChatContent_caipiaoXiazhu) {
       //彩票下注19
 
@@ -455,8 +475,10 @@ class RoomChatText extends BaseTextLink {
       String totalPayAmout = _selLinksStr(((temp['total_pay_amout']) / 1.0).toString(), Colors.red);
       textContent = '恭喜获得彩金分红$totalPayAmout火力';
     } else {
-      textContent = '异常数据 --- optcode = $value';
+
+      textContent = '异常数据    ${msg.optcode} --${msg.contentType}';
     }
+
   }
 
   //加系统图标
@@ -492,28 +514,27 @@ class RoomChatText extends BaseTextLink {
 
   //获取用户RoomPlayer
   void _getRoomPlayerByUserId(int userId, Function(RoomPlayer?) bFun) {
-
-    RoomPlayer? baseplayer = dataMgr.findObj(TableNames.roomPlayer, userId) != null
-        ? dataMgr.findObj(TableNames.roomPlayer, userId) as RoomPlayer
-        : null;
-    if (baseplayer == null) {
-      ModelPack modelPack= roomChatCellVo.modelPack;
-      int roomId = modelPack.roomPageModel.curRoomInfo.id!;
-      RoomMsg roomMsg=roomChatCellVo.roomMsg;
-      dataMgr.getRoomPlayer(roomMsg.userId, roomId: roomId).then((value) {
-        bFun(value);
-      });
-    } else {
-      bFun(baseplayer);
-    }
+    // Future.delayed(Duration(milliseconds: Random().nextInt(3000)), () {
+      RoomPlayer? basePlayer = dataMgr.findObj(TableNames.roomPlayer, userId) != null
+          ? dataMgr.findObj(TableNames.roomPlayer, userId) as RoomPlayer
+          : null;
+      if (basePlayer == null) {
+        ModelPack modelPack = roomChatCellVo.modelPack;
+        int roomId = modelPack.roomPageModel.curRoomInfo.id!;
+        RoomMsg roomMsg = roomChatCellVo.roomMsg;
+        dataMgr.getRoomPlayer(roomMsg.userId, roomId: roomId).then((value) {
+          bFun(value);
+        });
+      } else {
+        bFun(basePlayer);
+      }
+    // });
   }
 
   void _addUserLevelIcon(int level) {
     int lv = level;
-
     double lw = 12.w;
     int titleLen = 7;
-
     //10-90的宽度
     Rect rect = Rect.fromLTWH(0.w, 0.w, 76.w, 32.w);
     if (lv < 10) {
@@ -553,15 +574,12 @@ class RoomChatText extends BaseTextLink {
     //国王图标，网络地址
     String vipIconUrl = getVipIconUrl(player.vipLevel);
     if (vipIconUrl.isNotEmpty) {
-      // var src = ImageLoadManager().serviceUpload.cdnUrl(vipIconUrl);
       addIconTittleToHead(
-        TittleBaseIcon(
+        HeadBaseIcon(
           titleLen: 8,
-          url: 'assets/new_rank/rank_61_70.png',
+          url: vipIconUrl,
           textStyle: baseStyle!,
           boxRect: Rect.fromLTWH(0.w, 0.w, 86.w, 32.w),
-          pos: Offset(14.w, 4.w),
-          title: "国王",
         ),
       );
     }
@@ -603,11 +621,10 @@ class RoomChatText extends BaseTextLink {
 
 //创建聊天内容的文本组织信息
   void _makeChatText(RoomMsg msg, RoomPlayer? player) {
-    RoomMsg roomMsg=roomChatCellVo.roomMsg;
+    RoomMsg roomMsg = roomChatCellVo.roomMsg;
     if (player == null) {
       textContent = 'RoomPlayer is null ${roomMsg.userId} ';
     } else {
-
       String content = roomMsg.getValue('content', null);
       String baseStr = '';
       Map<String, dynamic> data = jsonDecode(content);
@@ -618,6 +635,4 @@ class RoomChatText extends BaseTextLink {
       textContent = '${_addNikeNameAndTap(msg, player)}:$baseStr';
     }
   }
-
-
 }

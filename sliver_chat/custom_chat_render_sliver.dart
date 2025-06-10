@@ -114,9 +114,9 @@ class CustomChatRenderSliver extends RenderSliver {
 
       // print('ty $ty  hitMainAxis $hitMainAxis  hitCrossAxis$hitCrossAxis ');
       for (RoomChatCellVo vo in _data) {
-        double toy = vo.rect!.top - ty;
+        double toy = vo.rect.top - ty;
         if (!(hitMainAxis > toy + vo.ctxPodding.top &&
-            hitMainAxis < (toy + vo.rect!.height) - vo.ctxPodding.bottom)) {
+            hitMainAxis < (toy + vo.rect.height) - vo.ctxPodding.bottom)) {
           //上下边界超出，跳过
           continue;
         }
@@ -145,8 +145,8 @@ class CustomChatRenderSliver extends RenderSliver {
     final double ty = constraints.scrollOffset - offset.dy;
     final double th = constraints.viewportMainAxisExtent;
     for (RoomChatCellVo infoVo in _data) {
-      if ((infoVo.rect!.top - ty + infoVo.rect!.height) < 0 ||
-          (infoVo.rect!.top - ty) > th) {
+      if ((infoVo.rect.top - ty + infoVo.rect.height) < 0 ||
+          (infoVo.rect.top - ty) > th) {
         //超出视窗的将跳过不绘制
         continue;
       }

@@ -33,8 +33,6 @@ class RoomChatCellVo {
   //9宫格对象，当没有图片，也可以是纯色背景和边框。用于扩容做为背景显示
   BaseNineImage? niceImage;
 
-
-
   //文本内容显示。
   BaseTextLink? textLink;
 
@@ -48,22 +46,18 @@ class RoomChatCellVo {
   final ModelPack modelPack;
 
   RoomPlayer? player;
+
   //传入聊天框宽度， 最能设置每行最大自动换行
   final double width;
 
   //临时独立id用测试传递测试内网存变化
-  int idNum = 0;
-  static int skipNum = 0;
+  // int idNum = 0;
+  // static int skipNum = 0;
 
   //传入房间信息roomMsg 和chatController控制器
   RoomChatCellVo({required this.roomMsg, required this.modelPack, required this.width, required this.chatController}) {
-    idNum = skipNum++;
+    // idNum = skipNum++;
     initData();
-    // resize();
-  }
-
-  void dispose() {
-    // print('dispose  RoomChatCellVo');
   }
 
   void initSampleKongGeWidth() {
@@ -88,9 +82,7 @@ class RoomChatCellVo {
     );
     textLink = RoomChatText(
       perentResetSize: resize,
-      // roomMsg: roomMsg,
-      roomChatCellVo:this,
-      // modelPack: modelPack,
+      roomChatCellVo: this,
       textStyle: textStyle,
       maxWidth: width - ctxPodding.left - ctxPodding.right,
     );
@@ -104,18 +96,17 @@ class RoomChatCellVo {
 
   //传递绘制方法，每个对象有自己的绘制方法，这样可以脱离组件，根据内容在自己的对像中绘制
   void draw(Canvas canvas, double ty) {
-    if(rect.height>0&&rect.width>0){
+    if (rect.height > 0 && rect.width > 0) {
       //先绘制背景
       niceImage!.draw(this, canvas, ty);
       //绘制上层文本
       textLink!.draw(this, canvas, ty);
     }
-
   }
 
   //记算当前cell的尺寸，用于在列表中的排序位置，所有需要显示的对象都是需要进行先记算
   void resize() {
-    if ( textLink != null && textLink!.textPainter != null) {
+    if (textLink != null && textLink!.textPainter != null) {
       Offset wh = textLink!.getDrawRect();
       rect = Rect.fromLTWH(
         0, //初始先设定为0.组织后第一个的宽度，再变量所有记录修改位置用于显示

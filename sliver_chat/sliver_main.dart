@@ -65,16 +65,22 @@ class _SliverMainState extends State<SliverMain> {
   void _oneByonePush(tm) {
     if (_customcChatController != null) {
       int len = _customcChatController!.data.length;
-      if (len > 9995 || (len - 9904).abs() < 5) {
+
+      int kk=(CustomcChatController.maxLen-len).abs();
+
+      if (kk<10 ||(len-9004).abs()<5) {
         tm = 3000;
       }
     }
+
     Future.delayed(Duration(milliseconds: tm), () {
       if (_customcChatController != null) {
         //暂时直接对应该当前的房间信息，然后显示要显示的记录 进行对比，没有就添加
         int idx = Random().nextInt(_roomMsgModel!.msgList.length);
         RoomMsg roomMsg = _roomMsgModel!.msgList[idx];
         roomMsg = roomMsg.clone();
+        String content = roomMsg.getValue('content', null);
+
 
         RoomChatCellVo addVo = RoomChatCellVo(
           chatController: _customcChatController!,
@@ -83,15 +89,14 @@ class _SliverMainState extends State<SliverMain> {
           width: _customcChatController!.width,
         );
         _customcChatController!.pushData(addVo);
-
         if (mounted) {
-          _oneByonePush(Random().nextInt(1000) + 1);
-          setState(() {});
+          _oneByonePush(Random().nextInt(2) + 1);
         }
       }
     });
   }
 
+  //注意这个数据不要泄漏，还没有做自动清理的
   final Map<int, bool> _useData = {};
 
 //数据显示暂是不改app逻辑硬对比的方法来添加到聊天列表中
@@ -102,7 +107,6 @@ class _SliverMainState extends State<SliverMain> {
         RoomMsg roomMsg = _roomMsgModel!.msgList[i];
         if (!_useData.containsKey(roomMsg.id)) {
           _makeRoomChatCellVo(roomMsg);
-
         }
       }
     }
@@ -111,7 +115,7 @@ class _SliverMainState extends State<SliverMain> {
 
   void _makeRoomChatCellVo(RoomMsg roomMsg) {
     _useData.addEntries(<int, bool>{roomMsg.id: true}.entries);
-    print('新添加对象 id = ${roomMsg.id}');
+    // print('新添加对象 id = ${roomMsg.id}');
     RoomChatCellVo addVo = RoomChatCellVo(
       chatController: _customcChatController!,
       roomMsg: roomMsg,

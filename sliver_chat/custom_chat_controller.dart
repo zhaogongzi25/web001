@@ -77,11 +77,10 @@ class CustomcChatController {
   }
 
   void dispose() {
+    data.clear();
     animationControl.dispose();
     scrollController.dispose();
-    // print('销毁   CustomcChatController ');
-
-
+    print('销毁   CustomcChatController ');
 
   }
 
@@ -99,13 +98,21 @@ class CustomcChatController {
     data.add(vo);
     resetListPosAll();
   }
+
   void resetListPosAll(){
     double top = 0.0;
+    int num=0;
+    int noRight=0;
     for (int i=0;i< data.length;i++) {
       RoomChatCellVo vo=data[i];
       vo.rect = Rect.fromLTWH(0.0, top, vo.rect.width, vo.rect.height);
       top += vo.rect.height;
+      if(vo.rect.height==0){
+        noRight++;
+      }
+      num++;
     }
+    // print('重新计算高度。  数量 $num    还有$noRight 没好');
     if (!animationControl.isAnimating&&!scrollButtonState.value) {
         dragScrollEvent=false; //需要将手势装态归零，因为当前的是在底部
         moveBottom();
@@ -114,27 +121,18 @@ class CustomcChatController {
     refreshUi();
   }
   //清理超出的数量，删除前部分， 当超过1000记录删除前面100条
-  static int maxLen=1000;
+  static int maxLen=10000;
   void _clearOldData() {
-
-
-
-    int killNum = 100;
+    int killNum = min(1000, (maxLen/10).toInt());
     if (data.length >= maxLen) {
       double killHeight = 0;
       while (data.length > maxLen - killNum) {
           killHeight += data[0].rect.height;
-          data[0].dispose();
           data.removeAt(0);
       }
       //有删除记录那我们将重置所有显示记录的位置，因为删除前部分数据所有位置前移
       //计算所有对象当前的位置和对应的高度，这里需要优化，不是每一个都是要全刷新，可以优化
-      double top = 0.0;
-      for (int i=0;i< data.length;i++) {
-        RoomChatCellVo vo=data[i];
-        vo.rect = Rect.fromLTWH(0.0, top, vo.rect.width, vo.rect.height);
-        top += vo.rect.height;
-      }
+      resetListPosAll();
       if (scrollController.hasClients) {
         if (scrollController.position.hasContentDimensions) {
           _startMovePosition = scrollController.position.pixels - killHeight;
