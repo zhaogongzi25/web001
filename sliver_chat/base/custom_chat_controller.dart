@@ -20,8 +20,8 @@ class CustomcChatController {
     // await Future.delayed(Duration(seconds:  Random().nextInt(5)));
     if (_imageMap.containsKey(url)) {
       bImg = _imageMap[url];
+      // print('已有缓存   $url');
     } else {
-      // print('加载图片  $url');
       if (url.contains("https:") || url.contains("http:")) {
         String? localUrl = await downloadMgr.downloadLite(url);
         if (localUrl != null) {
@@ -30,11 +30,11 @@ class CustomcChatController {
       } else {
         bImg = await _loadLocal(url);
       }
-    }
-    if (bImg != null) {
-      _imageMap.addEntries(
-        <String, ui.Image>{url: bImg}.entries,
-      );
+      if (bImg != null) {
+        _imageMap.addEntries(
+          <String, ui.Image>{url: bImg}.entries,
+        );
+      }
     }
     calBackfun(bImg);
   }

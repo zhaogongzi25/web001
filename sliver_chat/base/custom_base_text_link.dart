@@ -115,16 +115,17 @@ class CustomBaseTextLink {
     }
     return false;
   }
-  //修改文本内容，需要重置组件尺寸
-  void setTextContentToRander(String value){
 
-    _buildToPainter(value, textLinks);
+  //修改文本内容，需要重置组件尺寸
+  void setTextContentToRander(String? value){
+    _buildToPainter(value??'', textLinks);
     //重制对象的尺寸
     roomChatCellVo.resetSize();
 
   }
   //将文本排列
   void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
+
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
     String addStr = _getHeadEmptyStr();
     String text = addStr + str;
@@ -142,6 +143,7 @@ class CustomBaseTextLink {
     )..layout(minWidth: 0, maxWidth: maxWidth);
     contentLines = textPainter?.computeLineMetrics();
     multipleLinesH = contentLines!.length > 1 ? -2.w : 0.w;
+
   }
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {
     _drawBaseTextLink(canvas, vo, ty);

@@ -68,15 +68,21 @@ class RoomChatText extends CustomBaseTextLink {
         } else if (roomMsg.contentType == ChatType.Chat_sys) {
           //系统消息
           String content = roomMsg.data['content'] ?? '';
-          Map<String, dynamic> temp = jsonDecode(content);
-          _makeChatSys(roomMsg, temp);
+
+          if (content == '') {
+            _textContent = '未知消息 content 内容为空';
+          } else {
+            Map<String, dynamic> temp = jsonDecode(content);
+            _makeChatSys(roomMsg, temp);
+          }
         } else {
           _textContent = '未知消息 contentType = ${roomMsg.contentType}  id  =${roomMsg.id} ';
         }
-        setTextContentToRander(_textContent!);
+        setTextContentToRander(_textContent);
       });
     }
   }
+
 
   //独家消息
   void _addDujiaXingxi() {
@@ -137,7 +143,7 @@ class RoomChatText extends CustomBaseTextLink {
         }
       }
       _createPlayerIcon(player);
-      String nikeName=_addNikeNameAndTap(msg, player);
+      String nikeName = _addNikeNameAndTap(msg, player);
       _textContent = '$nikeName:$showText';
     }
   }
@@ -150,7 +156,7 @@ class RoomChatText extends CustomBaseTextLink {
 
     if (notice.id == -1) {
       //直接显示文本，前面加一个系统图标
-      _addSysIcon();//系统
+      _addSysIcon(); //系统
       _textContent = notice.content!.text!;
     } else if (notice.id == -9999999) {
       //独家信息
@@ -163,28 +169,29 @@ class RoomChatText extends CustomBaseTextLink {
       }
       //pk
       if (notice.data['userId'].abs() == ChatContentType.ChatContent_simulate) {
-        _addSysIcon();//互动
+        _addSysIcon(); //互动
         int startIndex = 0;
         String textSpans = '';
-        while (startIndex < notice.content!.text!.length) {
-          int poundIndex = notice.content!.text!.indexOf('#', startIndex);
+        String contentTxt=notice.content!.text??'';
+        while (startIndex < contentTxt.length) {
+          int poundIndex = contentTxt.indexOf('#', startIndex);
           if (poundIndex != -1) {
             // 添加 # 前的文本
-            textSpans += _selLinksStr(notice.content!.text!.substring(startIndex, poundIndex), Colours.text_blue);
+            textSpans += _selLinksStr(contentTxt.substring(startIndex, poundIndex), Colours.text_blue);
             // 添加 # 内的文本
-            int endIndex = notice.content!.text!.indexOf('#', poundIndex + 1);
+            int endIndex = contentTxt.indexOf('#', poundIndex + 1);
             if (endIndex != -1) {
-              textSpans += _selLinksStr(notice.content!.text!.substring(poundIndex + 1, endIndex), Colours.text_blue);
+              textSpans += _selLinksStr(contentTxt.substring(poundIndex + 1, endIndex), Colours.text_blue);
               startIndex = endIndex + 1;
             } else {
               // 没有匹配的 #，将剩余文本全部设置为白色
-              textSpans += _selLinksStr(notice.content!.text!.substring(poundIndex + 1), Colours.text_blue);
-              startIndex = notice.content!.text!.length;
+              textSpans += _selLinksStr(contentTxt.substring(poundIndex + 1), Colours.text_blue);
+              startIndex = contentTxt.length;
             }
           } else {
             // 没有 #，将剩余文本全部设置为白色
-            textSpans += _selLinksStr(notice.content!.text!.substring(startIndex), Colors.white);
-            startIndex = notice.content!.text!.length;
+            textSpans += _selLinksStr(contentTxt.substring(startIndex), Colours.text_blue);
+            startIndex = contentTxt.length;
           }
         }
         _textContent = textSpans;
@@ -196,7 +203,7 @@ class RoomChatText extends CustomBaseTextLink {
         //  ChatContext_xinyuandan = 9002; //心愿单
 
         String textSpans = '';
-        _addHuDongIcon();//互动
+        _addHuDongIcon(); //互动
         RegExp exp = RegExp(r"#(\d)(.*?)#\1", multiLine: true);
         Iterable<RegExpMatch> matches = exp.allMatches(notice.content!.text!);
 
@@ -251,16 +258,16 @@ class RoomChatText extends CustomBaseTextLink {
         _textContent = textSpans;
       } else if (notice.data['userId'].abs() == ChatContentType.ChatContext_tiaodan_connect) {
         //跳蛋(进直播间的连结消息)9003
-        _addHuDongIcon();//互动
+        _addHuDongIcon(); //互动
         String tiaoDan = _selLinksStr('跳蛋', Colours.chat_tiaodan);
         _textContent = "主播已连接 $tiaoDan";
-        _addTiaoDouIcon();//挑逗icon
+        _addTiaoDouIcon(); //挑逗icon
       } else {
-        _addSysIcon();//系统
+        _addSysIcon(); //系统
         if (notice.contentType == ChatType.Chat_none) {
-          String content = notice.getValue('content', null);
-          Map<String, dynamic> data = jsonDecode(content);
-          _textContent = data['text'] ?? '';
+
+          _textContent = notice.content!.text?? '';
+
         } else {
           _textContent = '未知信息 - contentType = ${notice.contentType}  id  =${notice.id} ';
         }
@@ -315,35 +322,35 @@ class RoomChatText extends CustomBaseTextLink {
       return;
     }
 
-    int value = temp['optcode'] ?? 0;
+    int optCode = temp['optcode'] ?? 0;
     // shaortid 有可能刚好是0
     if (msg.shortId != 0) {
-      value = msg.optcode;
+      optCode = msg.optcode;
     } else if (msg.optcode == ChatContentType.ChatContent_shortId && msg.shortId == 0) {
-      value = msg.optcode;
+      optCode = msg.optcode;
     }
 
-    if (value == ChatContentType.ChatContent_jinyan) {
+    if (optCode == ChatContentType.ChatContent_jinyan) {
       //禁言 1
       var flag = (temp['time_str'] == null || temp['time_str'] == "");
       var isGlobal = (temp['room_id'] != null && temp['room_id'] == 0);
       var timeStr = flag ? '' : temp['time_str'].toString();
       RoomPlayer? tempPlay = dataMgr.findObj(TableNames.roomPlayer, temp['user_id']) as RoomPlayer?;
-      _addSysIcon();//系统
+      _addSysIcon(); //系统
       if (tempPlay != null) {
         _createPlayerIcon(tempPlay);
         var baseStr = flag ? S.current.l_id_10168 : (isGlobal ? S.current.l_id_14516 : S.current.l_id_10169);
-        String nikeName=_addNikeNameAndTap(msg, player);
+        String nikeName = _addNikeNameAndTap(msg, player);
         _textContent = nikeName + baseStr + _selLinksStr(timeStr, Colors.red);
       } else {
         _textContent = '禁言  RoomPlayer  为空';
       }
-    } else if (value == ChatContentType.ChatContent_tiren) {
+    } else if (optCode == ChatContentType.ChatContent_tiren) {
       //踢人 2
-      _addSysIcon();//系统
+      _addSysIcon(); //系统
       String nickName = _selLinksStr(temp['nickname'], Colours.text_blue);
       _textContent = '$nickName:$S.current.l_id_10174';
-    } else if (value == ChatContentType.ChatContent_liwu) {
+    } else if (optCode == ChatContentType.ChatContent_liwu) {
       RoomPlayer? roomPlayer = player;
       //礼物 3
       Item? iteminfo;
@@ -353,7 +360,7 @@ class RoomChatText extends CustomBaseTextLink {
       String? s = iteminfo?.name ?? '';
       int id = iteminfo?.id ?? 0;
       if ((id >= 204 && id <= 206)) {
-        _addSysIcon();//系统
+        _addSysIcon(); //系统
         String nikeName = _addNikeNameAndTap(msg, player);
         String itemInfoName = _selLinksStr('[${iteminfo?.name}]', Color(0xfff4de98), fontWeight: FontWeight.w400);
         _textContent = nikeName + S.current.l_id_14581 + itemInfoName + S.current.l_id_14582;
@@ -366,16 +373,15 @@ class RoomChatText extends CustomBaseTextLink {
         String itemInfoName = _selLinksStr('[$s]', Color(0xfff4de98), fontWeight: FontWeight.w400);
         String count = _selLinksStr(' x${temp['count']}', Color(0xfff4de98), fontWeight: FontWeight.w400);
         _textContent = '$nikeName:${S.current.l_id_10167}$itemInfoName$count';
-
       }
-    } else if (value == ChatContentType.ChatContent_guanzhu) {
+    } else if (optCode == ChatContentType.ChatContent_guanzhu) {
       //关注 5
 
-      _addSysIcon();//系统
+      _addSysIcon(); //系统
       String nikeName = _addNikeNameAndTap(msg, player);
       String userNickname = _selLinksStr(temp['user_nickname'], Colours.text_blue);
       _textContent = '$nikeName关注了$userNickname';
-    } else if (value == ChatContentType.ChatContent_jinggao) {
+    } else if (optCode == ChatContentType.ChatContent_jinggao) {
       //警告 6
       if (temp['user_id'] == dataCenter.mainUser.id) {
         Future.delayed(const Duration(milliseconds: 500), () async {
@@ -383,7 +389,7 @@ class RoomChatText extends CustomBaseTextLink {
         });
       }
       _textContent = S.current.l_id_14381 + temp['desc'];
-    } else if (value == ChatContentType.ChatContent_meiqian) {
+    } else if (optCode == ChatContentType.ChatContent_meiqian) {
       //付费房钱不够退出 9
       // 弹窗逻辑不走这里
       // Future.delayed(const Duration(milliseconds: 300), () async {
@@ -391,27 +397,27 @@ class RoomChatText extends CustomBaseTextLink {
       //   chatNoMomeyHandler?.call(modelPack.roomPageModel.selfRoom);
       // });
       _textContent = temp['desc'];
-    } else if (value == ChatContentType.ChatContent_setadmin || value == ChatContentType.ChatContent_caneladmin) {
+    } else if (optCode == ChatContentType.ChatContent_setadmin || optCode == ChatContentType.ChatContent_caneladmin) {
       //设置房管 11 //取消房管 12
-      _addSysIcon();//系统
+      _addSysIcon(); //系统
       String userNickname = _selLinksStr(temp['user_nickname'], Colours.text_blue, fontWeight: FontWeight.w400);
-      String desc = value == ChatContentType.ChatContent_setadmin ? S.current.l_id_10170 : S.current.l_id_10171;
+      String desc = optCode == ChatContentType.ChatContent_setadmin ? S.current.l_id_10170 : S.current.l_id_10171;
       _textContent = userNickname + desc;
-    } else if (value == ChatContentType.ChatContent_forceEndVideo ||
-        value == ChatContentType.ChatContent_timeoutEndVideo ||
-        value == ChatContentType.ChatContent_maintainEndVideo ||
-        value == ChatContentType.ChatContent_changeUserEndVideo ||
-        value == ChatContentType.ChatContent_banTimeoutEndVideo) {
+    } else if (optCode == ChatContentType.ChatContent_forceEndVideo ||
+        optCode == ChatContentType.ChatContent_timeoutEndVideo ||
+        optCode == ChatContentType.ChatContent_maintainEndVideo ||
+        optCode == ChatContentType.ChatContent_changeUserEndVideo ||
+        optCode == ChatContentType.ChatContent_banTimeoutEndVideo) {
       var reson = "";
-      if (value == ChatContentType.ChatContent_forceEndVideo) {
+      if (optCode == ChatContentType.ChatContent_forceEndVideo) {
         reson = S.current.l_id_14374;
-      } else if (value == ChatContentType.ChatContent_timeoutEndVideo) {
+      } else if (optCode == ChatContentType.ChatContent_timeoutEndVideo) {
         reson = S.current.l_id_14375;
-      } else if (value == ChatContentType.ChatContent_maintainEndVideo) {
+      } else if (optCode == ChatContentType.ChatContent_maintainEndVideo) {
         reson = S.current.l_id_14376;
-      } else if (value == ChatContentType.ChatContent_changeUserEndVideo) {
+      } else if (optCode == ChatContentType.ChatContent_changeUserEndVideo) {
         reson = S.current.l_id_14377;
-      } else if (value == ChatContentType.ChatContent_banTimeoutEndVideo) {
+      } else if (optCode == ChatContentType.ChatContent_banTimeoutEndVideo) {
         reson = S.current.l_id_14378;
       }
       if (temp['user_id'] == dataCenter.mainUser.id) {
@@ -425,7 +431,7 @@ class RoomChatText extends CustomBaseTextLink {
         _textContent =
             '${msg.content!.text}${_selLinksStr(S.current.l_id_14380, Colors.white, fontWeight: FontWeight.w600)}';
       }
-    } else if (value == ChatContentType.ChatContent_shortId) {
+    } else if (optCode == ChatContentType.ChatContent_shortId) {
       //短语 18
       String str = '${msg.content!.text}';
       if (temp['short_id'] != null) {
@@ -442,12 +448,12 @@ class RoomChatText extends CustomBaseTextLink {
         }
       }
       _createPlayerIcon(player);
-      String nikeName=_addNikeNameAndTap(msg, player);
+      String nikeName = _addNikeNameAndTap(msg, player);
       _textContent = '$nikeName:$str';
-    } else if (value == ChatContentType.ChatContent_caipiaoXiazhu) {
+    } else if (optCode == ChatContentType.ChatContent_caipiaoXiazhu) {
       //彩票下注19
 
-      _addSysIcon();//系统
+      _addSysIcon(); //系统
       String nikeName = _addNikeNameAndTap(msg, player);
       String cpType = _selLinksStr(temp['cp_type_string'], Colours.text_yellow, fontWeight: FontWeight.w600);
       String totalAmount = _selLinksStr(((temp['total_amount']) / 1.0).toString(), Colours.text_yellow);
@@ -466,22 +472,22 @@ class RoomChatText extends CustomBaseTextLink {
               roomChatCellVo: roomChatCellVo),
         );
       }
-    } else if (value == ChatContentType.ChatContent_caipiaoZhongjiang) {
+    } else if (optCode == ChatContentType.ChatContent_caipiaoZhongjiang) {
       // 彩票中奖 20
 
-      _addZhongJiangIcon();//中奖
+      _addZhongJiangIcon(); //中奖
       String nikeName = _addNikeNameAndTap(msg, player);
       String cpName = _selLinksStr(temp['cp_name'], Colours.text_yellow, fontWeight: FontWeight.w600);
       String payAmount = _selLinksStr(((temp['pay_amount']) / 1.0).toString(), Colours.text_yellow);
       _textContent = '恭喜$nikeName在$cpName中了$payAmount元';
-    } else if (value == ChatContentType.ChatContent_caipiaoZhongjiangEffect) {
+    } else if (optCode == ChatContentType.ChatContent_caipiaoZhongjiangEffect) {
       // 彩票中奖特效 21
-      _addCaiJinIcon( );//彩金
+      _addCaiJinIcon(); //彩金
       String payAmount = _selLinksStr(((temp['pay_amount']) / 1.0).toString(), Colours.text_yellow);
       _textContent = '恭喜您中奖了获得彩金$payAmount元';
-    } else if (value == ChatContentType.ChatContent_caipiaoZhongjiangFenHong) {
+    } else if (optCode == ChatContentType.ChatContent_caipiaoZhongjiangFenHong) {
       // 彩票中奖主播分红 22
-      _addCaiJinIcon();//彩金
+      _addCaiJinIcon(); //彩金
       String totalPayAmout = _selLinksStr(((temp['total_pay_amout']) / 1.0).toString(), Colors.red);
       _textContent = '恭喜获得彩金分红$totalPayAmout火力';
     } else {
@@ -508,7 +514,7 @@ class RoomChatText extends CustomBaseTextLink {
     _addHeadBaseIcon(imgUrl: 'assets/live_game/caijin.png');
   }
 
-  void _addTiaoDouIcon( ) {
+  void _addTiaoDouIcon() {
     addEndImageArr(
       EndBaseIcon(
           url: 'assets/live_game/tiaodou.png',
@@ -534,7 +540,7 @@ class RoomChatText extends CustomBaseTextLink {
 
   //获取用户RoomPlayer
   void _getRoomPlayerByUserId(int userId, Function(RoomPlayer?) bFun) {
-    // Future.delayed(Duration(milliseconds: Random().nextInt(3000)), () {
+    // Future.delayed(Duration(milliseconds:3000), () {
     RoomPlayer? basePlayer = dataMgr.findObj(TableNames.roomPlayer, userId) != null
         ? dataMgr.findObj(TableNames.roomPlayer, userId) as RoomPlayer
         : null;
@@ -549,6 +555,7 @@ class RoomChatText extends CustomBaseTextLink {
       bFun(basePlayer);
     }
     // });
+
   }
 
   //添加用户等级Icon到前排中，
@@ -591,19 +598,21 @@ class RoomChatText extends CustomBaseTextLink {
     if (vipIconUrl.isNotEmpty) {
       addIconTittleToHead(
         HeadBaseIcon(
-          iconLen: 8,
+          iconLen: 7,
           url: vipIconUrl,
           roomChatCellVo: roomChatCellVo,
-          boxRect: Rect.fromLTWH(5.w, 0.w, 86.w, 32.w),
+          boxRect: Rect.fromLTWH(0.w, 2.w, 80.w, 30.w),
         ),
       );
     }
+    //小图标都用一样的尺寸
     int num3 = 3;
+    Rect rect=Rect.fromLTWH(5.w, 5.w, 26.w, 26.w);
     //，应该判断是管理者
     if (player.roomAdmin > 0) {
       addIconTittleToHead(
         HeadBaseIcon(
-          boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
+          boxRect:rect,
           iconLen: num3,
           url: 'assets/common/room_admin.png',
           roomChatCellVo: roomChatCellVo,
@@ -615,7 +624,7 @@ class RoomChatText extends CustomBaseTextLink {
       addIconTittleToHead(
         HeadBaseIcon(
           iconLen: num3,
-          boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
+          boxRect: rect,
           url: 'assets/common/icon_luckey_num.png',
           roomChatCellVo: roomChatCellVo,
         ),
@@ -628,7 +637,7 @@ class RoomChatText extends CustomBaseTextLink {
         addIconTittleToHead(
           HeadBaseIcon(
             iconLen: num3,
-            boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
+            boxRect: rect,
             url: serviceUpload.cdnUrl(it.icon ?? ''),
             roomChatCellVo: roomChatCellVo,
           ),
