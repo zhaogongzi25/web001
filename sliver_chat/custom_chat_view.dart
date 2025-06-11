@@ -30,7 +30,6 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
   void initState() {
     super.initState();
 
-    print('CustomChatView  initState');
 
     _controller = CustomcChatController(
       width: widget.ctxWidth,
@@ -47,7 +46,7 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
   }
 
   Widget _makeScrollButton() {
-    if (_chatScrollButton == null) {
+    if (!(_chatScrollButton != null)) {
       _chatScrollButton = Container(
         margin: EdgeInsets.only(left: 5.w, bottom: 5.w),
         padding: EdgeInsets.only(left: 15.w, right: 20.w, top: 5.w, bottom: 5.w),

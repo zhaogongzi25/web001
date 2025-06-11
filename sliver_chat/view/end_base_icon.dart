@@ -20,15 +20,12 @@ class EndBaseIcon {
 
 
 
-  //是否绘制测试的背景区域颜色， 用于调整当前字号，正式版本删除绘制测试区域的方法，
-  bool _hideRectBg = true;
-
   final VoidCallback? onTap;
 
   EndBaseIcon({
     required String url,
     required this.boxRect,
-      this.onTap,
+    this.onTap,
   }) {
     ImageLoadManager.getImageLocalorNetFun(url, (ui.Image? value) {
       _bgImage = value;
@@ -39,19 +36,12 @@ class EndBaseIcon {
 
   void initData() {}
 
-
-
   bool hitTest(RoomChatCellVo vo, Offset clikPos) {
     //写法有点罗说，需要在创建的时候就算出位置
- print(clikPos);
-    LineMetrics lineMetrics =
-        vo.textLink!.lines![vo.textLink!.lines!.length - 1];
+    print(clikPos);
+    LineMetrics lineMetrics = vo.textLink!.contentLines![vo.textLink!.contentLines!.length - 1];
 
-    double ty = vo.ctxPodding.top +
-        vo.textLink!.multipleLinesH / 2.0 +
-        lineMetrics.baseline -
-        drawToRect!.height;
-
+    double ty = vo.ctxPodding.top + vo.textLink!.multipleLinesH / 2.0 + lineMetrics.baseline - drawToRect!.height;
 
     Rect testRect = Rect.fromLTWH(
       drawToRect!.left,
@@ -60,7 +50,7 @@ class EndBaseIcon {
       drawToRect!.height,
     );
 
-    if(testRect.contains(clikPos)){
+    if (testRect.contains(clikPos)) {
       onTap!();
     }
     return true;
@@ -71,32 +61,26 @@ class EndBaseIcon {
     return fontRect!.width;
   }
 
-
   //绘制的区域，这是在列表表中对应该布局坐标
   Rect? drawToRect;
 
   //将内容绘制到空格范围内容
   void draw(Canvas canvas, RoomChatCellVo vo, double ty) {
-    if (_bgImage != null&&vo.textLink!.lines!=null) {
+    if (_bgImage != null && vo.textLink!.contentLines != null) {
       Rect drawRect = Rect.fromLTWH(
         boxRect.left,
         boxRect.top,
-        boxRect.width  ,
-        boxRect.height  ,
+        boxRect.width,
+        boxRect.height,
       );
 
-      LineMetrics lineMetrics =
-          vo.textLink!.lines![vo.textLink!.lines!.length - 1];
+      LineMetrics lineMetrics = vo.textLink!.contentLines![vo.textLink!.contentLines!.length - 1];
 
       double ttx = vo.ctxPodding.left + lineMetrics.width;
-      double tty = vo.rect!.top -
-          ty +
-          vo.ctxPodding.top +
-          lineMetrics.baseline -
-          drawRect.height;
+      double tty = vo.rect!.top - ty + vo.ctxPodding.top + lineMetrics.baseline - drawRect.height;
 
       drawToRect = Rect.fromLTWH(
-        ttx + drawRect.left+vo.textLink!.fontBaseLeft,
+        ttx + drawRect.left + vo.textLink!.fontBaseLeft,
         tty + drawRect.top + vo.textLink!.multipleLinesH / 2.0,
         drawRect.width,
         drawRect.height,
@@ -104,17 +88,14 @@ class EndBaseIcon {
 
       //显示背景区域
       // _hideRectBg = false;
-      if (!_hideRectBg) {
-        canvas.drawRect(
-          drawToRect!, // Draw only the visible intersection
-          Paint()..color = Colors.green,
-        );
-      }
-      //绘制底图
-      int imgW = _bgImage!.width;
-      int imgH = _bgImage!.height;
 
-      Rect srcRect = Rect.fromLTWH(0.0, 0.0, imgW * 1.0, imgH * 1.0);
+        // canvas.drawRect(
+        //   drawToRect!, // Draw only the visible intersection
+        //   Paint()..color = Colors.green,
+        // );
+
+
+      Rect srcRect = Rect.fromLTWH(0.0, 0.0,  _bgImage!.width * 1.0, _bgImage!.height * 1.0);
 
       canvas.drawImageRect(_bgImage!, srcRect, drawToRect!, Paint());
       //绘制文本

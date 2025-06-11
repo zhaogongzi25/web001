@@ -136,7 +136,7 @@ class CustomcChatController {
 
 
     if (!animationControl.isAnimating&&!scrollButtonState.value) {
-        dragScrollEvent=false; //需要将手势装态归零，因为当前的是在底部
+        dragScrollEvent=false; //需要将手势状态归零，因为当前的是在底部
         moveBottom();
     }
 

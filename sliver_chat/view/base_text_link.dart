@@ -3,6 +3,7 @@ import 'package:data_center/utils/sliver_chat/view/text_link_region.dart';
 
 import 'package:flutter/material.dart';
 
+import '../../../live_old/utility/colors.dart';
 import '../chatcell/room_chat_cell_vo.dart';
 import 'end_base_icon.dart';
 import 'free_base_icon.dart';
@@ -10,22 +11,18 @@ import 'head_base_icon.dart';
 
 //基本文本包含富文本点击的文本对象，描述文本显示内容，和点击事件的内容
 class BaseTextLink {
-  // String headstr = '';
-  // int headLen = 0;
-
   //基础文本最大宽度
-
   //多行文本和单行的高度偏移。如多行我们会让记录网往小一点显示，
   double multipleLinesH = 0.w;
   double fontBaseLeft = 0.w;
 
   //存放头部标签一般一个，也有可能会多个，
-  List<HeadBaseIcon> _headImageArr = [];
+  final List<HeadBaseIcon> _headImageArr = [];
 
   //存放尾部标签一般一个，也有可能会多个，
-  List<EndBaseIcon> _endImageArr = [];
+  final List<EndBaseIcon> _endImageArr = [];
 
-  List<FreeBaseIcon> _freeImage = [];
+  final List<FreeBaseIcon> _freeImage = [];
 
   //标记是否显示
   // bool hide = true;
@@ -36,39 +33,34 @@ class BaseTextLink {
   //文本Painter
   TextPainter? textPainter;
 
-  //文本内容
-  String? textContent;
+  //最终显示文本内容是包含了链接信息的内容
+  // String? _textContent;
 
-  //链接内容
-  List<Map<String, dynamic>> links = [];
+
+
 
   //文本行数列表，layout后才能有数据
-  List<LineMetrics>? lines;
+  List<LineMetrics>? contentLines;
+
+  //链接内容
+  List<Map<String, dynamic>> textLinks = [];
+
 
   final double maxWidth;
   final RoomChatCellVo roomChatCellVo;
   TextStyle? baseStyle;
-  final VoidCallback perentResetSize;
 
-  BaseTextLink(
-      {required TextStyle textStyle,
-      required this.perentResetSize,
-      required this.roomChatCellVo,
-      required this.maxWidth}) {
+  BaseTextLink({required TextStyle textStyle, required this.roomChatCellVo, required this.maxWidth}) {
     baseStyle = textStyle;
-
     initData();
   }
-
   void initData() {
-    textContent = '测试文本';
-  }
 
+  }
   //添加头部对象，会和文本空格结合
   void addIconTittleToHead(HeadBaseIcon baseTittle) {
     _headImageArr.add(baseTittle);
   }
-
   //添加尾部对象，会和文本空格结合
   void addEndImageArr(EndBaseIcon baseTittle) {
     _endImageArr.add(baseTittle);
@@ -85,21 +77,17 @@ class BaseTextLink {
     for (HeadBaseIcon baseTittle in _headImageArr) {
       len += baseTittle.titleLen;
     }
-
     return len;
   }
-
   //获取头部的空格文本
   String _getHeadEmptyStr() {
     String addStr = '';
     double len = _getHeadTitleFontLen();
     for (int i = 0; i < len.floor(); i++) {
-      addStr += HeadBaseIcon.sampleSpace;
+      addStr += RoomChatCellVo.sampleSpace;
     }
-
     return addStr;
   }
-
   //点击测试
   bool hitTest(RoomChatCellVo vo, Offset clikpos) {
     final Offset pointInTextLayout = Offset(
@@ -127,12 +115,18 @@ class BaseTextLink {
     }
     return false;
   }
+  //修改文本内容，需要重置组件尺寸
+  void setTextContentToRander(String value){
+    _buildToPainter(value, textLinks);
+    //重制对象的尺寸
+    roomChatCellVo.resetSize();
 
-  void buildToPainter(String str, List<Map<String, dynamic>> arr) {
+  }
+  //将文本排列
+  void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
     String addStr = _getHeadEmptyStr();
-    String text = addStr   + str;
-
+    String text = addStr + str;
     List<Map<String, dynamic>> linkArr = arr;
     final spanAndRegionData = buildSpansAndRegions(
       fullText: text,
@@ -141,34 +135,30 @@ class BaseTextLink {
     );
     List<InlineSpan> textSpans = spanAndRegionData.item1;
     linkRegions = spanAndRegionData.item2;
-
     textPainter = TextPainter(
       text: TextSpan(children: textSpans),
       textDirection: TextDirection.ltr,
     )..layout(minWidth: 0, maxWidth: maxWidth);
-
-    lines = textPainter?.computeLineMetrics();
-    multipleLinesH = lines!.length > 1 ? -2.w : 0.w;
-
-    perentResetSize();
+    contentLines = textPainter?.computeLineMetrics();
+    multipleLinesH = contentLines!.length > 1 ? -2.w : 0.w;
   }
-
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {
     _drawBaseTextLink(canvas, vo, ty);
-
     //绘制开头的icon列表，因第个独立，它们并不知到排列顺序，需要逐个计算起始位置
     double startLeft = 0.0;
+    //绘制前排图标，并需要累加排列直接多个
     for (HeadBaseIcon baseTittle in _headImageArr) {
       baseTittle.startLeft = startLeft;
       baseTittle.draw(canvas, vo, ty);
       startLeft += baseTittle.getWidth();
     }
-    startLeft = 0.0;
+    double endLeft = 0.0;
+    //行尾接图片，支持多个，
     for (EndBaseIcon endBaseIcon in _endImageArr) {
-      endBaseIcon.startLeft = startLeft;
+      endBaseIcon.startLeft = endLeft;
       endBaseIcon.draw(canvas, vo, ty);
     }
-
+    //显示自由排列图标
     for (FreeBaseIcon freeBaseIcon in _freeImage) {
       freeBaseIcon.draw(canvas, vo, ty);
     }
@@ -187,6 +177,7 @@ class BaseTextLink {
     }
   }
 
+  //获取文本的高宽度
   Offset getDrawRect() {
     return Offset(
       textPainter!.width + fontBaseLeft,

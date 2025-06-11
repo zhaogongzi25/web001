@@ -24,6 +24,7 @@ import 'package:provider/provider.dart';
 
 class SliverMain extends StatefulWidget {
   final dynamic roomPagePodCastModel;
+
   const SliverMain({super.key, this.roomPagePodCastModel});
 
   // Provider.of<RoomPagePodCastModel>(context, listen: false)
@@ -58,17 +59,17 @@ class _SliverMainState extends State<SliverMain> {
       roomPagePodCastModel: widget.roomPagePodCastModel,
       chatContext: context,
     );
-    _oneByonePush(2000);
+    // _oneByonePush(2000);
   }
 
-  //自动刷新数据
+  //自动刷新数据 测试用，到时会删除
   void _oneByonePush(tm) {
     if (_customcChatController != null) {
       int len = _customcChatController!.data.length;
 
-      int kk=(CustomcChatController.maxLen-len).abs();
+      int kk = (CustomcChatController.maxLen - len).abs();
 
-      if (kk<10 ||(len-9004).abs()<5) {
+      if (kk < 10 || (len - 9004).abs() < 5) {
         tm = 3000;
       }
     }
@@ -80,16 +81,12 @@ class _SliverMainState extends State<SliverMain> {
         RoomMsg roomMsg = _roomMsgModel!.msgList[idx];
         roomMsg = roomMsg.clone();
 
-
-
-
-        if(roomMsg.id==-2){
-          roomMsg.id=-1;
-          String str='数据总 ${_customcChatController!.data.length}    随机  ${Random().nextInt(9999)} - ${Random().nextInt(9999)}';
-          roomMsg.setValue('content', jsonEncode({"text":"❤️‍🔥❤${str}️❤️‍🔥 \n $str  \n$str"}));
+        if (roomMsg.id == -2) {
+          roomMsg.id = -1;
+          String str =
+              '数据总 ${_customcChatController!.data.length}    随机  ${Random().nextInt(9999)} - ${Random().nextInt(9999)}';
+          roomMsg.setValue('content', jsonEncode({"text": "❤️‍🔥❤${str}️❤️‍🔥 \n $str  \n$str"}));
         }
-
-
 
         RoomChatCellVo addVo = RoomChatCellVo(
           chatController: _customcChatController!,
@@ -98,14 +95,17 @@ class _SliverMainState extends State<SliverMain> {
           width: _customcChatController!.width,
         );
         _customcChatController!.pushData(addVo);
+
+
+
         if (mounted) {
-          _oneByonePush(Random().nextInt(30) + 300);
+          _oneByonePush(Random().nextInt(2) + 1);
         }
       }
     });
   }
 
-  //注意这个数据不要泄漏，还没有做自动清理的
+  //注意这个数据不要泄漏，还没有做自动清理的会当迁移到原来对象中后，将不需要map来记录已存取的数据
   final Map<int, bool> _useData = {};
 
 //数据显示暂是不改app逻辑硬对比的方法来添加到聊天列表中
@@ -121,7 +121,6 @@ class _SliverMainState extends State<SliverMain> {
     }
   }
 
-
   void _makeRoomChatCellVo(RoomMsg roomMsg) {
     _useData.addEntries(<int, bool>{roomMsg.id: true}.entries);
     // print('新添加对象 id = ${roomMsg.id}');
@@ -132,11 +131,7 @@ class _SliverMainState extends State<SliverMain> {
       width: _customcChatController!.width,
     );
     _customcChatController!.pushData(addVo);
-
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {

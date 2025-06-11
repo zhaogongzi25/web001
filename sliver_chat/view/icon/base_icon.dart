@@ -17,13 +17,11 @@ class BaseIcon {
     required this.roomChatCellVo,
     this.onTap,
   }) {
-
     initData();
     ImageLoadManager.getImageLocalorNetFun(url, (ui.Image? value) {
       bgImage = value;
       roomChatCellVo.chatController.refreshNum++;
       roomChatCellVo.chatController.refreshUi();
-
     });
   }
   void initData() {
@@ -38,5 +36,18 @@ class BaseIcon {
 
 
   //将内容绘制到空格范围内容
-  void draw(Canvas canvas, RoomChatCellVo vo, double ty) {}
+  void draw(Canvas canvas, RoomChatCellVo vo, double ty) {
+    if(bgImage!=null &&drawToRect!=null){
+
+      // canvas.drawRect(
+      //   drawToRect!,
+      //   Paint()..color =Colors.white,
+      // );
+
+      Rect srcRect = Rect.fromLTWH(0.0, 0.0, bgImage!.width * 1.0, bgImage!.height * 1.0);
+      canvas.drawImageRect(bgImage!, srcRect, drawToRect!, Paint());
+    }
+
+
+  }
 }

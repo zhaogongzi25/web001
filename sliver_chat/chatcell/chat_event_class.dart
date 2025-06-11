@@ -26,8 +26,9 @@ import 'package:wordchat/views/benefit/benefit_dialog.dart';
 import 'model_pack.dart';
 
 
-
+//按钮事件都放这里，和原来方法一样，
 class ChatEventClass{
+  //解锁
   void onJiesuo(ModelPack modelPack) async {
     BuildContext context = modelPack.chatContext;
     dynamic roomPageModel = modelPack.roomPageModel;
@@ -115,7 +116,7 @@ class ChatEventClass{
     );
 
   }
-
+//点击人名
   void onTapNikeName(RoomPlayer roomPlayer, RoomMsg _chatRoom,ModelPack modelPack) {
     if ((
         roomPlayer.mysteryMan > 0 &&
@@ -141,6 +142,7 @@ class ChatEventClass{
       );
     }
   }
+  //打开跟注
   void onTapGetzhuEvent(temp,ModelPack modelPack) async {
     dynamic _liveGameModel=modelPack.liveGameModel;
     dynamic _roomPageModel=modelPack.roomPageModel;
