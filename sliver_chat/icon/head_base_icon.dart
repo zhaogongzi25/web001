@@ -2,7 +2,7 @@
 import 'dart:math';
 
 import 'package:common_base/common_base.dart';
-import 'package:data_center/utils/sliver_chat/view/icon/base_icon.dart';
+import 'package:data_center/utils/sliver_chat/icon/base_icon.dart';
 import 'package:flutter/material.dart';
 import '../chatcell/room_chat_cell_vo.dart';
 
@@ -13,11 +13,11 @@ class HeadBaseIcon extends BaseIcon {
   //图像偏移，默认为0,0,0,0;计算出来的文字空间再扩展
   final Rect boxRect;
   //设定图片占用的文字宽度。用的是空格数量，和字号关联，做到图片和文字同比static String sampleSpace='\u2002'; //一个空字符的宽度
-  final int titleLen;
+  final int iconLen;
 
   HeadBaseIcon({
     required super.url,
-    required this.titleLen,
+    required this.iconLen,
     required this.boxRect,
     required super.roomChatCellVo,
   });
@@ -25,7 +25,7 @@ class HeadBaseIcon extends BaseIcon {
   //获取Icon的宽度， 这将用来累加前排Icon宽度
   double getWidth() {
     double tw = RoomChatCellVo.sampleCodeWidth ?? 20.w; //应该到这里都算好了，
-    return tw * titleLen;
+    return tw * iconLen;
   }
 
   //绘制con图标

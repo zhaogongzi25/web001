@@ -21,10 +21,7 @@ class TextLinkRegion {
     this.onTap,
   });
 
-  @override
-  String toString() {
-    return 'TextLinkRegion(start: $startCharacterIndex, end: $endCharacterIndex, data: $linkData)';
-  }
+
 }
 
 Tuple2<List<InlineSpan>, List<TextLinkRegion>> buildSpansAndRegions({

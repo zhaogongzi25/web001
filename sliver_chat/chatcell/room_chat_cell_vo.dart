@@ -3,10 +3,11 @@ import 'package:common_base/common_base.dart';
 import 'package:data_center/live_old/model/room_msg.dart';
 import 'package:flutter/material.dart';
 
-import 'model_pack.dart';
+import '../base/custom_chat_controller.dart';
+import '../base/model_pack.dart';
 import 'room_chat_text.dart';
-import '../view/base_text_link.dart';
-import '../custom_chat_controller.dart';
+import '../base/base_text_link.dart';
+
 
 
 //每一条显示记录对象
@@ -39,7 +40,6 @@ class RoomChatCellVo {
   //数据对象包，存放要向下传递的model
   final ModelPack modelPack;
 
-  // RoomPlayer? voPlayer;
 
   //传入聊天框宽度， 最能设置每行最大自动换行
   final double width;

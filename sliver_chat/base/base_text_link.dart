@@ -1,13 +1,13 @@
 import 'package:common_base/common_base.dart';
-import 'package:data_center/utils/sliver_chat/view/text_link_region.dart';
+import 'package:data_center/utils/sliver_chat/base/text_link_region.dart';
 
 import 'package:flutter/material.dart';
 
 import '../../../live_old/utility/colors.dart';
 import '../chatcell/room_chat_cell_vo.dart';
-import 'end_base_icon.dart';
-import 'free_base_icon.dart';
-import 'head_base_icon.dart';
+import '../icon/end_base_icon.dart';
+import '../icon/free_base_icon.dart';
+import '../icon/head_base_icon.dart';
 
 //基本文本包含富文本点击的文本对象，描述文本显示内容，和点击事件的内容
 class BaseTextLink {
@@ -75,7 +75,7 @@ class BaseTextLink {
   double _getHeadTitleFontLen() {
     double len = 0;
     for (HeadBaseIcon baseTittle in _headImageArr) {
-      len += baseTittle.titleLen;
+      len += baseTittle.iconLen;
     }
     return len;
   }
@@ -117,6 +117,7 @@ class BaseTextLink {
   }
   //修改文本内容，需要重置组件尺寸
   void setTextContentToRander(String value){
+
     _buildToPainter(value, textLinks);
     //重制对象的尺寸
     roomChatCellVo.resetSize();

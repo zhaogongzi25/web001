@@ -1,7 +1,7 @@
 //聊天消息
 
 import 'dart:convert';
-import 'dart:math';
+
 
 import 'package:common_base/common_base.dart';
 import 'package:data_center/data_center.dart';
@@ -30,14 +30,14 @@ import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 
 import '../../../live_old/model/video.dart';
 import '../../../live_old/service/service_upload.dart';
-import '../view/end_base_icon.dart';
-import '../view/free_base_icon.dart';
-import '../view/head_base_icon.dart';
-import '../view/tittle_base_icon.dart';
-import '../view/base_text_link.dart';
+import '../icon/end_base_icon.dart';
+import '../icon/free_base_icon.dart';
+import '../icon/head_base_icon.dart';
+import '../icon/level_base_icon.dart';
+import '../base/base_text_link.dart';
 
 import 'chat_event_class.dart';
-import 'model_pack.dart';
+import '../base/model_pack.dart';
 
 class RoomChatText extends BaseTextLink {
   //角色信息，特殊消息是没有角色信息的
@@ -71,11 +71,7 @@ class RoomChatText extends BaseTextLink {
         } else {
           _textContent = '未知消息 contentType = ${roomMsg.contentType}  id  =${roomMsg.id} ';
         }
-        //如果信内容还有需要异步，需要需要将恶意㲺文本移到之后才能刷区域大小
-
-
         setTextContentToRander(_textContent!);
-
       });
     }
   }
@@ -99,7 +95,7 @@ class RoomChatText extends BaseTextLink {
           boxRect: Rect.fromLTWH(0.w, 10.w, 100.w, 32.w),
           onTap: () {
             ChatEventClass().onJiesuo(modelPack);
-          }),
+          }, roomChatCellVo: roomChatCellVo),
     );
 
     addFreeImageArr(
@@ -251,14 +247,8 @@ class RoomChatText extends BaseTextLink {
         //跳蛋(进直播间的连结消息)9003
         _addHuDongIcon('互动');
         _textContent = "主播已连接" + _selLinksStr('跳蛋', Colours.chat_tiaodan);
-        addEndImageArr(
-          EndBaseIcon(
-              url: 'assets/live_game/tiaodou.png',
-              boxRect: Rect.fromLTWH(5.w, 5.w, 86.w, 32.w),
-              onTap: () {
-                dataCenter.roomExtendMgr.callEggBuy();
-              }),
-        );
+        _addTiaoDouIcon('挑逗icon');
+
       } else {
         _addSysIcon('系统');
         if (notice.contentType == ChatType.Chat_none) {
@@ -472,7 +462,7 @@ class RoomChatText extends BaseTextLink {
               boxRect: Rect.fromLTWH(5.w, 5.w, 66.w, 32.w),
               onTap: () {
                 ChatEventClass().onTapGetzhuEvent(temp, roomChatCellVo.modelPack);
-              }),
+              }, roomChatCellVo: roomChatCellVo),
         );
       }
     } else if (value == ChatContentType.ChatContent_caipiaoZhongjiang) {
@@ -517,11 +507,22 @@ class RoomChatText extends BaseTextLink {
     _addHeadBaseIcon(len: 6, imgUrl: 'assets/live_game/caijin.png');
   }
 
+  void _addTiaoDouIcon(String value){
+    addEndImageArr(
+      EndBaseIcon(
+          url: 'assets/live_game/tiaodou.png',
+          boxRect: Rect.fromLTWH(5.w, 5.w, 86.w, 32.w),
+          onTap: () {
+            dataCenter.roomExtendMgr.callEggBuy();
+          }, roomChatCellVo: roomChatCellVo),
+    );
+  }
+
   //对头部图标的统一入口，只包含了图片，
   void _addHeadBaseIcon({required int len, required String imgUrl}) {
     addIconTittleToHead(
       HeadBaseIcon(
-        titleLen: len,
+        iconLen: len,
         url: imgUrl,
         boxRect: Rect.fromLTWH(0.w, 0.w, 66.w, 32.w),
         roomChatCellVo: roomChatCellVo,
@@ -551,31 +552,29 @@ class RoomChatText extends BaseTextLink {
   //添加用户等级Icon到前排中，
   void _addUserLevelIcon(int level) {
     int lv = level;
-    double lw = 12.w;
     int titleLen = 7;
     //10-90的宽度
     Rect rect = Rect.fromLTWH(0.w, 0.w, 76.w, 32.w);
     if (lv < 10) {
-      lw = 16.w;
+
       rect = Rect.fromLTWH(0.w, 0.w, 66.w, 32.w); //和系统，互动，按钮一样大
       titleLen = 6;
     } else if (lv > 90 && lv < 100) {
-      lw = 15.w;
+
       rect = Rect.fromLTWH(0.w, 0.w, 86.w, 32.w);
       titleLen = 7;
     } else if (lv >= 100) {
-      lw = 18.w;
+
       rect = Rect.fromLTWH(-5.w, 0.w, 88.w, 32.w);
       titleLen = 8;
     }
     addIconTittleToHead(
-      TittleBaseIcon(
-        titleLen: titleLen,
+      LevelBaseIcon(
+        iconLen: titleLen,
         url: 'assets/new_rank/${getNewRankIcon(lv)}.png',
         textStyle: baseStyle!,
         boxRect: rect,
-        pos: Offset(lw, 3.w),
-        title: '$lv',
+        level: lv,
         roomChatCellVo: roomChatCellVo,
       ),
     );
@@ -585,6 +584,7 @@ class RoomChatText extends BaseTextLink {
   //用户多个icon 等级，标签，房管，幸运
   void _createPlayInfoView(RoomPlayer player) {
     if (_isMysteryPlayer(player)) {
+      //神秘用户不显示
       return;
     }
     _addUserLevelIcon(player.level);
@@ -593,7 +593,7 @@ class RoomChatText extends BaseTextLink {
     if (vipIconUrl.isNotEmpty) {
       addIconTittleToHead(
         HeadBaseIcon(
-          titleLen: 8,
+          iconLen: 8,
           url: vipIconUrl,
           roomChatCellVo: roomChatCellVo,
           boxRect: Rect.fromLTWH(5.w, 0.w, 86.w, 32.w),
@@ -606,7 +606,7 @@ class RoomChatText extends BaseTextLink {
       addIconTittleToHead(
         HeadBaseIcon(
           boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
-          titleLen: num3,
+          iconLen: num3,
           url: 'assets/common/room_admin.png',
           roomChatCellVo: roomChatCellVo,
         ),
@@ -616,7 +616,7 @@ class RoomChatText extends BaseTextLink {
     if (player.luckNum != null && player.luckNum! > 0) {
       addIconTittleToHead(
         HeadBaseIcon(
-          titleLen: num3,
+          iconLen: num3,
           boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
           url: 'assets/common/icon_luckey_num.png',
           roomChatCellVo: roomChatCellVo,
@@ -629,7 +629,7 @@ class RoomChatText extends BaseTextLink {
       if (it!.icon != null) {
         addIconTittleToHead(
           HeadBaseIcon(
-            titleLen: num3,
+            iconLen: num3,
             boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
             url: serviceUpload.cdnUrl(it.icon ?? ''),
             roomChatCellVo: roomChatCellVo,

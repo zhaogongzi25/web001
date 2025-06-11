@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/rendering.dart';
-import 'chatcell/room_chat_cell_vo.dart';
+
+import '../chatcell/room_chat_cell_vo.dart';
+
 
 // --- 1. 定义自定义的 RenderSliver ---
 class CustomChatRenderSliver extends RenderSliver {

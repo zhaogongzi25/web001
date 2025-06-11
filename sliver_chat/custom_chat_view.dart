@@ -4,35 +4,40 @@ import 'package:data_center/live_old/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 
-import 'custom_cavas_widget.dart';
-import 'custom_chat_controller.dart';
-import 'custom_chat_render_sliver.dart';
+import 'base/custom_chat_controller.dart';
+import 'base/custom_chat_render_sliver.dart';
+import 'base/model_pack.dart';
+import 'base/custom_cavas_widget.dart';
+
 
 //显示聊天室窗口 回调控制器
 class CustomChatView extends StatefulWidget {
   final void Function(CustomcChatController) onCreated;
   //设置聊天框的宽度
   final double ctxWidth;
+  final ModelPack modelPack;
 
-  const CustomChatView({super.key, required this.onCreated, required this.ctxWidth});
+  const CustomChatView({super.key, required this.modelPack,required this.onCreated, required this.ctxWidth});
+
 
   @override
-  _CustomChatViewState createState() => _CustomChatViewState();
+  State<StatefulWidget> createState() {
+    return _CustomChatViewState();
+  }
 }
 
 
 class _CustomChatViewState extends State<CustomChatView> with SingleTickerProviderStateMixin {
   CustomcChatController? _controller;
-
   Widget? _chatScrollButton;
 
   @override
   void initState() {
     super.initState();
 
-
     _controller = CustomcChatController(
       width: widget.ctxWidth,
+      modelPack: widget.modelPack,
       refreshUi: refreshListView,
       scrollController: ScrollController(),
       animationControl: AnimationController(
@@ -40,20 +45,18 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
         duration: Duration(milliseconds: 1000), //这里设置1秒是以后所有需要播放动画可以在这个范围内，参数在移动到底部可选0-1秒来确定滑动时间
       ),
     );
-
-    // _controller!.scrollController.addListener(_onScroll);
     widget.onCreated(_controller!);
   }
-
+  //到底部按钮
   Widget _makeScrollButton() {
     if (!(_chatScrollButton != null)) {
       _chatScrollButton = Container(
         margin: EdgeInsets.only(left: 5.w, bottom: 5.w),
         padding: EdgeInsets.only(left: 15.w, right: 20.w, top: 5.w, bottom: 5.w),
-        decoration: new BoxDecoration(
+        decoration:   BoxDecoration(
           color: Color(0xEAFFFFFF), // 边色与边宽度
           shape: BoxShape.rectangle, // 默认值也是矩形
-          borderRadius: new BorderRadius.circular((20.0)), // 圆角度
+          borderRadius:   BorderRadius.circular((20.0)), // 圆角度
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -85,7 +88,7 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
     _controller?.dispose();
     super.dispose();
   }
-
+  //手势上滑改变显示到底部按钮
   bool _handleScrollNotification(ScrollNotification notification) {
     if (_controller!.dragScrollEvent) {
       double currentOffset = _controller!.scrollController.offset;
@@ -137,10 +140,9 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
     );
   }
 
-  Map<Rect, Shader> shaderCache = {};
 
   Shader _getOrCreateShader(Rect bounds) {
-    return shaderCache.putIfAbsent(
+    return {}.putIfAbsent(
         bounds,
         () => LinearGradient(
               begin: Alignment.topCenter,
@@ -153,7 +155,6 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
   //上部分渐变效果，原chat复制过来
   Widget _maskWidget() {
     return ShaderMask(
-        // key: UniqueKey(),
         shaderCallback: (Rect bounds) {
           Shader shader = _getOrCreateShader(bounds);
           return shader;

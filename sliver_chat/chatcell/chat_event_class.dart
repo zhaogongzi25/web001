@@ -23,7 +23,7 @@ import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
 
 import 'package:wordchat/views/benefit/benefit_dialog.dart';
 
-import 'model_pack.dart';
+import '../base/model_pack.dart';
 
 
 //按钮事件都放这里，和原来方法一样，
