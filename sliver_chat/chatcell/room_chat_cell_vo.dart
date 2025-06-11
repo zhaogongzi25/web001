@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../base/custom_chat_controller.dart';
 import '../base/model_pack.dart';
 import 'room_chat_text.dart';
-import '../base/base_text_link.dart';
+import '../base/custom_base_text_link.dart';
 
 
 
@@ -29,7 +29,7 @@ class RoomChatCellVo {
 
 
   //文本内容显示。
-  BaseTextLink? textLink;
+  CustomBaseTextLink? textLink;
 
   //和chatController控制器
   final CustomcChatController chatController;

@@ -8,11 +8,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_net/download_mgr.dart';
-
 import 'model_pack.dart';
+
 import '../chatcell/room_chat_cell_vo.dart';
-
-
 
 class CustomcChatController {
   final Map<String, ui.Image> _imageMap = {};
@@ -75,6 +73,7 @@ class CustomcChatController {
   //播放的开始位置，
   double _startMovePosition = 0.0;
 
+  //聊天框的宽度用于限制文本的换行
   final double width;
 
   final AnimationController animationControl;
@@ -124,7 +123,6 @@ class CustomcChatController {
     animationControl.forward(from: 0);
   }
 
-
   void dispose() {
     data.clear();
     animationControl.dispose();
@@ -140,6 +138,7 @@ class CustomcChatController {
     return h;
   }
 
+  //向聊天框中推入聊天对象，
   void pushRoomMsg(RoomMsg roomMsg) {
     RoomChatCellVo addVo = RoomChatCellVo(
       chatController: this,
@@ -155,6 +154,7 @@ class CustomcChatController {
   //刷新重新统计高度叠加
   int _startTotalIdx = 0;
 
+  //重置位置和高度，会从_startTotalIdx开始往后叠加下去，如果不考虑性能直接从第一个开始，
   void resetListPosAll() {
     int beginIdx = -1;
     double baseTop = 0.0;
@@ -197,17 +197,17 @@ class CustomcChatController {
   //清理超出的数量，删除前部分， 当超过1000记录删除前面100条
   static int maxLen = 10000;
 
+  //判断是否需要清理数据
   void _clearOldData() {
-    int killNum = min(1000, (maxLen / 10).toInt());
+    int killNum = min(1000, (maxLen / 10).toInt()); //得到每次删除的数里，见意写入固定值，要比总数小，
     if (data.length >= maxLen) {
-      _startTotalIdx = 0;
       double killHeight = 0;
       while (data.length > maxLen - killNum) {
         killHeight += data[0].rect.height;
         data.removeAt(0);
       }
-      //有删除记录那我们将重置所有显示记录的位置，因为删除前部分数据所有位置前移
-      //计算所有对象当前的位置和对应的高度，这里需要优化，不是每一个都是要全刷新，可以优化
+      //删除前部份数据，需要重置所有对象的位置从0开始
+      _startTotalIdx = 0;
       resetListPosAll();
       if (scrollController.hasClients) {
         if (scrollController.position.hasContentDimensions) {

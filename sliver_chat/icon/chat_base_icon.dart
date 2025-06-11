@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 
 import '../chatcell/room_chat_cell_vo.dart';
 
-
-class BaseIcon {
+//基础Icon图片
+class ChatBaseIcon {
   //背景图片
   ui.Image? bgImage;
   //绘制到的位置
   Rect? drawToRect;
   final VoidCallback? onTap;
   final RoomChatCellVo roomChatCellVo;
-  BaseIcon({
+  ChatBaseIcon({
     required String url,
     required this.roomChatCellVo,
     this.onTap,

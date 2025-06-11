@@ -2,10 +2,10 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import '../chatcell/room_chat_cell_vo.dart';
-import 'base_icon.dart';
+import 'chat_base_icon.dart';
 
 
-class EndBaseIcon extends BaseIcon {
+class EndBaseIcon extends ChatBaseIcon {
   //起始位置，后续逐个叠加在文本的开始使用.
   double startLeft = 0.0;
   //图像偏移，默认为0,0,0,0;计算出来的文字空间再扩展

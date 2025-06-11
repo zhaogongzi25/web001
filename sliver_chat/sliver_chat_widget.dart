@@ -21,19 +21,19 @@ import 'custom_chat_view.dart';
 
 import 'package:provider/provider.dart';
 
-class SliverMain extends StatefulWidget {
+class SliverChatWidget extends StatefulWidget {
   final dynamic roomPagePodCastModel;
 
-  const SliverMain({super.key, this.roomPagePodCastModel});
+  const SliverChatWidget({super.key, this.roomPagePodCastModel});
 
 
   @override
   State<StatefulWidget> createState() {
-    return _SliverMainState();
+    return _SliverChatWidgetState();
   }
 }
 
-class _SliverMainState extends State<SliverMain> {
+class _SliverChatWidgetState extends State<SliverChatWidget> {
   CustomcChatController? _customcChatController;
   // RoomMsgModel? _roomMsgModel;
   ModelPack? _modelPack;
@@ -42,10 +42,11 @@ class _SliverMainState extends State<SliverMain> {
   @override
   void initState() {
     super.initState();
+
     chatMargin = EdgeInsets.only(right: 182.w - widgetSpanPadding.right);
 
     _modelPack = ModelPack(
-      roomMsgModel:  Provider.of<RoomMsgModel>(context, listen: false)!,
+      roomMsgModel:  Provider.of<RoomMsgModel>(context, listen: false),
       myFollowModel: Provider.of<MyFollowModel>(context, listen: false),
       liveGameModel:  Provider.of<LiveGameModel>(context, listen: false),
       roomPageModel:  Provider.of<RoomPageModel>(context, listen: false),
@@ -53,6 +54,8 @@ class _SliverMainState extends State<SliverMain> {
       chatContext: context,
     );
     // _oneByonePush(2000);
+
+
   }
   //自动刷新数据 测试用，到时会删除
   void _oneByonePush(tm) {
@@ -134,6 +137,7 @@ class _SliverMainState extends State<SliverMain> {
       onCreated: (CustomcChatController controller) {
         _customcChatController = controller;
         _refreshMsglIst();
+
       },
     );
   }

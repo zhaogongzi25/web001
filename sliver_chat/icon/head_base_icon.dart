@@ -2,12 +2,12 @@
 import 'dart:math';
 
 import 'package:common_base/common_base.dart';
-import 'package:data_center/utils/sliver_chat/icon/base_icon.dart';
+import 'package:data_center/utils/sliver_chat/icon/chat_base_icon.dart';
 import 'package:flutter/material.dart';
 import '../chatcell/room_chat_cell_vo.dart';
 
 //前排icon,是需要叠加到文本内容的缩进位关联
-class HeadBaseIcon extends BaseIcon {
+class HeadBaseIcon extends ChatBaseIcon {
   //起始位置，后续逐个叠加在文本的开始使用.
   double startLeft = 0.0;
   //图像偏移，默认为0,0,0,0;计算出来的文字空间再扩展

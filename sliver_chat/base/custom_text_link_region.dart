@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 //用于给文本保存点击链接的数据，
-class TextLinkRegion {
+class CustomTextLinkRegion {
   /// 链接在整个文本字符串中的起始字符索引 (包含)
   final int startCharacterIndex;
 
@@ -14,7 +14,7 @@ class TextLinkRegion {
   /// 点击时触发的回调
   final VoidCallback? onTap;
 
-  TextLinkRegion({
+  CustomTextLinkRegion({
     required this.startCharacterIndex,
     required this.endCharacterIndex,
     this.linkData,
@@ -24,14 +24,14 @@ class TextLinkRegion {
 
 }
 
-Tuple2<List<InlineSpan>, List<TextLinkRegion>> buildSpansAndRegions({
+Tuple2<List<InlineSpan>, List<CustomTextLinkRegion>> buildSpansAndRegions({
   required String fullText, // Full simple string (if not using base style)
   required TextStyle baseStyle,
   required List<Map<String, dynamic>>
   linkDefinitions, // List of { 'text': 'link text', 'url': '...', 'onTap': ...}
 }) {
   final List<InlineSpan> resultSpans = [];
-  final List<TextLinkRegion> linkRegions = [];
+  final List<CustomTextLinkRegion> linkRegions = [];
   int currentOffset = 0;
   int linkDefIndex = 0;
   // A simple parser: find links in sequence. This is basic and might need
@@ -72,7 +72,7 @@ Tuple2<List<InlineSpan>, List<TextLinkRegion>> buildSpansAndRegions({
 
         // Add the link region
         linkRegions.add(
-          TextLinkRegion(
+          CustomTextLinkRegion(
             startCharacterIndex: currentOffset,
             endCharacterIndex: currentOffset + linkText.length,
             linkData: url,

@@ -76,7 +76,7 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
     return _chatScrollButton!;
   }
 
-  //当数据变化时来判断是否需要刷新ui
+  //更新Ui
   void refreshListView() {
     if (mounted) {
       setState(() {});

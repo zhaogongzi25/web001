@@ -1,5 +1,5 @@
 import 'package:common_base/common_base.dart';
-import 'package:data_center/utils/sliver_chat/base/text_link_region.dart';
+import 'package:data_center/utils/sliver_chat/base/custom_text_link_region.dart';
 
 import 'package:flutter/material.dart';
 
@@ -10,7 +10,7 @@ import '../icon/free_base_icon.dart';
 import '../icon/head_base_icon.dart';
 
 //基本文本包含富文本点击的文本对象，描述文本显示内容，和点击事件的内容
-class BaseTextLink {
+class CustomBaseTextLink {
   //基础文本最大宽度
   //多行文本和单行的高度偏移。如多行我们会让记录网往小一点显示，
   double multipleLinesH = 0.w;
@@ -28,7 +28,7 @@ class BaseTextLink {
   // bool hide = true;
 
   //链接对象
-  List<TextLinkRegion>? linkRegions;
+  List<CustomTextLinkRegion>? linkRegions;
 
   //文本Painter
   TextPainter? textPainter;
@@ -50,7 +50,7 @@ class BaseTextLink {
   final RoomChatCellVo roomChatCellVo;
   TextStyle? baseStyle;
 
-  BaseTextLink({required TextStyle textStyle, required this.roomChatCellVo, required this.maxWidth}) {
+  CustomBaseTextLink({required TextStyle textStyle, required this.roomChatCellVo, required this.maxWidth}) {
     baseStyle = textStyle;
     initData();
   }
@@ -96,7 +96,7 @@ class BaseTextLink {
     );
     final TextPosition textPosition = vo.textLink!.textPainter!.getPositionForOffset(pointInTextLayout);
     final int clickedCharacterIndex = textPosition.offset;
-    TextLinkRegion? clickedLink;
+    CustomTextLinkRegion? clickedLink;
     for (final linkRegion in vo.textLink!.linkRegions!) {
       if (clickedCharacterIndex >= linkRegion.startCharacterIndex &&
           clickedCharacterIndex < linkRegion.endCharacterIndex) {

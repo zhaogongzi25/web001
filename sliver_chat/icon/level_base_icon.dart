@@ -9,14 +9,14 @@ class LevelBaseIcon extends HeadBaseIcon {
   final int level;
   //显示文本
   TextPainter? _labelPainter;
-  final TextStyle textStyle;
+
   LevelBaseIcon({
     required super.url,
     required super.iconLen,
     required super.boxRect,
     required super.roomChatCellVo,
     required this.level,
-    required this.textStyle,
+
   });
   //绘制文本因为在Icon上基本上都有指定偏移，如果需要对应的排序方法，如等级，其它排序，需要对应该相对位置进行微调
   void draw(Canvas canvas, RoomChatCellVo vo, double ty) {
@@ -46,10 +46,11 @@ class LevelBaseIcon extends HeadBaseIcon {
     if(_labelPainter!=null){
       return;
     }
+
     _labelPainter = TextPainter(
       text: TextSpan(
           text: level.toString(),
-          style: textStyle.copyWith(
+          style: TextStyle(
               decoration: TextDecoration.none, fontWeight: FontWeight.bold, fontSize: 20.sp, color: Colors.white)),
       textDirection: TextDirection.rtl,
     )..layout(minWidth: 0, maxWidth: double.infinity);

@@ -1,10 +1,10 @@
 
-import 'package:data_center/utils/sliver_chat/icon/base_icon.dart';
+import 'package:data_center/utils/sliver_chat/icon/chat_base_icon.dart';
 import 'package:flutter/material.dart';
 import '../chatcell/room_chat_cell_vo.dart';
 
 
-class FreeBaseIcon extends BaseIcon {
+class FreeBaseIcon extends ChatBaseIcon {
   //绘制的区域，这是在列表表中对应该布局坐标
   final Rect drawRect;
   FreeBaseIcon({required super.url, required this.drawRect, required super.roomChatCellVo});
