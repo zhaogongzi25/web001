@@ -563,15 +563,15 @@ class RoomChatText extends CustomBaseTextLink {
     int lv = level;
     int titleLen = 7;
     //10-90的宽度
-    Rect rect = Rect.fromLTWH(0.w, 0.w, 76.w, 32.w);
+    Rect rect = Rect.fromLTWH(0.w, 1.w, 76.w, 30.w);
     if (lv < 10) {
-      rect = Rect.fromLTWH(0.w, 0.w, 66.w, 32.w); //和系统，互动，按钮一样大
+      rect = Rect.fromLTWH(0.w, 1.w, 66.w, 30.w); //和系统，互动，按钮一样大
       titleLen = 6;
     } else if (lv > 90 && lv < 100) {
-      rect = Rect.fromLTWH(0.w, 0.w, 86.w, 32.w);
+      rect = Rect.fromLTWH(0.w, 1.w, 86.w, 30.w);
       titleLen = 7;
     } else if (lv >= 100) {
-      rect = Rect.fromLTWH(-5.w, 0.w, 88.w, 32.w);
+      rect = Rect.fromLTWH(-2.w, 1.w, 90.w, 30.w);
       titleLen = 8;
     }
     addIconTittleToHead(
@@ -601,7 +601,7 @@ class RoomChatText extends CustomBaseTextLink {
           iconLen: 7,
           url: vipIconUrl,
           roomChatCellVo: roomChatCellVo,
-          boxRect: Rect.fromLTWH(0.w, 2.w, 80.w, 30.w),
+          boxRect: Rect.fromLTWH(0.w, 2.w, 80.w, 28.w),
         ),
       );
     }

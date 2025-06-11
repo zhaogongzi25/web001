@@ -23,13 +23,13 @@ class LevelBaseIcon extends HeadBaseIcon {
     super.draw(canvas, vo, ty);
     if ( drawToRect != null) {
 
-      Offset labelPos= Offset(12.w, 3.w);
+      Offset labelPos= Offset(12.w, 4.w);
       if (level < 10) {
-        labelPos= Offset(16.w, 3.w);
+        labelPos= Offset(16.w, 4.w);
       } else if (level > 90 && level < 100) {
-        labelPos= Offset(15.w, 3.w);
+        labelPos= Offset(15.w, 4.w);
       } else if (level >= 100) {
-        labelPos= Offset(18.w, 3.w);
+        labelPos= Offset(18.w, 4.w);
       }
       _makeTextPainter();
       //微调等级坐标
