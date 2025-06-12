@@ -110,7 +110,7 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
         NotificationListener<ScrollNotification>(
             // 监听 ScrollNotification
             onNotification: _handleScrollNotification, // 注册回调函数
-            child: _maskWidget()),
+            child: _listRender()),
         ValueListenableBuilder<bool>(
           valueListenable: _controller!.scrollButtonState,
           builder: (context, value, child) {
@@ -132,36 +132,17 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
         ),
         Positioned(
           right: 0,
+            top: 20,
             child: Text(
           '${_controller!.data.length}/${CustomcChatController.maxLen}',
-          style: TextStyle(color: Colors.white, fontSize: 24.sp, height: 2.5.w, fontWeight: FontWeight.w400),
+          style: TextStyle(color: Colors.red, fontSize: 24.sp, height: 2.5.w, fontWeight: FontWeight.w400),
         ))
+
+
       ],
     );
   }
 
-
-  Shader _getOrCreateShader(Rect bounds) {
-    return {}.putIfAbsent(
-        bounds,
-        () => LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xff000000), Color(0x00000000), Colors.transparent],
-              stops: [0, .1, .11],
-            ).createShader(bounds));
-  }
-
-  //上部分渐变效果，原chat复制过来
-  Widget _maskWidget() {
-    return ShaderMask(
-        shaderCallback: (Rect bounds) {
-          Shader shader = _getOrCreateShader(bounds);
-          return shader;
-        },
-        blendMode: BlendMode.dstOut,
-        child: _listRender());
-  }
 
   Widget _listRender() {
     return CustomScrollView(
