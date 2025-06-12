@@ -124,13 +124,13 @@ class ChatEventClass{
         dataCenter.mainUser.isAdmin == 0) {
       return;
     }
-    dynamic roomMsgModel = modelPack.roomMsgModel;
+    BuildContext chatContext = modelPack.chatContext;
     MyFollowModel myFollowModel = modelPack.myFollowModel;
-    if (roomMsgModel.msgBuildContext != null) {
+    if (chatContext != null) {
       showModalBottomSheet(
         barrierColor: Colours.bottom_sheet_black_bg,
         backgroundColor: Colors.transparent,
-        context: roomMsgModel.msgBuildContext!,
+        context: chatContext,
         builder: (context) {
           Widget _memberInfoNew =
           getMemberWidget!(_chatRoom.id, roomPlayer.id);

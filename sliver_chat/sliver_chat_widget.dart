@@ -48,18 +48,10 @@ class SliverChatBox extends StatelessWidget {
 
 class SliverChatWidget extends StatefulWidget {
   final dynamic roomPagePodCastModel;
-  final Function? buildMemberPageNew;
-  final Function? buildXiaZhuWidget;
-  final Function? leaveHander;
-  final Function? noMomeyDialogHandler;
 
   const SliverChatWidget({
     super.key,
     this.roomPagePodCastModel,
-    this.leaveHander,
-    this.noMomeyDialogHandler,
-    this.buildMemberPageNew,
-    this.buildXiaZhuWidget,
   });
 
   @override
@@ -71,7 +63,7 @@ class SliverChatWidget extends StatefulWidget {
 class _SliverChatWidgetState extends State<SliverChatWidget> {
   CustomcChatController? _customcChatController;
 
-  // RoomMsgModel? _roomMsgModel;
+  RoomMsgModel? _roomMsgModel;
   ModelPack? _modelPack;
   EdgeInsets? chatMargin;
 
@@ -79,23 +71,10 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
   void initState() {
     super.initState();
 
-    if (widget.buildMemberPageNew != null) {
-      getMemberWidget = widget.buildMemberPageNew;
-    }
-    if (widget.buildXiaZhuWidget != null) {
-      getXiaZhuWidget = widget.buildXiaZhuWidget;
-    }
-    if (widget.leaveHander != null) {
-      chatLeaveHandler = widget.leaveHander;
-    }
-    if (widget.noMomeyDialogHandler != null) {
-      chatNoMomeyHandler = widget.noMomeyDialogHandler;
-    }
-
     chatMargin = EdgeInsets.only(right: 182.w - widgetSpanPadding.right);
-
+    _roomMsgModel = Provider.of<RoomMsgModel>(context, listen: false);
     _modelPack = ModelPack(
-      roomMsgModel: Provider.of<RoomMsgModel>(context, listen: false),
+      // roomMsgModel: Provider.of<RoomMsgModel>(context, listen: false),
       myFollowModel: Provider.of<MyFollowModel>(context, listen: false),
       liveGameModel: Provider.of<LiveGameModel>(context, listen: false),
       roomPageModel: Provider.of<RoomPageModel>(context, listen: false),
@@ -116,8 +95,8 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
     }
     Future.delayed(Duration(milliseconds: tm), () {
       if (_customcChatController != null) {
-        int idx = Random().nextInt(_modelPack!.roomMsgModel.msgList.length);
-        RoomMsg roomMsg = _modelPack!.roomMsgModel.msgList[idx];
+        int idx = Random().nextInt(_roomMsgModel!.msgList.length);
+        RoomMsg roomMsg = _roomMsgModel!.msgList[idx];
         roomMsg = roomMsg.clone();
         if (roomMsg.id == -2) {
           roomMsg.id = -1;
@@ -136,8 +115,8 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
   void _refreshMsglIst() {
     if (_customcChatController != null) {
       //暂时直接对应该当前的房间信息，然后显示要显示的记录 进行对比，没有就添加
-      for (int i = 0; i < _modelPack!.roomMsgModel.msgList.length; i++) {
-        RoomMsg roomMsg = _modelPack!.roomMsgModel.msgList[i];
+      for (int i = 0; i < _roomMsgModel!.msgList.length; i++) {
+        RoomMsg roomMsg = _roomMsgModel!.msgList[i];
         if (!_useData.containsKey(roomMsg.id)) {
           _useData.addEntries(<int, bool>{roomMsg.id: true}.entries);
           _customcChatController!.pushRoomMsg(roomMsg);
@@ -153,8 +132,6 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
       child: _listView(),
     );
   }
-
-
 
   Widget _listView() {
     _refreshMsglIst(); //刷新数据的方法还要结合app机制

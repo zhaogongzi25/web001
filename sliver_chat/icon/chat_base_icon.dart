@@ -37,10 +37,10 @@ class ChatBaseIcon {
   void draw(Canvas canvas, RoomChatCellVo vo, double ty) {
     if(bgImage!=null &&drawToRect!=null){
 
-      // canvas.drawRect(
-      //   drawToRect!,
-      //   Paint()..color =Colors.white,
-      // );
+      canvas.drawRect(
+        drawToRect!,
+        Paint()..color =Colors.white,
+      );
 
       Rect srcRect = Rect.fromLTWH(0.0, 0.0, bgImage!.width * 1.0, bgImage!.height * 1.0);
       canvas.drawImageRect(bgImage!, srcRect, drawToRect!, Paint());
