@@ -14,6 +14,7 @@ class CustomBaseTextLink {
   //基础文本最大宽度
   //多行文本和单行的高度偏移。如多行我们会让记录网往小一点显示，
   double multipleLinesH = 0.w;
+  //争对房卡整个文本右移，并不是缩进，
   double fontBaseLeft = 0.w;
 
   //存放头部标签一般一个，也有可能会多个，
@@ -128,7 +129,7 @@ class CustomBaseTextLink {
 
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
     String addStr = _getHeadEmptyStr();
-    String text = addStr + str;
+    String text = addStr + str+'-'+roomChatCellVo.id.toString();
     List<Map<String, dynamic>> linkArr = arr;
     final spanAndRegionData = buildSpansAndRegions(
       fullText: text,

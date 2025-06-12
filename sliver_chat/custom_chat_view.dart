@@ -130,13 +130,13 @@ class _CustomChatViewState extends State<CustomChatView> with SingleTickerProvid
             }
           },
         ),
-        Positioned(
-          right: 0,
-            top: 20,
-            child: Text(
-          '${_controller!.data.length}/${CustomcChatController.maxLen}',
-          style: TextStyle(color: Colors.red, fontSize: 24.sp, height: 2.5.w, fontWeight: FontWeight.w400),
-        ))
+        // Positioned(
+        //   right: 0,
+        //     top: 5,
+        //     child: Text(
+        //   '${_controller!.data.length}/${CustomcChatController.maxLen}',
+        //   style: TextStyle(color: Colors.white, fontSize: 36.sp, height: 2.5.w, fontWeight: FontWeight.w400),
+        // ))
 
 
       ],

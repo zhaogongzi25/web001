@@ -106,18 +106,19 @@ class CustomChatRenderSliver extends RenderSliver {
     final double hitCrossAxis = entry.crossAxisPosition;
     if (event is PointerDownEvent) {
       _downPosTy = ty;
+
     } else if (event is PointerMoveEvent) {
     } else if (event is PointerUpEvent) {
       //有移动将不执行点击事件
       if ((_downPosTy - ty).abs() > 0.0) {
         return;
       }
-      print('点击');
+
 
       // print('ty $ty  hitMainAxis $hitMainAxis  hitCrossAxis$hitCrossAxis ');
       for (RoomChatCellVo vo in _data) {
         double toy = vo.rect.top - ty;
-        if (!(hitMainAxis > toy + vo.ctxPodding.top && hitMainAxis < (toy + vo.rect.height) - vo.ctxPodding.bottom)) {
+        if (!(hitMainAxis > toy   && hitMainAxis < (toy + vo.rect.height) )) {
           //上下边界超出，跳过
           continue;
         }
@@ -125,13 +126,13 @@ class CustomChatRenderSliver extends RenderSliver {
           //左右边界超出，跳过
           continue;
         }
-
         final Offset clikPos = Offset(
           hitCrossAxis, // corresponds to dx
           hitMainAxis - toy, // corresponds to dy
         );
         //向选中的cell传递点击事件
         vo.hitTest(vo, clikPos);
+        return;
       }
     }
   }

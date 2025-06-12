@@ -36,7 +36,11 @@ class SliverChatBox extends StatelessWidget {
             // color: Colors.white,
             margin: EdgeInsets.only(right: 182.w - widgetSpanPadding.right),
             height: h,
-            child: SliverChatWidget())
+            child: Selector<RoomMsgModel, int>(
+                selector: (context, model) => model.msgChangeFlag,
+                builder: (context, flag, child) {
+                  return SliverChatWidget();
+                }))
       ],
     );
   }
@@ -98,7 +102,7 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
       roomPagePodCastModel: widget.roomPagePodCastModel,
       chatContext: context,
     );
-    _oneByonePush(3000);
+    // _oneByonePush(3000);
   }
 
   //自动刷新数据 测试用，到时会删除
@@ -117,9 +121,6 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
         roomMsg = roomMsg.clone();
         if (roomMsg.id == -2) {
           roomMsg.id = -1;
-          String str =
-              '数据总 ${_customcChatController!.data.length}    随机  ${Random().nextInt(9999)} - ${Random().nextInt(9999)}';
-          roomMsg.setValue('content', jsonEncode({"text": "❤️‍🔥❤$str️❤️‍🔥 \n $str  \n$str"}));
         }
         _customcChatController!.pushRoomMsg(roomMsg);
         if (mounted) {
@@ -147,15 +148,13 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<RoomMsgModel, int>(
-        selector: (context, model) => model.msgChangeFlag,
-        builder: (context, flag, child) {
-          return Container(
-            margin: lineMargin,
-            child: _listView(),
-          );
-        });
+    return Container(
+      margin: lineMargin,
+      child: _listView(),
+    );
   }
+
+
 
   Widget _listView() {
     _refreshMsglIst(); //刷新数据的方法还要结合app机制
@@ -169,8 +168,6 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
     );
   }
 }
-
-
 
 //
 // void initSliverModel() {

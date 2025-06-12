@@ -85,7 +85,7 @@ class RoomChatText extends CustomBaseTextLink {
 
 
   //独家消息
-  void _addDujiaXingxi() {
+  void _addRoomCard() {
     ModelPack modelPack = roomChatCellVo.modelPack;
     fontBaseLeft = 80.w;
     dynamic roomPageModel = modelPack.roomPageModel;
@@ -96,7 +96,7 @@ class RoomChatText extends CustomBaseTextLink {
       _textContent = '独家主播福利,等你来解锁！尽情畅享私\n密时刻,体验无与伦比的乐趣！';
     }
     //行距不一样。
-    baseStyle = TextStyle(color: Colors.white, fontSize: 24.sp, height: 3.w);
+    baseStyle = TextStyle(color: Colors.white, fontSize: 24.sp, height: 3.2.w);
     addEndImageArr(
       EndBaseIcon(
           url: 'assets/new_live_room/new_room_chat_card.png',
@@ -159,8 +159,8 @@ class RoomChatText extends CustomBaseTextLink {
       _addSysIcon(); //系统
       _textContent = notice.content!.text!;
     } else if (notice.id == -9999999) {
-      //独家信息
-      _addDujiaXingxi();
+      //房卡
+      _addRoomCard();
     } else {
       if (!notice.data.containsKey('userId')) {
         //没有userId 也就是异常信息
@@ -714,5 +714,6 @@ class RoomChatText extends CustomBaseTextLink {
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {
     _drawBackGroundColor(vo, canvas, ty);
     super.draw(vo, canvas, ty);
+
   }
 }

@@ -27,6 +27,8 @@ class EndBaseIcon extends ChatBaseIcon {
       drawToRect!.width,
       drawToRect!.height,
     );
+    // print(clikPos);
+    // print(testRect);
     if (testRect.contains(clikPos)) {
       onTap!();
     }
@@ -52,7 +54,6 @@ class EndBaseIcon extends ChatBaseIcon {
         drawRect.width,
         drawRect.height,
       );
-
 
     }
     super.draw(canvas, vo, ty);

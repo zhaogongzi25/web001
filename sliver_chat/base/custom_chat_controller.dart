@@ -160,8 +160,10 @@ class CustomcChatController {
       modelPack: modelPack,
       width: width,
     );
+
     _clearOldData();
     data.add(addVo);
+
     resetListPosAll();
   }
 

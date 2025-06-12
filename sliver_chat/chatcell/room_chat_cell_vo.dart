@@ -17,7 +17,10 @@ class RoomChatCellVo {
 
   //基础文本颜色，字号，行距，
   TextStyle textStyle =
-      TextStyle(color: Colors.white, fontSize: 24.sp, height: 2.5.w, fontWeight: FontWeight.w400); //原来chat的数值
+  TextStyle(color: Colors.white, fontSize: 24.sp  ,fontWeight: FontWeight.w400); //原来chat的数值
+
+  // TextStyle textStyle =
+  // TextStyle(color: Colors.white, fontSize: 24.sp, height: 2.5.w, fontWeight: FontWeight.w400); //原来chat的数值
   //一个空字符的宽度
   static String sampleSpace = '\u2002';
 
@@ -44,10 +47,12 @@ class RoomChatCellVo {
   //传入聊天框宽度， 最能设置每行最大自动换行
   final double width;
 
+  int id=0;
   //传入房间信息roomMsg 和chatController控制器
   RoomChatCellVo({required this.roomMsg, required this.modelPack, required this.width, required this.chatController}) {
     _initSampleKongGeWidth();
     //显示文本内容，
+    id=chatController.data.length;
     textLink = RoomChatText(
       roomChatCellVo: this,
       textStyle: textStyle,
@@ -71,6 +76,7 @@ class RoomChatCellVo {
 
   //传递点击事件
   bool hitTest(RoomChatCellVo vo, Offset clikPos) {
+
     return textLink!.hitTest(vo, clikPos);
   }
 
