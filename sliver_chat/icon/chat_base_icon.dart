@@ -19,7 +19,7 @@ class ChatBaseIcon {
     this.onTap,
   }) {
     //必须有一张底图
-    roomChatCellVo.chatController.getImageLocalorNetFun(url, (ui.Image? value) {
+    roomChatCellVo.chatController.getImageLocalOrNetFun(url, (ui.Image? value) {
       bgImage = value;
       roomChatCellVo.chatController.refreshNum++;
       roomChatCellVo.chatController.refreshUi();

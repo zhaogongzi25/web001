@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
 
@@ -9,46 +10,59 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_net/download_mgr.dart';
 import 'model_pack.dart';
-
 import '../chatcell/room_chat_cell_vo.dart';
 
 class CustomcChatController {
   final Map<String, ui.Image> _imageMap = {};
 
-  void getImageLocalorNetFun(String url, Function(ui.Image?) calBackfun) async {
+  void getImageLocalOrNetFun(String url, Function(ui.Image?) calBackFun) async {
     ui.Image? bImg;
-    // await Future.delayed(Duration(seconds:  Random().nextInt(5)));
+    // await Future.delayed(Duration(seconds: Random().nextInt(5)));
     if (_imageMap.containsKey(url)) {
       bImg = _imageMap[url];
       // print('已有缓存   $url');
     } else {
       if (url.contains("https:") || url.contains("http:")) {
-        String? localUrl = await downloadMgr.downloadLite(url);
-        if (localUrl != null) {
-          bImg = await _loadLocal(localUrl);
-        }
+        bImg = await _loadNetimage(url);
       } else {
-        bImg = await _loadLocal(url);
+        bImg = await _loadLocalImage(url);
       }
       if (bImg != null) {
         _imageMap.addEntries(
           <String, ui.Image>{url: bImg}.entries,
         );
+      } else {
+        // print('图片加载失败url   $url');
       }
     }
-    calBackfun(bImg);
+    calBackFun(bImg);
   }
 
-  Future<ui.Image?> _loadLocal(String assetPath) async {
+  Future<ui.Image?> _loadNetimage(String netUrl) async {
+    try {
+      String? imagePath = await downloadMgr.downloadLite(netUrl);
+      if (imagePath != null) {
+        File imageFile = File(imagePath);
+        if (await imageFile.exists()) {
+          Uint8List bytes = await imageFile.readAsBytes();
+          final ui.Codec codec = await ui.instantiateImageCodec(bytes);
+          final ui.FrameInfo frameInfo = await codec.getNextFrame();
+          return frameInfo.image;
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  Future<ui.Image?> _loadLocalImage(String assetPath) async {
     try {
       final ByteData data = await rootBundle.load(assetPath);
       final Uint8List bytes = data.buffer.asUint8List();
       final ui.Codec codec = await ui.instantiateImageCodec(bytes);
       final ui.FrameInfo frameInfo = await codec.getNextFrame();
       return frameInfo.image;
-    } catch (e) {
-      return null;
-    }
+    } catch (e) {}
+    return null;
   }
 
   num _easeInOut(double t) {

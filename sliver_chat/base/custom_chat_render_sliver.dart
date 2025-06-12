@@ -3,7 +3,6 @@ import 'package:flutter/rendering.dart';
 
 import '../chatcell/room_chat_cell_vo.dart';
 
-
 // --- 1. 定义自定义的 RenderSliver ---
 class CustomChatRenderSliver extends RenderSliver {
   // 修正: extends
@@ -18,10 +17,10 @@ class CustomChatRenderSliver extends RenderSliver {
   //存放所有记录的数组，当删除前排数据，需要重新按顺序重置所有对象的位置，现在是自动删除，逐个添加所以不可以人工修改数组
   final List<RoomChatCellVo> _data;
 
-
   int _refreshNum;
 
   int get refreshNum => _refreshNum;
+
   //刷新变化装太值，布局已计算好，但图片或其它数据还在准备中，当图片和数据准备好后，需要刷新列表的渲染，需要通过markNeedsLayout（）
   set refreshNum(int value) {
     if (_refreshNum == value) return;
@@ -33,6 +32,7 @@ class CustomChatRenderSliver extends RenderSliver {
   double _totalExtent;
 
   double get totalExtent => _totalExtent;
+
   //列表总高度
   set totalExtent(double value) {
     if (_totalExtent == value) return;
@@ -64,8 +64,7 @@ class CustomChatRenderSliver extends RenderSliver {
       maxPaintExtent: paintExtent,
       hitTestExtent: paintExtent,
       hasVisualOverflow: scrollExtent > constraints.remainingPaintExtent ||
-          constraints.scrollOffset >
-              0, // Content can be above or below viewport
+          constraints.scrollOffset > 0, // Content can be above or below viewport
     );
   }
 
@@ -92,38 +91,37 @@ class CustomChatRenderSliver extends RenderSliver {
         ),
       );
       return true; // We've found a target
-    }else{
+    } else {
       return false;
     }
   }
+
   //记录是否可以判断点击事件，如果有滑动就取消
-  bool _canUseHitHander=false;
+  double _downPosTy = 0.0;
+
   @override
   void handleEvent(PointerEvent event, SliverHitTestEntry entry) {
+    final double ty = constraints.scrollOffset;
+    final double hitMainAxis = entry.mainAxisPosition;
+    final double hitCrossAxis = entry.crossAxisPosition;
     if (event is PointerDownEvent) {
-        _canUseHitHander=true;
+      _downPosTy = ty;
     } else if (event is PointerMoveEvent) {
-      _canUseHitHander=false;
     } else if (event is PointerUpEvent) {
-      if(!_canUseHitHander){
+      //有移动将不执行点击事件
+      if ((_downPosTy - ty).abs() > 0.0) {
         return;
       }
-
-
-      final double ty = constraints.scrollOffset;
-      final double hitMainAxis = entry.mainAxisPosition;
-      final double hitCrossAxis = entry.crossAxisPosition;
+      print('点击');
 
       // print('ty $ty  hitMainAxis $hitMainAxis  hitCrossAxis$hitCrossAxis ');
       for (RoomChatCellVo vo in _data) {
         double toy = vo.rect.top - ty;
-        if (!(hitMainAxis > toy + vo.ctxPodding.top &&
-            hitMainAxis < (toy + vo.rect.height) - vo.ctxPodding.bottom)) {
+        if (!(hitMainAxis > toy + vo.ctxPodding.top && hitMainAxis < (toy + vo.rect.height) - vo.ctxPodding.bottom)) {
           //上下边界超出，跳过
           continue;
         }
-        if (hitCrossAxis < vo.ctxPodding.left ||
-            hitCrossAxis > vo.width- vo.ctxPodding.right) {
+        if (hitCrossAxis < vo.ctxPodding.left || hitCrossAxis > vo.width - vo.ctxPodding.right) {
           //左右边界超出，跳过
           continue;
         }
@@ -147,8 +145,7 @@ class CustomChatRenderSliver extends RenderSliver {
     final double ty = constraints.scrollOffset - offset.dy;
     final double th = constraints.viewportMainAxisExtent;
     for (RoomChatCellVo infoVo in _data) {
-      if ((infoVo.rect.top - ty + infoVo.rect.height) < 0 ||
-          (infoVo.rect.top - ty) > th) {
+      if ((infoVo.rect.top - ty + infoVo.rect.height) < 0 || (infoVo.rect.top - ty) > th) {
         //超出视窗的将跳过不绘制
         continue;
       }
