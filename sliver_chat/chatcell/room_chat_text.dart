@@ -76,7 +76,7 @@ class RoomChatText extends CustomBaseTextLink {
             _makeChatSys(roomMsg, temp);
           }
         } else {
-          _textContent = '未知消息 contentType = ${roomMsg.contentType}  id  =${roomMsg.id} ';
+          _textContent = '未知消息 contentType = ${roomMsg.contentType}   id  =${roomMsg.id} ';
         }
         setTextContentToRander(_textContent);
       });
@@ -644,6 +644,7 @@ class RoomChatText extends CustomBaseTextLink {
         );
       }
     }
+
   }
 
   //绘制背景

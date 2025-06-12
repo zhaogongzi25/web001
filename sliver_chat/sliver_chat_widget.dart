@@ -64,65 +64,65 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
   CustomcChatController? _customcChatController;
 
   RoomMsgModel? _roomMsgModel;
+
   ModelPack? _modelPack;
   EdgeInsets? chatMargin;
 
   @override
   void initState() {
     super.initState();
-
     chatMargin = EdgeInsets.only(right: 182.w - widgetSpanPadding.right);
     _roomMsgModel = Provider.of<RoomMsgModel>(context, listen: false);
     _modelPack = ModelPack(
-      // roomMsgModel: Provider.of<RoomMsgModel>(context, listen: false),
       myFollowModel: Provider.of<MyFollowModel>(context, listen: false),
       liveGameModel: Provider.of<LiveGameModel>(context, listen: false),
       roomPageModel: Provider.of<RoomPageModel>(context, listen: false),
       roomPagePodCastModel: widget.roomPagePodCastModel,
       chatContext: context,
     );
-    // _oneByonePush(3000);
+    _oneByonePush(5000);
   }
 
   //自动刷新数据 测试用，到时会删除
   void _oneByonePush(tm) {
     if (_customcChatController != null) {
       int len = _customcChatController!.data.length;
-      int kk = (CustomcChatController.maxLen - len).abs();
-      if (kk < 10 || (len - 9004).abs() < 5) {
+      if (len < 15 || (len > 9000 && len < 9010) || len > 9990) {
         tm = 3000;
       }
-    }
-    Future.delayed(Duration(milliseconds: tm), () {
-      if (_customcChatController != null) {
-        int idx = Random().nextInt(_roomMsgModel!.msgList.length);
-        RoomMsg roomMsg = _roomMsgModel!.msgList[idx];
-        roomMsg = roomMsg.clone();
-        if (roomMsg.id == -2) {
-          roomMsg.id = -1;
-        }
-        _customcChatController!.pushRoomMsg(roomMsg);
-        if (mounted) {
-          _oneByonePush(Random().nextInt(10) + 2);
-        }
+      if (len == 2000) {
+        // while(_customcChatController!.data.length<8500){
+        //   int idx = Random().nextInt(_customcChatController!.data.length);
+        //   RoomMsg roomMsg = _customcChatController!.data[idx].roomMsg;
+        //   roomMsg = roomMsg.clone();
+        //   if (roomMsg.id == -2) {
+        //     roomMsg.id = -1;
+        //   }
+        //   _customcChatController!.pushRoomMsg(roomMsg);
+        //
+        // }
       }
-    });
-  }
+    }
 
-  final Map<int, bool> _useData = {};
-
-//数据显示暂是不改app逻辑硬对比的方法来添加到聊天列表中
-  void _refreshMsglIst() {
-    if (_customcChatController != null) {
-      //暂时直接对应该当前的房间信息，然后显示要显示的记录 进行对比，没有就添加
-      for (int i = 0; i < _roomMsgModel!.msgList.length; i++) {
-        RoomMsg roomMsg = _roomMsgModel!.msgList[i];
-        if (!_useData.containsKey(roomMsg.id)) {
-          _useData.addEntries(<int, bool>{roomMsg.id: true}.entries);
+    Future.delayed(Duration(milliseconds: tm), () {
+      if (Random().nextInt(100) == 1) {
+        _roomMsgModel!.addSysInfo('添加的能想不信息');
+      } else {
+        //已有的信息
+        if (_customcChatController!.data.length > 0) {
+          int idx = Random().nextInt(_customcChatController!.data.length);
+          RoomMsg roomMsg = _customcChatController!.data[idx].roomMsg;
+          roomMsg = roomMsg.clone();
+          if (roomMsg.id == -2) {
+            roomMsg.id = -1;
+          }
           _customcChatController!.pushRoomMsg(roomMsg);
         }
       }
-    }
+      if (mounted) {
+        _oneByonePush(Random().nextInt(2) + 1);
+      }
+    });
   }
 
   @override
@@ -134,18 +134,16 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
   }
 
   Widget _listView() {
-    _refreshMsglIst(); //刷新数据的方法还要结合app机制
     return CustomChatView(
       modelPack: _modelPack!,
       ctxWidth: ScreenUtil().screenWidth - chatMargin!.right - lineMargin.left,
       onCreated: (CustomcChatController controller) {
+        _roomMsgModel?.setChatController(controller);
         _customcChatController = controller;
-        _refreshMsglIst();
       },
     );
   }
 }
-
 //
 // void initSliverModel() {
 //   setRoomMsgModel = _roomMsgModel;

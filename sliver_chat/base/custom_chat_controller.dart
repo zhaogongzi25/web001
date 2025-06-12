@@ -20,7 +20,6 @@ class CustomcChatController {
     // await Future.delayed(Duration(seconds: Random().nextInt(5)));
     if (_imageMap.containsKey(url)) {
       bImg = _imageMap[url];
-      // print('已有缓存   $url');
     } else {
       if (url.contains("https:") || url.contains("http:")) {
         bImg = await _loadNetimage(url);

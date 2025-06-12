@@ -23,6 +23,8 @@ class CustomBaseTextLink {
   //存放尾部标签一般一个，也有可能会多个，
   final List<EndBaseIcon> _endImageArr = [];
 
+
+
   final List<FreeBaseIcon> _freeImage = [];
 
   //标记是否显示
@@ -127,9 +129,26 @@ class CustomBaseTextLink {
   //将文本排列
   void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
 
+    if(_endImageArr.length<5){
+      addIconTittleToHead(
+        HeadBaseIcon(
+          boxRect:Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
+          iconLen: 3,
+          url: 'assets/common/bg_duihuan.png',
+          roomChatCellVo: roomChatCellVo,
+        ),
+      );
+    }
+
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
     String addStr = _getHeadEmptyStr();
-    String text = addStr + str+'-'+roomChatCellVo.id.toString();
+    String text = addStr + str;
+    if(   _endImageArr.length==0){
+      text +='-' +roomChatCellVo.id.toString();
+    }
+
+
+
     List<Map<String, dynamic>> linkArr = arr;
     final spanAndRegionData = buildSpansAndRegions(
       fullText: text,
