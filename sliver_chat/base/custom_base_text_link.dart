@@ -14,6 +14,7 @@ class CustomBaseTextLink {
   //基础文本最大宽度
   //多行文本和单行的高度偏移。如多行我们会让记录网往小一点显示，
   double multipleLinesH = 0.w;
+
   //争对房卡整个文本右移，并不是缩进，
   double fontBaseLeft = 0.w;
 
@@ -22,8 +23,6 @@ class CustomBaseTextLink {
 
   //存放尾部标签一般一个，也有可能会多个，
   final List<EndBaseIcon> _endImageArr = [];
-
-
 
   final List<FreeBaseIcon> _freeImage = [];
 
@@ -39,15 +38,11 @@ class CustomBaseTextLink {
   //最终显示文本内容是包含了链接信息的内容
   // String? _textContent;
 
-
-
-
   //文本行数列表，layout后才能有数据
   List<LineMetrics>? contentLines;
 
   //链接内容
   List<Map<String, dynamic>> textLinks = [];
-
 
   final double maxWidth;
   final RoomChatCellVo roomChatCellVo;
@@ -57,13 +52,14 @@ class CustomBaseTextLink {
     baseStyle = textStyle;
     initData();
   }
-  void initData() {
 
-  }
+  void initData() {}
+
   //添加头部对象，会和文本空格结合
   void addIconTittleToHead(HeadBaseIcon baseTittle) {
     _headImageArr.add(baseTittle);
   }
+
   //添加尾部对象，会和文本空格结合
   void addEndImageArr(EndBaseIcon baseTittle) {
     _endImageArr.add(baseTittle);
@@ -82,6 +78,7 @@ class CustomBaseTextLink {
     }
     return len;
   }
+
   //获取头部的空格文本
   String _getHeadEmptyStr() {
     String addStr = '';
@@ -91,6 +88,7 @@ class CustomBaseTextLink {
     }
     return addStr;
   }
+
   //点击测试
   bool hitTest(RoomChatCellVo vo, Offset clikpos) {
     final Offset pointInTextLayout = Offset(
@@ -120,34 +118,31 @@ class CustomBaseTextLink {
   }
 
   //修改文本内容，需要重置组件尺寸
-  void setTextContentToRander(String? value){
-    _buildToPainter(value??'', textLinks);
+  void setTextContentToRander(String? value) {
+    _buildToPainter(value ?? '', textLinks);
     //重制对象的尺寸
     roomChatCellVo.resetSize();
-
   }
+
   //将文本排列
   void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
-
-    if(_endImageArr.length<5){
-      addIconTittleToHead(
-        HeadBaseIcon(
-          boxRect:Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
-          iconLen: 3,
-          url: 'assets/common/bg_duihuan.png',
-          roomChatCellVo: roomChatCellVo,
-        ),
-      );
-    }
+    // if (_endImageArr.length < 5) {
+    //   addIconTittleToHead(
+    //     HeadBaseIcon(
+    //       boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
+    //       iconLen: 3,
+    //       url: 'assets/common/bg_duihuan.png',
+    //       roomChatCellVo: roomChatCellVo,
+    //     ),
+    //   );
+    // }
 
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
     String addStr = _getHeadEmptyStr();
     String text = addStr + str;
-    if(   _endImageArr.length==0){
-      text +='-' +roomChatCellVo.id.toString();
+    if (_endImageArr.length == 0) {
+      text += '-' + roomChatCellVo.id.toString();
     }
-
-
 
     List<Map<String, dynamic>> linkArr = arr;
     final spanAndRegionData = buildSpansAndRegions(
@@ -163,8 +158,36 @@ class CustomBaseTextLink {
     )..layout(minWidth: 0, maxWidth: maxWidth);
     contentLines = textPainter?.computeLineMetrics();
     multipleLinesH = contentLines!.length > 1 ? -2.w : 0.w;
-
   }
+
+  void show() {
+    for (HeadBaseIcon baseTittle in _headImageArr) {
+      baseTittle.show();
+    }
+
+    for (EndBaseIcon endBaseIcon in _endImageArr) {
+      endBaseIcon.show();
+    }
+
+    for (FreeBaseIcon freeBaseIcon in _freeImage) {
+      freeBaseIcon.show();
+    }
+  }
+
+  void hide() {
+    for (HeadBaseIcon baseTittle in _headImageArr) {
+      baseTittle.hide();
+    }
+
+    for (EndBaseIcon endBaseIcon in _endImageArr) {
+      endBaseIcon.hide();
+    }
+
+    for (FreeBaseIcon freeBaseIcon in _freeImage) {
+      freeBaseIcon.hide();
+    }
+  }
+
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {
     _drawBaseTextLink(canvas, vo, ty);
     //绘制开头的icon列表，因第个独立，它们并不知到排列顺序，需要逐个计算起始位置

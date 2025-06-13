@@ -88,6 +88,17 @@ class RoomChatCellVo {
     }
   }
 
+  void show(){
+    if (rect.height > 0 && rect.width > 0) {
+      textLink!.show( );
+    }
+  }
+  void hide(){
+    if (rect.height > 0 && rect.width > 0) {
+      textLink!.hide( );
+    }
+  }
+
   //记算当前cell的尺寸，用于在列表中的排序位置，所有需要显示的对象都是需要进行先记算
   void resetSize() {
     if (textLink != null && textLink!.textPainter != null) {

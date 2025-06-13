@@ -11,20 +11,37 @@ class ChatBaseIcon {
   ui.Image? bgImage;
   //绘制到的位置
   Rect? drawToRect;
+  final String url;
   final VoidCallback? onTap;
   final RoomChatCellVo roomChatCellVo;
   ChatBaseIcon({
-    required String url,
+    required this.url,
     required this.roomChatCellVo,
     this.onTap,
   }) {
     //必须有一张底图
-    roomChatCellVo.chatController.getImageLocalOrNetFun(url, (ui.Image? value) {
-      bgImage = value;
-      roomChatCellVo.chatController.refreshNum++;
-      roomChatCellVo.chatController.refreshUi();
-    });
+
     initData();
+  }
+  bool _loadIng=false;
+  void show() {
+    //没有图片并没有在加载那么我就要加载图片了
+     if(bgImage==null&&_loadIng==false){
+       _loadIng=true;
+       roomChatCellVo.chatController.getImageLocalOrNetFun(url, (ui.Image? value) {
+         _loadIng=false;
+         bgImage = value;
+         roomChatCellVo.chatController.refreshNum++;
+         roomChatCellVo.chatController.refreshUi();
+       });
+     }
+  }
+  void hide() {
+    //有图我就清理；无法中断图片加载过程
+     if(bgImage!=null){
+       _loadIng=false;
+       bgImage=null;
+     }
   }
   void initData() {
 

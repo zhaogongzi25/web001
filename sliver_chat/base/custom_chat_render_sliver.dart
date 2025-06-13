@@ -148,8 +148,10 @@ class CustomChatRenderSliver extends RenderSliver {
     for (RoomChatCellVo infoVo in _data) {
       if ((infoVo.rect.top - ty + infoVo.rect.height) < 0 || (infoVo.rect.top - ty) > th) {
         //超出视窗的将跳过不绘制
+        infoVo.hide();
         continue;
       }
+      infoVo.show();
       //绘制传递到对应对象自行绘制
       infoVo.draw(context.canvas, ty);
     }

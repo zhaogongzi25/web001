@@ -18,25 +18,15 @@ class CustomcChatController {
   void getImageLocalOrNetFun(String url, Function(ui.Image?) calBackFun) async {
     ui.Image? bImg;
     // await Future.delayed(Duration(seconds: Random().nextInt(5)));
-    if (_imageMap.containsKey(url)) {
-      bImg = _imageMap[url];
+    if (url.contains("https:") || url.contains("http:")) {
+
+      bImg = await _loadNetimage(url);
     } else {
-      if (url.contains("https:") || url.contains("http:")) {
-        bImg = await _loadNetimage(url);
-      } else {
-        bImg = await _loadLocalImage(url);
-      }
-      if (bImg != null) {
-        _imageMap.addEntries(
-          <String, ui.Image>{url: bImg}.entries,
-        );
-      } else {
-        // print('图片加载失败url   $url');
-      }
+      bImg = await _loadLocalImage(url);
     }
     calBackFun(bImg);
   }
-
+  //加载网上图片
   Future<ui.Image?> _loadNetimage(String netUrl) async {
     try {
       String? imagePath = await downloadMgr.downloadLite(netUrl);
@@ -52,7 +42,7 @@ class CustomcChatController {
     } catch (e) {}
     return null;
   }
-
+//加载本地图片
   Future<ui.Image?> _loadLocalImage(String assetPath) async {
     try {
       final ByteData data = await rootBundle.load(assetPath);
@@ -68,13 +58,16 @@ class CustomcChatController {
     return t < 0.5 ? 2 * pow(t, 2) : -1 + (4 - 2 * t) * t;
   }
 
+  //存放聊天列表
   List<RoomChatCellVo> data = [];
+
+  //是否为手势滑动状态
   bool dragScrollEvent = false;
 
-  //刷新变量，用于改变让updateRenderObject能够更新到变化才会刷行ui
+  //刷新变量，用于改变让updateRenderObject能够更新到变化才会刷行ui会一直变化+1，
   int refreshNum = 0;
 
-  //标记动画的滑动方向，是否移动到地步
+  //标记动画的滑动方向，是否移动到底部
   bool _animationMoveBottom = true;
 
   //是否显示滑到底部按钮
@@ -95,11 +88,11 @@ class CustomcChatController {
   final ModelPack modelPack;
 
   CustomcChatController({
-    required this.scrollController, // 需要传入 ScrollController
-    required this.animationControl, // 需要传入 AnimationController
-    required this.refreshUi, // 需要传入 setState 或类似的刷新函数
-    required this.modelPack, //
-    required this.width, //
+    required this.scrollController,
+    required this.animationControl,
+    required this.refreshUi,
+    required this.modelPack,
+    required this.width,
   }) {
     maxLen = dataMgr.getConfig(ConfigKeys.livechatnumyh_open) ?? 200;
     animationControl.addListener(() {

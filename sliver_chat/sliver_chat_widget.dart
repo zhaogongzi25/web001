@@ -102,6 +102,7 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
         //
         // }
       }
+      // tm=1000;
     }
 
     Future.delayed(Duration(milliseconds: tm), () {
