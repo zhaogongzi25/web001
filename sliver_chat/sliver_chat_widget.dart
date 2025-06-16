@@ -39,7 +39,14 @@ class SliverChatBox extends StatelessWidget {
             child: Selector<RoomMsgModel, int>(
                 selector: (context, model) => model.msgChangeFlag,
                 builder: (context, flag, child) {
-                  return SliverChatWidget();
+                  return SliverChatWidget(modelPack: ModelPack(
+                    roomMsgModel: Provider.of<RoomMsgModel>(context, listen: false),
+                    myFollowModel: Provider.of<MyFollowModel>(context, listen: false),
+                    liveGameModel: Provider.of<LiveGameModel>(context, listen: false),
+                    roomPageModel: Provider.of<RoomPageModel>(context, listen: false),
+                    roomPagePodCastModel: null,
+                    chatContext: context,
+                  ),);
                 }))
       ],
     );
@@ -48,9 +55,11 @@ class SliverChatBox extends StatelessWidget {
 
 class SliverChatWidget extends StatefulWidget {
   final dynamic roomPagePodCastModel;
+  final ModelPack modelPack;
 
   const SliverChatWidget({
     super.key,
+     required  this.modelPack,
     this.roomPagePodCastModel,
   });
 
@@ -63,25 +72,26 @@ class SliverChatWidget extends StatefulWidget {
 class _SliverChatWidgetState extends State<SliverChatWidget> {
   CustomcChatController? _customcChatController;
 
-  RoomMsgModel? _roomMsgModel;
+  // RoomMsgModel? _roomMsgModel;
 
-  ModelPack? _modelPack;
+  // ModelPack? _modelPack;
   EdgeInsets? chatMargin;
 
   @override
   void initState() {
     super.initState();
     chatMargin = EdgeInsets.only(right: 182.w - widgetSpanPadding.right);
-    _roomMsgModel = Provider.of<RoomMsgModel>(context, listen: false);
-    _modelPack = ModelPack(
-      myFollowModel: Provider.of<MyFollowModel>(context, listen: false),
-      liveGameModel: Provider.of<LiveGameModel>(context, listen: false),
-      roomPageModel: Provider.of<RoomPageModel>(context, listen: false),
-      roomPagePodCastModel: widget.roomPagePodCastModel,
-      chatContext: context,
-    );
-    _oneByonePush(5000);
+    // _roomMsgModel = Provider.of<RoomMsgModel>(context, listen: false);
+    // _modelPack = ModelPack(
+    //   myFollowModel: Provider.of<MyFollowModel>(context, listen: false),
+    //   liveGameModel: Provider.of<LiveGameModel>(context, listen: false),
+    //   roomPageModel: Provider.of<RoomPageModel>(context, listen: false),
+    //   roomPagePodCastModel: widget.roomPagePodCastModel,
+    //   chatContext: context,
+    // );
+    // _oneByonePush(3000);
   }
+
 
   //自动刷新数据 测试用，到时会删除
   void _oneByonePush(tm) {
@@ -90,38 +100,37 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
       if (len < 15 || (len > 9000 && len < 9010) || len > 9990) {
         tm = 3000;
       }
-      if (len == 2000) {
-        // while(_customcChatController!.data.length<8500){
-        //   int idx = Random().nextInt(_customcChatController!.data.length);
-        //   RoomMsg roomMsg = _customcChatController!.data[idx].roomMsg;
-        //   roomMsg = roomMsg.clone();
-        //   if (roomMsg.id == -2) {
-        //     roomMsg.id = -1;
-        //   }
-        //   _customcChatController!.pushRoomMsg(roomMsg);
-        //
-        // }
+      
+      if(len>5000){
+        tm = 3000;
+        return;
+      }else{
+        tm=1;
       }
+
+
       // tm=1000;
     }
 
     Future.delayed(Duration(milliseconds: tm), () {
-      if (Random().nextInt(100) == 1) {
-        _roomMsgModel!.addSysInfo('添加的能想不信息');
-      } else {
+
         //已有的信息
+        print('有数据 ${_customcChatController!.data.length}' );
         if (_customcChatController!.data.length > 0) {
           int idx = Random().nextInt(_customcChatController!.data.length);
           RoomMsg roomMsg = _customcChatController!.data[idx].roomMsg;
           roomMsg = roomMsg.clone();
-          if (roomMsg.id == -2) {
-            roomMsg.id = -1;
-          }
-          _customcChatController!.pushRoomMsg(roomMsg);
+         if(   widget.modelPack.roomMsgModel.filterInfoItem(roomMsg)){
+           if (roomMsg.id == -2) {
+             roomMsg.id = -1;
+           }
+           _customcChatController!.pushRoomMsg(roomMsg);
+         }
+
         }
-      }
+
       if (mounted) {
-        _oneByonePush(Random().nextInt(2) + 1);
+        _oneByonePush(Random().nextInt(1) + 1000);
       }
     });
   }
@@ -136,10 +145,10 @@ class _SliverChatWidgetState extends State<SliverChatWidget> {
 
   Widget _listView() {
     return CustomChatView(
-      modelPack: _modelPack!,
+      modelPack: widget.modelPack,
       ctxWidth: ScreenUtil().screenWidth - chatMargin!.right - lineMargin.left,
       onCreated: (CustomcChatController controller) {
-        _roomMsgModel?.setChatController(controller);
+        widget.modelPack.roomMsgModel.setChatController(controller);
         _customcChatController = controller;
       },
     );

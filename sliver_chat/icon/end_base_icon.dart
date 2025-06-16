@@ -19,20 +19,25 @@ class EndBaseIcon extends ChatBaseIcon {
   });
   @override
   bool hitTest(RoomChatCellVo vo, ui.Offset clikPos) {
-    LineMetrics lineMetrics = vo.textLink!.contentLines![vo.textLink!.contentLines!.length - 1];
-    double ty = vo.ctxPodding.top + vo.textLink!.multipleLinesH / 2.0 + lineMetrics.baseline - drawToRect!.height;
-    Rect testRect = Rect.fromLTWH(
-      drawToRect!.left,
-      ty,
-      drawToRect!.width,
-      drawToRect!.height,
-    );
-    // print(clikPos);
-    // print(testRect);
-    if (testRect.contains(clikPos)) {
-      onTap!();
+    if(drawToRect!=null){
+      LineMetrics lineMetrics = vo.textLink!.contentLines![vo.textLink!.contentLines!.length - 1];
+      double ty = vo.ctxPodding.top + vo.textLink!.multipleLinesH / 2.0 + lineMetrics.baseline - drawToRect!.height;
+      Rect testRect = Rect.fromLTWH(
+        drawToRect!.left,
+        ty,
+        drawToRect!.width,
+        drawToRect!.height,
+      );
+      // print(clikPos);
+      // print(testRect);
+      if (testRect.contains(clikPos)) {
+        onTap!();
+      }
+      return true;
+    }else{
+      return false;
     }
-    return true;
+
   }
 
   @override

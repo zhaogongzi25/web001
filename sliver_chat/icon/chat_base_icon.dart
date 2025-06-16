@@ -22,27 +22,25 @@ class ChatBaseIcon {
     //必须有一张底图
 
     initData();
+
+    // showBmp();
+
   }
-  bool _loadIng=false;
-  void show() {
+  bool _canLoad=true;
+  void showBmp() {
     //没有图片并没有在加载那么我就要加载图片了
-     if(bgImage==null&&_loadIng==false){
-       _loadIng=true;
+     if( _canLoad==true  ){
+       _canLoad=false;
        roomChatCellVo.chatController.getImageLocalOrNetFun(url, (ui.Image? value) {
-         _loadIng=false;
          bgImage = value;
          roomChatCellVo.chatController.refreshNum++;
          roomChatCellVo.chatController.refreshUi();
        });
      }
   }
-  void hide() {
-    //有图我就清理；无法中断图片加载过程
-     if(bgImage!=null){
-       _loadIng=false;
-       bgImage=null;
-     }
-  }
+  static bool isClear=false;
+  static bool loadBmp=true;
+
   void initData() {
 
   }

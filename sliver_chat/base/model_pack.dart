@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 
 //用于传递模型数据，
 class ModelPack{
-  // final RoomMsgModel roomMsgModel;
+  final RoomMsgModel roomMsgModel;
   final MyFollowModel myFollowModel;
   final LiveGameModel liveGameModel;
   final RoomPageModel roomPageModel;
@@ -16,7 +16,7 @@ class ModelPack{
   final BuildContext chatContext;
 
   ModelPack( {
-    // required this.roomMsgModel,
+    required this.roomMsgModel,
     required this.myFollowModel,
     required this.liveGameModel,
     required this.roomPageModel,

@@ -181,7 +181,7 @@ class RoomChatText extends CustomBaseTextLink {
             // 添加 # 内的文本
             int endIndex = contentTxt.indexOf('#', poundIndex + 1);
             if (endIndex != -1) {
-              textSpans += _selLinksStr(contentTxt.substring(poundIndex + 1, endIndex), Colours.text_blue);
+              textSpans += _selLinksStr(contentTxt.substring(poundIndex + 1, endIndex), Colours.yellow);
               startIndex = endIndex + 1;
             } else {
               // 没有匹配的 #，将剩余文本全部设置为白色

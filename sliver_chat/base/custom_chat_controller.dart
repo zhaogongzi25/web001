@@ -16,16 +16,17 @@ class CustomcChatController {
   final Map<String, ui.Image> _imageMap = {};
 
   void getImageLocalOrNetFun(String url, Function(ui.Image?) calBackFun) async {
+    // url='https://zhaogongzi25.github.io/web001/meinv004.png';
     ui.Image? bImg;
     // await Future.delayed(Duration(seconds: Random().nextInt(5)));
     if (url.contains("https:") || url.contains("http:")) {
-
       bImg = await _loadNetimage(url);
     } else {
       bImg = await _loadLocalImage(url);
     }
     calBackFun(bImg);
   }
+
   //加载网上图片
   Future<ui.Image?> _loadNetimage(String netUrl) async {
     try {
@@ -33,7 +34,7 @@ class CustomcChatController {
       if (imagePath != null) {
         File imageFile = File(imagePath);
         if (await imageFile.exists()) {
-          Uint8List bytes = await imageFile.readAsBytes();
+          final Uint8List bytes = await imageFile.readAsBytes();
           final ui.Codec codec = await ui.instantiateImageCodec(bytes);
           final ui.FrameInfo frameInfo = await codec.getNextFrame();
           return frameInfo.image;
@@ -42,6 +43,7 @@ class CustomcChatController {
     } catch (e) {}
     return null;
   }
+
 //加载本地图片
   Future<ui.Image?> _loadLocalImage(String assetPath) async {
     try {
@@ -159,6 +161,17 @@ class CustomcChatController {
     resetListPosAll();
   }
 
+//removeMsgBySender
+  void removeMsgBySender(int userId) {
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].roomMsg.userId == userId) {
+        data.removeAt(i);
+        i--;
+      }
+    }
+    resetListPosAll();
+  }
+
   //刷新重新统计高度叠加
   int _startTotalIdx = 0;
 
@@ -167,6 +180,8 @@ class CustomcChatController {
     int beginIdx = -1;
     double baseTop = 0.0;
     //取到开始要重新遍历的位置，便重新遍历就不必要多次重置
+
+
     if (_startTotalIdx > 0 && _startTotalIdx < data.length) {
       RoomChatCellVo beGinVo = data[_startTotalIdx - 1];
       if (beGinVo.rect.height != 0) {
@@ -174,12 +189,25 @@ class CustomcChatController {
       } else {
         _startTotalIdx = 0;
       }
+
     }
+
     //其实应该是自行遍历全部，以下逻辑是为了如果以有高度的内容之前的就不再相加，在大数据之后可以减少运算
     //简单的逻辑就是对所有的位置从上到下进行一次遍历，考虑到大量数据的时间记录之前的计算好的位置就不必要重复再相加
+    _startTotalIdx=0;
+    baseTop=0.0;
+    int haveViewNum=0;
     for (int i = _startTotalIdx; i < data.length; i++) {
       RoomChatCellVo vo = data[i];
+      if(vo.textLink!=null){
+        haveViewNum++;
+      }
       vo.rect = Rect.fromLTWH(0.0, baseTop, vo.rect.width, vo.rect.height);
+      if (beginIdx == -1) {
+        if (vo.rect.height > 0) {
+          vo.hasScenePostion = true;
+        }
+      }
       baseTop += vo.rect.height;
       if (vo.rect.height == 0) {
         if (beginIdx == -1) {
@@ -187,6 +215,7 @@ class CustomcChatController {
         }
       }
     }
+    // print('当前显示对象。  开始有位置没更新的beginIdx。$beginIdx   -- 显示  $haveViewNum / ${data.length}');
     // print('重新计算高度。 开始 $_startTotalIdx   没好的beginIdx $beginIdx       数量 $num    还有$noRight 没好');
     if (beginIdx == -1) {
       _startTotalIdx = max(data.length - 1, 0);

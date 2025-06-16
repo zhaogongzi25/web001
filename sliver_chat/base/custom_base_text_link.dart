@@ -78,6 +78,9 @@ class CustomBaseTextLink {
     }
     return len;
   }
+  void dispose(){
+
+  }
 
   //获取头部的空格文本
   String _getHeadEmptyStr() {
@@ -126,16 +129,7 @@ class CustomBaseTextLink {
 
   //将文本排列
   void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
-    // if (_endImageArr.length < 5) {
-    //   addIconTittleToHead(
-    //     HeadBaseIcon(
-    //       boxRect: Rect.fromLTWH(5.w, 5.w, 26.w, 26.w),
-    //       iconLen: 3,
-    //       url: 'assets/common/bg_duihuan.png',
-    //       roomChatCellVo: roomChatCellVo,
-    //     ),
-    //   );
-    // }
+
 
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
     String addStr = _getHeadEmptyStr();
@@ -160,33 +154,22 @@ class CustomBaseTextLink {
     multipleLinesH = contentLines!.length > 1 ? -2.w : 0.w;
   }
 
-  void show() {
+  void showBmp() {
     for (HeadBaseIcon baseTittle in _headImageArr) {
-      baseTittle.show();
+      baseTittle.showBmp();
     }
 
     for (EndBaseIcon endBaseIcon in _endImageArr) {
-      endBaseIcon.show();
+      endBaseIcon.showBmp();
     }
 
     for (FreeBaseIcon freeBaseIcon in _freeImage) {
-      freeBaseIcon.show();
+      freeBaseIcon.showBmp();
     }
   }
 
-  void hide() {
-    for (HeadBaseIcon baseTittle in _headImageArr) {
-      baseTittle.hide();
-    }
 
-    for (EndBaseIcon endBaseIcon in _endImageArr) {
-      endBaseIcon.hide();
-    }
 
-    for (FreeBaseIcon freeBaseIcon in _freeImage) {
-      freeBaseIcon.hide();
-    }
-  }
 
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {
     _drawBaseTextLink(canvas, vo, ty);
