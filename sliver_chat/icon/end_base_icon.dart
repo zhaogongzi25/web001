@@ -21,7 +21,7 @@ class EndBaseIcon extends ChatBaseIcon {
   bool hitTest(RoomChatCellVo vo, ui.Offset clikPos) {
     if(drawToRect!=null){
       LineMetrics lineMetrics = vo.textLink!.contentLines![vo.textLink!.contentLines!.length - 1];
-      double ty = vo.ctxPodding.top + vo.textLink!.multipleLinesH / 2.0 + lineMetrics.baseline - drawToRect!.height;
+      double ty = vo.ctxPodding!.top + vo.textLink!.multipleLinesH / 2.0 + lineMetrics.baseline - drawToRect!.height;
       Rect testRect = Rect.fromLTWH(
         drawToRect!.left,
         ty,
@@ -50,8 +50,8 @@ class EndBaseIcon extends ChatBaseIcon {
         boxRect.height,
       );
       LineMetrics lineMetrics = vo.textLink!.contentLines![vo.textLink!.contentLines!.length - 1];
-      double ttx = vo.ctxPodding.left + lineMetrics.width;
-      double tty = vo.rect.top - ty + vo.ctxPodding.top + lineMetrics.baseline - drawRect.height;
+      double ttx = vo.ctxPodding!.left + lineMetrics.width;
+      double tty = vo.rect.top - ty + vo.ctxPodding!.top + lineMetrics.baseline - drawRect.height;
 
       drawToRect = Rect.fromLTWH(
         ttx + drawRect.left + vo.textLink!.fontBaseLeft,

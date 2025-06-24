@@ -78,9 +78,8 @@ class CustomBaseTextLink {
     }
     return len;
   }
-  void dispose(){
 
-  }
+  void dispose() {}
 
   //获取头部的空格文本
   String _getHeadEmptyStr() {
@@ -95,8 +94,8 @@ class CustomBaseTextLink {
   //点击测试
   bool hitTest(RoomChatCellVo vo, Offset clikpos) {
     final Offset pointInTextLayout = Offset(
-      clikpos.dx - vo.ctxPodding.left, // corresponds to dx
-      clikpos.dy - vo.ctxPodding.top - multipleLinesH / 2.0, // corresponds to dy
+      clikpos.dx - vo.ctxPodding!.left, // corresponds to dx
+      clikpos.dy - vo.ctxPodding!.top - multipleLinesH / 2.0, // corresponds to dy
     );
     final TextPosition textPosition = vo.textLink!.textPainter!.getPositionForOffset(pointInTextLayout);
     final int clickedCharacterIndex = textPosition.offset;
@@ -129,8 +128,6 @@ class CustomBaseTextLink {
 
   //将文本排列
   void _buildToPainter(String str, List<Map<String, dynamic>> arr) {
-
-
     //通过空格的数量来确定文本显示的缩进 ，也预留出来用于显示头部标签
     String addStr = _getHeadEmptyStr();
     String text = addStr + str;
@@ -168,9 +165,6 @@ class CustomBaseTextLink {
     }
   }
 
-
-
-
   void draw(RoomChatCellVo vo, Canvas canvas, double ty) {
     _drawBaseTextLink(canvas, vo, ty);
     //绘制开头的icon列表，因第个独立，它们并不知到排列顺序，需要逐个计算起始位置
@@ -196,13 +190,21 @@ class CustomBaseTextLink {
   //绘制文本信息
   void _drawBaseTextLink(Canvas canvas, RoomChatCellVo vo, double ty) {
     if (textPainter != null) {
-      textPainter!.paint(
-        canvas,
-        Offset(
-          vo.ctxPodding.left + fontBaseLeft,
-          vo.ctxPodding.top + vo.rect.top - ty + multipleLinesH / 2.0,
-        ),
+      double kk = (vo.ctxPodding!.top + vo.rect.top - ty + multipleLinesH / 2.0);
+      if (kk < 0) {
+        //画布要预留出来多一点，绘制文本不能从负数开始
+        //当不在画面时就不再绘制 。。有空核对下原理
+        // kk = 0;
+        // return;
+        // print('kk                    $kk');
+      }
+      Offset pos = Offset(
+        vo.ctxPodding!.left + fontBaseLeft,
+        kk,
       );
+
+
+      textPainter!.paint(canvas, pos);
     }
   }
 

@@ -37,8 +37,8 @@ class HeadBaseIcon extends ChatBaseIcon {
         boxRect.width,
         boxRect.height,
       );
-      double ttx = vo.ctxPodding.left + startLeft;
-      double tty = vo.rect.top - ty + vo.ctxPodding.top;
+      double ttx = vo.ctxPodding!.left + startLeft;
+      double tty = vo.rect.top - ty + vo.ctxPodding!.top;
       drawToRect = Rect.fromLTWH(
         ttx + drawRect.left,
         tty + drawRect.top + vo.textLink!.multipleLinesH / 2.0,

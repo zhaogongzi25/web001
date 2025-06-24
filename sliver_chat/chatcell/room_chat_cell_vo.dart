@@ -14,10 +14,10 @@ class RoomChatCellVo {
   Rect rect = Rect.fromLTWH(0, 0, 0, 0);
 
   //内容距离边缘区域值 左上右下 可以设置不一样的值
-  Rect ctxPodding = Rect.fromLTRB(12.w, 8.w, 16.w, 8.w);
+  Rect? ctxPodding ;
 
   //基础文本颜色，字号，行距，
-  TextStyle textStyle = TextStyle(color: Colors.white, fontSize: 24.sp, fontWeight: FontWeight.w400); //原来chat的数值
+  TextStyle? textStyle  ; //原来chat的数值
 
   // TextStyle textStyle =
   // TextStyle(color: Colors.white, fontSize: 24.sp, height: 2.5.w, fontWeight: FontWeight.w400); //原来chat的数值
@@ -27,7 +27,7 @@ class RoomChatCellVo {
   //一个空字符的宽度
   static double? sampleCodeWidth;
 
-  
+
 
 
   //文本内容显示。
@@ -59,9 +59,14 @@ class RoomChatCellVo {
 //使用显示的文字来计算一次一个空格的宽度，用于填充第一行的行进位置
   void _initSampleKongGeWidth() {
     if (RoomChatCellVo.sampleCodeWidth == null) {
-      TextStyle baseStyle = textStyle;
+        ctxPodding = Rect.fromLTRB(12.w, 8.w, 16.w, 8.w);
+
+      //基础文本颜色，字号，行距，
+        textStyle = TextStyle(color: Colors.white, fontSize: 24.sp, fontWeight: FontWeight.w400); //原来chat的数值
+
+
       TextPainter textPainter = TextPainter(
-        text: TextSpan(text: RoomChatCellVo.sampleSpace, style: baseStyle),
+        text: TextSpan(text: RoomChatCellVo.sampleSpace, style: textStyle),
         textDirection: TextDirection.ltr,
       )..layout(minWidth: 0, maxWidth: double.infinity);
       RoomChatCellVo.sampleCodeWidth = textPainter.width;
@@ -79,10 +84,10 @@ class RoomChatCellVo {
         textStyle = TextStyle(color: Colors.white, fontSize: 24.sp, fontWeight: FontWeight.w400); //原来chat的数值
       textLink = RoomChatText(
         roomChatCellVo: this,
-        textStyle: textStyle,
-        maxWidth: width - ctxPodding.left - ctxPodding.right,
+        textStyle: textStyle!,
+        maxWidth: width - ctxPodding!.left - ctxPodding!.right,
       );
-      textLink!.showBmp();
+
       resetSize();
     }
   }
@@ -104,34 +109,28 @@ class RoomChatCellVo {
   }
 
   void show() {
-
-
     if (textLink == null) {
       _resetCellWidget();
-
-      print('显示  $id');
     }
+    textLink!.showBmp();
   }
 
   //拥有整体坐标-->标记是否进行了队列排序
   bool hasScenePostion = false;
 
   void hide() {
-
       if (textLink != null && rect.height>0&&hasScenePostion) {
-
-        textLink!.dispose();
+        // textLink!.dispose();
         textLink = null;
-
-        print('清理  $id');
+        ctxPodding =null;
+        textStyle =null;
+        // print('清理  $id');
       }
-
 
   }
 
   //记算当前cell的尺寸，用于在列表中的排序位置，所有需要显示的对象都是需要进行先记算
 
-  List<Rect> _oldlist = [];
 
   void resetSize() {
     if (textLink != null && textLink!.textPainter != null&&rect.height==0) {
@@ -139,15 +138,9 @@ class RoomChatCellVo {
       rect = Rect.fromLTWH(
         rect.left, //初始先设定为0.组织后第一个的宽度，再变量所有记录修改位置用于显示
         rect.top,
-        wh.dx + (ctxPodding.left + ctxPodding.right),
-        wh.dy + (ctxPodding.top + ctxPodding.bottom),
+        wh.dx + (ctxPodding!.left + ctxPodding!.right),
+        wh.dy + (ctxPodding!.top + ctxPodding!.bottom),
       );
-      _oldlist.add(rect);
-      if (_oldlist.length > 1) {
-        for (int i = 0; i < _oldlist.length; i++) {
-          print('-重载 高度----   $i     ${_oldlist[i].height}');
-        }
-      }
 
       chatController.resetListPosAll();
     }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
@@ -13,18 +14,99 @@ import 'model_pack.dart';
 import '../chatcell/room_chat_cell_vo.dart';
 
 class CustomcChatController {
-  final Map<String, ui.Image> _imageMap = {};
-
-  void getImageLocalOrNetFun(String url, Function(ui.Image?) calBackFun) async {
-    // url='https://zhaogongzi25.github.io/web001/meinv004.png';
-    ui.Image? bImg;
-    // await Future.delayed(Duration(seconds: Random().nextInt(5)));
+  void getImageLocalOrNetFun(String url, Function(ui.Image?, bool?) calBackFun) {
     if (url.contains("https:") || url.contains("http:")) {
-      bImg = await _loadNetimage(url);
+      getImageByMd5netImage(url, calBackFun);
     } else {
-      bImg = await _loadLocalImage(url);
+      _getUiImageFromAsset(url, calBackFun);
     }
-    calBackFun(bImg);
+  }
+  void getImageByMd5netImage(String netUrl,Function(ui.Image?, bool?) calBackFun) async{
+
+    String? imagePath = await downloadMgr.downloadLite(netUrl);
+    if (imagePath != null) {
+
+      final ImageProvider provider =FileImage(File(imagePath));
+      // 2. 获取 ImageConfiguration
+      // 如果没有提供 context 或 configuration，使用默认配置
+      final ImageConfiguration config = ImageConfiguration(); // 使用默认配置，可能没有正确的 scale
+      // 3. 解析 ImageProvider，获取 ImageStream
+      final ImageStream stream = provider.resolve(config);
+      // 使用 Compl_getUiImageFromAsseteter 来管理 future 的完成
+
+      // 4. 添加监听器到 ImageStream
+      // ImageStreamListener 的 onImage 回调会在图片加载并解码完成后触发
+      ImageStreamListener? listener; // Use late final for listener reference
+      listener = ImageStreamListener(
+            (ImageInfo imageInfo, bool synchronousCall) {
+          // 图片成功加载！imageInfo 包含 ui.Image 对象
+          // 移除监听器以防止内存泄漏（很重要！）
+          stream.removeListener(listener!);
+          // 完成 future
+
+          calBackFun(imageInfo.image, false);
+        },
+        onError: (Object exception, StackTrace? stackTrace) {
+          // 图片加载或解码失败
+          stream.removeListener(listener!);
+          // 完成 future 并抛出错误
+
+          print('Error loading image: $exception');
+        },
+      );
+      // 开始监听
+      stream.addListener(listener);
+
+    }
+  }
+  //跳过imageCache
+  void getImageLocalOrNetFunNoCache(String url, Function(ui.Image?, bool?) calBackFun) async {
+    if (url.contains("https:") || url.contains("http:")) {
+      ui.Image? bImg = await _loadNetimage(url);
+      calBackFun(bImg, true);
+    } else {
+      ui.Image? bImg = await _loadLocalImage(url);
+      calBackFun(bImg, true);
+    }
+  }
+
+  void _getUiImageFromAsset(String assetPath, Function(ui.Image?, bool?) calBackFun) async {
+    // 1. 创建 AssetImage
+    final ImageProvider provider = AssetImage(assetPath);
+    // 2. 获取 ImageConfiguration
+    // 如果没有提供 context 或 configuration，使用默认配置
+    final ImageConfiguration config = ImageConfiguration(); // 使用默认配置，可能没有正确的 scale
+    // 3. 解析 ImageProvider，获取 ImageStream
+    final ImageStream stream = provider.resolve(config);
+    // 使用 Completer 来管理 future 的完成
+
+    // 4. 添加监听器到 ImageStream
+    // ImageStreamListener 的 onImage 回调会在图片加载并解码完成后触发
+        ImageStreamListener? listener; // Use late final for listener reference
+      listener = ImageStreamListener(
+      (ImageInfo imageInfo, bool synchronousCall) {
+        // 图片成功加载！imageInfo 包含 ui.Image 对象
+        // 移除监听器以防止内存泄漏（很重要！）
+        stream.removeListener(listener!);
+        // 完成 future
+
+        calBackFun(imageInfo.image, false);
+      },
+      onError: (Object exception, StackTrace? stackTrace) {
+        // 图片加载或解码失败
+        stream.removeListener(listener!);
+        // 完成 future 并抛出错误
+
+        print('Error loading image: $exception');
+      },
+    );
+    // 开始监听
+    stream.addListener(listener);
+    // 5. Stream might complete immediately if image is in cache
+    // Await the completer's future
+    // If the image was already available in the cache (synchronousCall is true),
+    // The listener might have already completed the completer before addListener returns.
+    // Await ensures we wait for the result regardless.
   }
 
   //加载网上图片
@@ -146,6 +228,8 @@ class CustomcChatController {
     return h;
   }
 
+  //添加Msg到内存
+
   //向聊天框中推入聊天对象，
   void pushRoomMsg(RoomMsg roomMsg) {
     RoomChatCellVo addVo = RoomChatCellVo(
@@ -172,56 +256,30 @@ class CustomcChatController {
     resetListPosAll();
   }
 
-  //刷新重新统计高度叠加
-  int _startTotalIdx = 0;
-
   //重置位置和高度，会从_startTotalIdx开始往后叠加下去，如果不考虑性能直接从第一个开始，
   void resetListPosAll() {
     int beginIdx = -1;
     double baseTop = 0.0;
-    //取到开始要重新遍历的位置，便重新遍历就不必要多次重置
-
-
-    if (_startTotalIdx > 0 && _startTotalIdx < data.length) {
-      RoomChatCellVo beGinVo = data[_startTotalIdx - 1];
-      if (beGinVo.rect.height != 0) {
-        baseTop = beGinVo.rect.top + beGinVo.rect.height; //起始位置为上一个的位置加上一个位置的高度得到开始的位置
-      } else {
-        _startTotalIdx = 0;
-      }
-
-    }
-
-    //其实应该是自行遍历全部，以下逻辑是为了如果以有高度的内容之前的就不再相加，在大数据之后可以减少运算
-    //简单的逻辑就是对所有的位置从上到下进行一次遍历，考虑到大量数据的时间记录之前的计算好的位置就不必要重复再相加
-    _startTotalIdx=0;
-    baseTop=0.0;
-    int haveViewNum=0;
-    for (int i = _startTotalIdx; i < data.length; i++) {
+    int haveTextLInkNum = 0;
+    for (int i = 0; i < data.length; i++) {
       RoomChatCellVo vo = data[i];
-      if(vo.textLink!=null){
-        haveViewNum++;
+      if (vo.textLink != null) {
+        haveTextLInkNum++;
       }
       vo.rect = Rect.fromLTWH(0.0, baseTop, vo.rect.width, vo.rect.height);
-      if (beginIdx == -1) {
-        if (vo.rect.height > 0) {
-          vo.hasScenePostion = true;
-        }
+      //特殊标记，因为是从第一个向后累加位置，
+
+      if (vo.rect.height > 0) {
+        vo.hasScenePostion = true;
+      }
+      if (beginIdx == -1 && vo.rect.height == 0) {
+        beginIdx = i;
       }
       baseTop += vo.rect.height;
-      if (vo.rect.height == 0) {
-        if (beginIdx == -1) {
-          beginIdx = max(i, 0);
-        }
-      }
     }
-    // print('当前显示对象。  开始有位置没更新的beginIdx。$beginIdx   -- 显示  $haveViewNum / ${data.length}');
+
+    // print('当前显示对象。  开始有位置没更新的beginIdx。$beginIdx   -- 显示  $haveTextLInkNum / ${data.length}');
     // print('重新计算高度。 开始 $_startTotalIdx   没好的beginIdx $beginIdx       数量 $num    还有$noRight 没好');
-    if (beginIdx == -1) {
-      _startTotalIdx = max(data.length - 1, 0);
-    } else {
-      _startTotalIdx = max(beginIdx - 1, 0);
-    }
 
     if (!animationControl.isAnimating && !scrollButtonState.value) {
       dragScrollEvent = false; //需要将手势状态归零，因为当前的是在底部
@@ -244,7 +302,7 @@ class CustomcChatController {
         data.removeAt(0);
       }
       //删除前部份数据，需要重置所有对象的位置从0开始
-      _startTotalIdx = 0;
+
       resetListPosAll();
       if (scrollController.hasClients) {
         if (scrollController.position.hasContentDimensions) {

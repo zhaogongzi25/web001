@@ -31,10 +31,15 @@ class ChatBaseIcon {
     //没有图片并没有在加载那么我就要加载图片了
      if( _canLoad==true  ){
        _canLoad=false;
-       roomChatCellVo.chatController.getImageLocalOrNetFun(url, (ui.Image? value) {
+
+       roomChatCellVo.chatController.getImageLocalOrNetFun(url, (ui.Image? value,bool? wait) {
          bgImage = value;
-         roomChatCellVo.chatController.refreshNum++;
-         roomChatCellVo.chatController.refreshUi();
+         if(wait==true){
+           //异才需要重置刷新，这在生命周期中需要了解，
+           roomChatCellVo.chatController.refreshNum++;
+           roomChatCellVo.chatController.refreshUi();
+         }
+
        });
      }
   }

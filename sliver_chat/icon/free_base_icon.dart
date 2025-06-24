@@ -12,8 +12,8 @@ class FreeBaseIcon extends ChatBaseIcon {
   //将内容绘制到空格范围内容
   void draw(Canvas canvas, RoomChatCellVo vo, double ty) {
     if (bgImage != null) {
-      double ttx = vo.ctxPodding.left;
-      double tty = vo.rect.top - ty + vo.ctxPodding.top;
+      double ttx = vo.ctxPodding!.left;
+      double tty = vo.rect.top - ty + vo.ctxPodding!.top;
       drawToRect = Rect.fromLTWH(
         ttx + drawRect.left,
         tty + drawRect.top + vo.textLink!.multipleLinesH / 2.0,
