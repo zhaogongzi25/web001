@@ -1,0 +1,43 @@
+[
+    {
+        "bundleName":"remove",
+        "icon":"remove"
+    },
+    {
+        "bundleName":"CatSparks",
+        "icon":"CatSparks"
+    },
+    {
+        "bundleName":"sdlr",
+        "icon":"sdlr"
+    },
+    {
+        "bundleName":"sdlu",
+        "icon":"sdlu"
+    },
+    {
+        "bundleName":"fashi",
+        "icon":"fashi"
+    },
+    {
+        "bundleName":"xueqiu_lm_fu",
+        "icon":"xueqiu_lm_fu"
+    },
+    {
+        "bundleName":"chri1",
+        "icon":"chri1"
+    },
+    {
+        "bundleName":"daisypig",
+        "icon":"daisypig"
+    },
+    {
+        "bundleName":"gaoshiqing",
+        "icon":"gaoshiqing"
+    },
+    {
+        "bundleName":"wobushi",
+        "icon":"wobushi"
+    }
+    
+]
